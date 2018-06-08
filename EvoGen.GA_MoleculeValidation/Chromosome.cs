@@ -54,6 +54,8 @@ namespace EvoGen.GA_MoleculeValidation
             this.Fitness += Math.Abs(this.Molecule.AtomNodes.Count - this.Molecule.InterconectedAtoms());
 
             this.Fitness += this.Molecule.AtomNodes.Sum(x => x.AtomFitiness);
+            this.Fitness += this.Molecule.LinkEdges.Sum(x => x.From.AtomFitiness);
+            this.Fitness += this.Molecule.LinkEdges.Sum(x => x.To.AtomFitiness);
         }
 
         public Chromosome Crossover(Chromosome pair)
@@ -61,8 +63,8 @@ namespace EvoGen.GA_MoleculeValidation
             List<LinkEdge> childLinks = new List<LinkEdge>();
             childLinks.AddRange(LinkEdge.ListClone(this.Molecule.LinkEdges.Take(this.Molecule.LinkEdges.Count / 2).ToList()));
             childLinks.AddRange(LinkEdge.ListClone(pair.Molecule.LinkEdges.Skip(childLinks.Count).ToList()));
-            
-            return new Chromosome(new MoleculeGraph(this.Molecule.Nomenclature, this.Molecule.AtomNodes, childLinks));
+
+            return new Chromosome(new MoleculeGraph(this.Molecule.Nomenclature, AtomNode.ListClone(this.Molecule.AtomNodes), childLinks));
         }
 
         public void Mutate(double rate)
@@ -84,8 +86,25 @@ namespace EvoGen.GA_MoleculeValidation
                     }
                 } while (!mutated);
 
-                if ((this.Molecule.AtomNodes.Count - 1) < this.Molecule.LinkEdges.Count && random.NextDouble() > 0.90)
+                var newMutationRate = random.NextDouble();
+                if ((this.Molecule.AtomNodes.Count - 1) < this.Molecule.LinkEdges.Count && newMutationRate > 0.90)
                     this.Molecule.LinkEdges.RemoveAt(random.Next(this.Molecule.LinkEdges.Count));
+                else if (newMutationRate < 0.10)
+                {
+                    bool create = false;
+                    do
+                    {
+                        var atom1 = this.Molecule.AtomNodes[random.Next(this.Molecule.AtomNodes.Count)];
+                        var atom2 = this.Molecule.AtomNodes[random.Next(this.Molecule.AtomNodes.Count)];
+                        create = atom1.AtomId != atom2.AtomId;
+                        if (create)
+                        {
+                            var from = new AtomNode(atom1.Symbol, atom1.AtomId);
+                            var to = new AtomNode(atom2.Symbol, atom2.AtomId);
+                            this.Molecule.LinkEdges.Add(new LinkEdge(from, to));
+                        }
+                    } while (!create);
+                }
 
                 this.CalcFitness();
             }

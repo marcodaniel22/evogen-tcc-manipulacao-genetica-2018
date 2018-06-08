@@ -1,5 +1,6 @@
 ﻿using EvoGen.Helper;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace EvoGen.GA_MoleculeValidation
@@ -23,6 +24,16 @@ namespace EvoGen.GA_MoleculeValidation
         public void SetFitness(double fitness)
         {
             this.AtomFitiness = fitness;
+        }
+
+        public static List<AtomNode> ListClone(List<AtomNode> original)
+        {
+            List<AtomNode> result = new List<AtomNode>();
+            foreach (var atom in original)
+            {
+                result.Add(new AtomNode(atom.Symbol, atom.AtomId));
+            }
+            return result;
         }
 
         public override string ToString()

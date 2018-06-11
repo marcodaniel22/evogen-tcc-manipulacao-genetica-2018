@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace EvoGen.MoleculeValidation
 {
@@ -22,6 +23,15 @@ namespace EvoGen.MoleculeValidation
         public MoleculeValidationForm()
         {
             InitializeComponent();
+
+            chart1.Series.Add(new Series("Fitness"));
+
+            chart1.Series["Fitness"].ChartType = SeriesChartType.Line;
+            chart1.Series["Fitness"].Color = Color.Blue;
+            chart1.ChartAreas[0].AxisX.Enabled = AxisEnabled.True;
+            chart1.ChartAreas[0].AxisY.Enabled = AxisEnabled.True;
+            chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 0;
+            chart1.ChartAreas[0].AxisY.MajorGrid.LineWidth = 0;
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
@@ -43,6 +53,7 @@ namespace EvoGen.MoleculeValidation
             try
             {
                 this.CancelSearch();
+                this.chart1.Series[0].Points.Clear();
                 var populationSize = Int32.Parse(this.txtPopulationSize.Text);
                 var maxGenerations = Int32.Parse(this.txtMaxGenerations.Text);
                 var mutationRate = Double.Parse(this.txtMutationRate.Text);
@@ -98,12 +109,15 @@ namespace EvoGen.MoleculeValidation
                 {
                     if (this.ga.BestIndividual != null)
                     {
-                        this.SetText(this.lblBestFitness, this.ga.BestIndividual.Fitness.ToString());
-                        Thread.Sleep(100);
+                        var bestFitness = this.ga.BestIndividual.Fitness;
+                        this.SetText(this.lblBestFitness, bestFitness.ToString());
+                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), bestFitness);
+                        Thread.Sleep(500);
                     }
                 }
             }).Start();
         }
+
 
         private void CancelSearch()
         {
@@ -153,6 +167,14 @@ namespace EvoGen.MoleculeValidation
                 new Task(() => gridView.Invoke(new MethodInvoker(() => gridView.DataSource = dataSource))).Start();
             else
                 new Task(() => gridView.DataSource = dataSource).Start();
+        }
+
+        private void SetChartSerie(Chart chart, int v, double bestFitness)
+        {
+            if (chart.InvokeRequired)
+                new Task(() => chart.Invoke(new MethodInvoker(() => chart.Series["Fitness"].Points.AddXY(v, bestFitness)))).Start();
+            else
+                new Task(() => chart.Series["Fitness"].Points.AddXY(v, bestFitness)).Start();
         }
 
         public void SetStatus(string message)

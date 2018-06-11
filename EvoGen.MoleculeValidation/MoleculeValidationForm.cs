@@ -15,8 +15,9 @@ namespace EvoGen.MoleculeValidation
 {
     public partial class MoleculeValidationForm : Form
     {
-        private volatile GA ga;
         private Thread searchThread;
+        private volatile GA ga;
+        private volatile int timerCounter;
 
         public MoleculeValidationForm()
         {
@@ -47,6 +48,8 @@ namespace EvoGen.MoleculeValidation
                 var mutationRate = Double.Parse(this.txtMutationRate.Text);
                 var nomenclature = this.txtNomenclature.Text;
 
+                this.timerCounter = 0;
+                this.timer1.Start();
                 this.searchThread = new Thread(() =>
                 {
                     this.SetStatus("Initializing population...");
@@ -64,12 +67,13 @@ namespace EvoGen.MoleculeValidation
                 searchThread.Start();
                 new Task(() =>
                 {
-                    while(searchThread != null && searchThread.IsAlive)
+                    while (searchThread != null && searchThread.IsAlive)
                     {
                         Thread.Sleep(500);
                     }
                     this.SetEnabled(this.btnCancel, false);
                     this.SetEnabled(this.btnSearch, true);
+                    this.timer1.Enabled = false;
                 }).Start();
             }
             catch (Exception ex)
@@ -105,12 +109,16 @@ namespace EvoGen.MoleculeValidation
         {
             try
             {
+                if (this.timer1.Enabled)
+                    this.timer1.Stop();
                 if (this.searchThread != null && this.searchThread.IsAlive)
                     this.searchThread.Abort();
                 this.searchThread = null;
                 this.ga = null;
                 this.lblStopWatch.Text = "0.00";
                 this.lblGenerations.Text = "0";
+                this.lblBestFitness.Text = "0";
+                this.timerCounter = 0;
                 this.gridResult.DataSource = new
                 {
                     From = new List<string>(),
@@ -150,6 +158,24 @@ namespace EvoGen.MoleculeValidation
         public void SetStatus(string message)
         {
             new Task(() => this.SetText(this.lblStatus, message)).Start();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (this.timer1.Enabled)
+            {
+                new Task(() =>
+                {
+                    this.timerCounter++;
+                    var minutes = 0;
+                    while ((this.timerCounter - (minutes * 60)) >= 60)
+                    {
+                        minutes++;
+                    }
+                    var seconds = this.timerCounter - (minutes * 60);
+                    this.SetText(this.lblStopWatch, string.Format("{0}:{1}{2}", minutes, (seconds < 10 ? "0" : ""), seconds));
+                }).Start();
+            }
         }
     }
 }

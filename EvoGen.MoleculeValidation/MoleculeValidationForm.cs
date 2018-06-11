@@ -24,10 +24,13 @@ namespace EvoGen.MoleculeValidation
         {
             InitializeComponent();
 
-            chart1.Series.Add(new Series("Fitness"));
+            chart1.Series.Add(new Series("Worst Fitness"));
+            chart1.Series.Add(new Series("Best Fitness"));
 
-            chart1.Series["Fitness"].ChartType = SeriesChartType.Line;
-            chart1.Series["Fitness"].Color = Color.Blue;
+            chart1.Series["Best Fitness"].ChartType = SeriesChartType.Line;
+            chart1.Series["Best Fitness"].Color = Color.Blue;
+            chart1.Series["Worst Fitness"].ChartType = SeriesChartType.Line;
+            chart1.Series["Worst Fitness"].Color = Color.Red;
             chart1.ChartAreas[0].AxisX.Enabled = AxisEnabled.True;
             chart1.ChartAreas[0].AxisY.Enabled = AxisEnabled.True;
             chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 0;
@@ -54,6 +57,7 @@ namespace EvoGen.MoleculeValidation
             {
                 this.CancelSearch();
                 this.chart1.Series[0].Points.Clear();
+                this.chart1.Series[1].Points.Clear();
                 var populationSize = Int32.Parse(this.txtPopulationSize.Text);
                 var maxGenerations = Int32.Parse(this.txtMaxGenerations.Text);
                 var mutationRate = Double.Parse(this.txtMutationRate.Text);
@@ -107,12 +111,14 @@ namespace EvoGen.MoleculeValidation
             {
                 while (this.ga != null)
                 {
-                    if (this.ga.BestIndividual != null)
+                    if (this.ga.BestIndividual != null && this.ga.WorseIndividual != null)
                     {
                         var bestFitness = this.ga.BestIndividual.Fitness;
+                        var worstFitness = this.ga.WorseIndividual.Fitness;
                         this.SetText(this.lblBestFitness, bestFitness.ToString());
-                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), bestFitness);
-                        Thread.Sleep(500);
+                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), bestFitness, "Best Fitness");
+                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), worstFitness, "Worst Fitness");
+                        Thread.Sleep(1000);
                     }
                 }
             }).Start();
@@ -169,12 +175,12 @@ namespace EvoGen.MoleculeValidation
                 new Task(() => gridView.DataSource = dataSource).Start();
         }
 
-        private void SetChartSerie(Chart chart, int v, double bestFitness)
+        private void SetChartSerie(Chart chart, int v, double bestFitness, string lineChart)
         {
             if (chart.InvokeRequired)
-                new Task(() => chart.Invoke(new MethodInvoker(() => chart.Series["Fitness"].Points.AddXY(v, bestFitness)))).Start();
+                new Task(() => chart.Invoke(new MethodInvoker(() => chart.Series[lineChart].Points.AddXY(v, bestFitness)))).Start();
             else
-                new Task(() => chart.Series["Fitness"].Points.AddXY(v, bestFitness)).Start();
+                new Task(() => chart.Series[lineChart].Points.AddXY(v, bestFitness)).Start();
         }
 
         public void SetStatus(string message)

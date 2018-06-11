@@ -73,7 +73,7 @@ namespace EvoGen.GA_MoleculeValidation
             do
             {
                 GenerateChildren();
-                Selection(); 
+                Selection();
                 MutatePopulation();
                 generation++;
                 GetBestIndividual();
@@ -110,10 +110,11 @@ namespace EvoGen.GA_MoleculeValidation
                         double fator = (population[x].Fitness - bestIndividual.Fitness)
                             / (worseIndividual.Fitness - bestIndividual.Fitness);
                         double r = random.NextDouble();
-                        if (r < fator || population[x].Fitness == bestIndividual.Fitness) break;
+                        if (r < fator || fator == 0) break;
                     } while (true);
 
-                    population[x] = children[i];
+                    if (population[x].Fitness > this.bestIndividual.Fitness)
+                        population[x] = children[i];
                 }
             }
         }
@@ -121,10 +122,7 @@ namespace EvoGen.GA_MoleculeValidation
         public void MutatePopulation()
         {
             for (int i = 0; i < population.Count; i++)
-            {
-                if (bestIndividual == null || (bestIndividual != null && population[i].Fitness > bestIndividual.Fitness))
-                    population[i].Mutate(mutationRate);
-            }
+                population[i].Mutate(mutationRate);
         }
 
         public void GetBestIndividual()

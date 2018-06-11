@@ -8,11 +8,37 @@ namespace EvoGen.GA_MoleculeValidation
 {
     public class GA
     {
-        private List<Chromosome> population, children;
-        private Chromosome bestIndividual, worseIndividual;
-        private int generations, generation;
+        private volatile List<Chromosome> population, children;
+        private volatile Chromosome bestIndividual, worseIndividual;
+        private volatile int generation;
+        private int generations;
         private double mutationRate;
-        public string target;
+        private string target;
+
+        public List<Chromosome> Population
+        {
+            get { return this.population; }
+        }
+
+        public List<Chromosome> Childrem
+        {
+            get { return this.children; }
+        }
+
+        public Chromosome BestIndividual
+        {
+            get { return this.bestIndividual; }
+        }
+
+        public Chromosome WorseIndividual
+        {
+            get { return this.worseIndividual; }
+        }
+
+        public int Generation
+        {
+            get { return this.generation; }
+        }
 
         private static Random random = new Random(DateTime.Now.Millisecond);
 

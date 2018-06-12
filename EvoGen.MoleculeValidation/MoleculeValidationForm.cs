@@ -205,5 +205,10 @@ namespace EvoGen.MoleculeValidation
                 }).Start();
             }
         }
+
+        private void MoleculeValidationForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.CancelSearch();
+        }
     }
 }

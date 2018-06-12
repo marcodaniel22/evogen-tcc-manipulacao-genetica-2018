@@ -222,7 +222,7 @@
             this.txtPopulationSize.Name = "txtPopulationSize";
             this.txtPopulationSize.Size = new System.Drawing.Size(140, 26);
             this.txtPopulationSize.TabIndex = 3;
-            this.txtPopulationSize.Text = "1000";
+            this.txtPopulationSize.Text = "100";
             this.txtPopulationSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label2
@@ -390,6 +390,7 @@
             this.Name = "MoleculeValidationForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Molecule Validation";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MoleculeValidationForm_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

@@ -24,13 +24,13 @@ namespace EvoGen.MoleculeValidation
         {
             InitializeComponent();
 
-            chart1.Series.Add(new Series("Worst Fitness"));
-            chart1.Series.Add(new Series("Best Fitness"));
+            chart1.Series.Add(new Series("Maior Fitness"));
+            chart1.Series.Add(new Series("Menor Fitness"));
 
-            chart1.Series["Best Fitness"].ChartType = SeriesChartType.Line;
-            chart1.Series["Best Fitness"].Color = Color.Blue;
-            chart1.Series["Worst Fitness"].ChartType = SeriesChartType.Line;
-            chart1.Series["Worst Fitness"].Color = Color.Red;
+            chart1.Series["Menor Fitness"].ChartType = SeriesChartType.Line;
+            chart1.Series["Menor Fitness"].Color = Color.Blue;
+            chart1.Series["Maior Fitness"].ChartType = SeriesChartType.Line;
+            chart1.Series["Maior Fitness"].Color = Color.Red;
             chart1.ChartAreas[0].AxisX.Enabled = AxisEnabled.True;
             chart1.ChartAreas[0].AxisY.Enabled = AxisEnabled.True;
             chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 0;
@@ -67,17 +67,17 @@ namespace EvoGen.MoleculeValidation
                 this.timer1.Start();
                 this.searchThread = new Thread(() =>
                 {
-                    this.SetStatus("Initializing population...");
+                    this.SetStatus("Iniciando população...");
                     this.ga = new GA(nomenclature, populationSize, maxGenerations, mutationRate);
                     this.StartWatchers();
-                    this.SetStatus("Searching molecule structures...");
+                    this.SetStatus("Procurando estrutura molecular...");
                     MoleculeGraph molecule = this.ga.FindSolution();
                     this.SetDataSource(this.gridResult, molecule.LinkEdges.Select(x => new
                     {
                         From = x.From.ToString(),
                         To = x.To.ToString()
                     }).ToList());
-                    this.SetStatus("Finished!");
+                    this.SetStatus("Fim!");
                 });
                 searchThread.Start();
                 new Task(() =>
@@ -116,8 +116,8 @@ namespace EvoGen.MoleculeValidation
                         var bestFitness = this.ga.BestIndividual.Fitness;
                         var worstFitness = this.ga.WorseIndividual.Fitness;
                         this.SetText(this.lblBestFitness, bestFitness.ToString());
-                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), bestFitness, "Best Fitness");
-                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), worstFitness, "Worst Fitness");
+                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), bestFitness, "Menor Fitness");
+                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), worstFitness, "Maior Fitness");
                         Thread.Sleep(1000);
                     }
                 }

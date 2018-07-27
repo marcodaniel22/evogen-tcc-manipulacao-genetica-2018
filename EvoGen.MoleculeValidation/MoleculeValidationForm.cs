@@ -37,85 +37,92 @@ namespace EvoGen.MoleculeValidation
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            this.btnCancel.Enabled = true;
-            this.btnSearch.Enabled = false;
-            this.StartSearch();
+            btnCancel.Enabled = true;
+            btnSearch.Enabled = false;
+            StartSearch();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.btnCancel.Enabled = false;
-            this.btnSearch.Enabled = true;
-            this.CancelSearch();
+            btnCancel.Enabled = false;
+            btnSearch.Enabled = true;
+            CancelSearch();
         }
 
         private void StartSearch()
         {
             try
             {
-                this.CancelSearch();
-                this.chart1.Series[0].Points.Clear();
-                this.chart1.Series[1].Points.Clear();
+                CancelSearch();
+                ClearCharts();
+
                 var populationSize = Int32.Parse(this.txtPopulationSize.Text);
                 var maxGenerations = Int32.Parse(this.txtMaxGenerations.Text);
                 var mutationRate = Double.Parse(this.txtMutationRate.Text);
                 var nomenclature = this.txtNomenclature.Text;
 
-                this.timerCounter = 0;
-                this.timer1.Start();
+                StartTimer();
                 this.searchThread = new Thread(() =>
                 {
-                    this.SetStatus("Iniciando população...");
-                    this.ga = new GA(nomenclature, populationSize, maxGenerations, mutationRate);
-                    this.StartWatchers();
-                    this.SetStatus("Procurando estrutura molecular...");
-                    MoleculeGraph molecule = this.ga.FindSolution();
-                    this.SetDataSource(this.gridResult, molecule.LinkEdges.Select(x => new
+                    SetStatus("Iniciando população...");
+                    ga = new GA(nomenclature, populationSize, maxGenerations, mutationRate);
+                    StartWatchers();
+                    SetStatus("Procurando estrutura molecular...");
+                    MoleculeGraph molecule = ga.FindSolution();
+
+                    SetDataSource(gridResult, molecule.LinkEdges.Select(x => new
                     {
                         From = x.From.ToString(),
                         To = x.To.ToString()
                     }).ToList());
-                    this.SetStatus("Fim!");
+
+                    SetStatus("Fim!");
                 });
                 searchThread.Start();
+
                 new Task(() =>
                 {
                     while (searchThread != null && searchThread.IsAlive)
-                    {
                         Thread.Sleep(500);
-                    }
-                    this.SetEnabled(this.btnCancel, false);
-                    this.SetEnabled(this.btnSearch, true);
-                    this.timer1.Enabled = false;
+
+                    SetEnabled(btnCancel, false);
+                    SetEnabled(btnSearch, true);
+                    timer1.Enabled = false;
                 }).Start();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show("Erro: " + ex.Message);
             }
+        }
+
+        private void ClearCharts()
+        {
+            chart1.Series[0].Points.Clear();
+            chart1.Series[1].Points.Clear();
         }
 
         public void StartWatchers()
         {
             new Task(() =>
             {
-                while (this.ga != null)
+                while (ga != null)
                 {
-                    this.SetText(this.lblGenerations, this.ga.Generation.ToString());
+                    SetText(lblGenerations, ga.Generation.ToString());
                     Thread.Sleep(100);
                 }
             }).Start();
             new Task(() =>
             {
-                while (this.ga != null)
+                while (ga != null)
                 {
-                    if (this.ga.BestIndividual != null && this.ga.WorseIndividual != null)
+                    if (ga.BestIndividual != null && ga.WorseIndividual != null)
                     {
-                        var bestFitness = this.ga.BestIndividual.Fitness;
-                        var worstFitness = this.ga.WorseIndividual.Fitness;
-                        this.SetText(this.lblBestFitness, bestFitness.ToString());
-                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), bestFitness, "Menor Fitness");
-                        this.SetChartSerie(this.chart1, Int32.Parse(this.lblGenerations.Text), worstFitness, "Maior Fitness");
+                        var bestFitness = ga.BestIndividual.Fitness;
+                        var worstFitness = ga.WorseIndividual.Fitness;
+                        SetText(lblBestFitness, bestFitness.ToString());
+                        SetChartSerie(chart1, Int32.Parse(lblGenerations.Text), bestFitness, "Menor Fitness");
+                        SetChartSerie(chart1, Int32.Parse(lblGenerations.Text), worstFitness, "Maior Fitness");
                         Thread.Sleep(1000);
                     }
                 }
@@ -127,26 +134,46 @@ namespace EvoGen.MoleculeValidation
         {
             try
             {
-                if (this.timer1.Enabled)
-                    this.timer1.Stop();
-                if (this.searchThread != null && this.searchThread.IsAlive)
-                    this.searchThread.Abort();
-                this.searchThread = null;
-                this.ga = null;
-                this.lblStopWatch.Text = "0.00";
-                this.lblGenerations.Text = "0";
-                this.lblBestFitness.Text = "0";
-                this.timerCounter = 0;
-                this.gridResult.DataSource = new
-                {
-                    From = new List<string>(),
-                    To = new List<string>()
-                };
+                StopTimer();
+                CancelThread();
+                ResetVariables();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show("Erro: " + ex.Message);
             }
+        }
+
+        private void CancelThread()
+        {
+            if (searchThread != null && searchThread.IsAlive)
+                searchThread.Abort();
+            searchThread = null;
+        }
+
+        private void StartTimer()
+        {
+            timerCounter = 0;
+            timer1.Start();
+        }
+
+        private void StopTimer()
+        {
+            if (timer1.Enabled)
+                timer1.Stop();
+        }
+
+        private void ResetVariables()
+        {
+            ga = null;
+            lblStopWatch.Text = "0.00";
+            lblGenerations.Text = "0";
+            lblBestFitness.Text = "0";
+            timerCounter = 0;
+            gridResult.DataSource = new List<object>
+            {
+                new { From = "", To = "" }
+            };
         }
 
         public void SetText(Label lblText, string texto)
@@ -183,30 +210,30 @@ namespace EvoGen.MoleculeValidation
 
         public void SetStatus(string message)
         {
-            new Task(() => this.SetText(this.lblStatus, message)).Start();
+            new Task(() => SetText(lblStatus, message)).Start();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (this.timer1.Enabled)
+            if (timer1.Enabled)
             {
                 new Task(() =>
                 {
-                    this.timerCounter++;
+                    timerCounter++;
                     var minutes = 0;
-                    while ((this.timerCounter - (minutes * 60)) >= 60)
+                    while ((timerCounter - (minutes * 60)) >= 60)
                     {
                         minutes++;
                     }
-                    var seconds = this.timerCounter - (minutes * 60);
-                    this.SetText(this.lblStopWatch, string.Format("{0}:{1}{2}", minutes, (seconds < 10 ? "0" : ""), seconds));
+                    var seconds = timerCounter - (minutes * 60);
+                    SetText(lblStopWatch, string.Format("{0}:{1}{2}", minutes, (seconds < 10 ? "0" : ""), seconds));
                 }).Start();
             }
         }
 
         private void MoleculeValidationForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.CancelSearch();
+            CancelSearch();
         }
     }
 }

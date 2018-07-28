@@ -29,12 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MoleculeValidationForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblBestFitness = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -54,12 +55,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.gridResult = new System.Windows.Forms.DataGridView();
+            this.From = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.To = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label8 = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.From = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.To = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridResult)).BeginInit();
@@ -275,42 +276,41 @@
             this.gridResult.AllowUserToOrderColumns = true;
             this.gridResult.AllowUserToResizeColumns = false;
             this.gridResult.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Empty;
-            this.gridResult.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.gridResult.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle17;
             this.gridResult.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.gridResult.BackgroundColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridResult.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridResult.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle18;
             this.gridResult.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridResult.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.From,
             this.To});
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridResult.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle19.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle19.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle19.SelectionBackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle19.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridResult.DefaultCellStyle = dataGridViewCellStyle19;
             this.gridResult.Location = new System.Drawing.Point(6, 22);
             this.gridResult.Name = "gridResult";
             this.gridResult.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridResult.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle20.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle20.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridResult.RowHeadersDefaultCellStyle = dataGridViewCellStyle20;
             this.gridResult.RowHeadersVisible = false;
             this.gridResult.RowHeadersWidth = 50;
             this.gridResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -318,23 +318,41 @@
             this.gridResult.Size = new System.Drawing.Size(218, 488);
             this.gridResult.TabIndex = 0;
             // 
+            // From
+            // 
+            this.From.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.From.DataPropertyName = "From";
+            this.From.HeaderText = "Átomo início";
+            this.From.Name = "From";
+            this.From.ReadOnly = true;
+            this.From.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // To
+            // 
+            this.To.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.To.DataPropertyName = "To";
+            this.To.HeaderText = "Átomo destino";
+            this.To.Name = "To";
+            this.To.ReadOnly = true;
+            this.To.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
             // chart1
             // 
-            chartArea1.AxisX.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisX.MajorTickMark.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisX.Title = "Geração";
-            chartArea1.AxisX2.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisX2.MajorTickMark.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisY.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisY.MajorTickMark.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisY.Title = "Fitness";
-            chartArea1.AxisY2.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisY2.MajorTickMark.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.BorderColor = System.Drawing.Color.Transparent;
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Fitness progression";
-            this.chart1.Legends.Add(legend1);
+            chartArea5.AxisX.LineColor = System.Drawing.Color.Transparent;
+            chartArea5.AxisX.MajorTickMark.LineColor = System.Drawing.Color.Transparent;
+            chartArea5.AxisX.Title = "Geração";
+            chartArea5.AxisX2.LineColor = System.Drawing.Color.Transparent;
+            chartArea5.AxisX2.MajorTickMark.LineColor = System.Drawing.Color.Transparent;
+            chartArea5.AxisY.LineColor = System.Drawing.Color.Transparent;
+            chartArea5.AxisY.MajorTickMark.LineColor = System.Drawing.Color.Transparent;
+            chartArea5.AxisY.Title = "Fitness";
+            chartArea5.AxisY2.LineColor = System.Drawing.Color.Transparent;
+            chartArea5.AxisY2.MajorTickMark.LineColor = System.Drawing.Color.Transparent;
+            chartArea5.BorderColor = System.Drawing.Color.Transparent;
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
+            legend5.Name = "Fitness progression";
+            this.chart1.Legends.Add(legend5);
             this.chart1.Location = new System.Drawing.Point(12, 338);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
@@ -367,39 +385,25 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // From
-            // 
-            this.From.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.From.DataPropertyName = "From";
-            this.From.HeaderText = "Átomo início";
-            this.From.Name = "From";
-            this.From.ReadOnly = true;
-            this.From.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
-            // To
-            // 
-            this.To.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.To.DataPropertyName = "To";
-            this.To.HeaderText = "Átomo destino";
-            this.To.Name = "To";
-            this.To.ReadOnly = true;
-            this.To.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
             // MoleculeValidationForm
             // 
+            this.AcceptButton = this.btnSearch;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.DarkGray;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(737, 552);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MoleculeValidationForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Molecule Validation";
+            this.Text = "Gerador de Moléculas";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MoleculeValidationForm_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

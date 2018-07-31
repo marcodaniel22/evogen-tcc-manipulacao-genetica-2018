@@ -1,10 +1,10 @@
-﻿using EvoGen.GA_MoleculeValidation;
+﻿using EvoGen.Domain.Collections;
+using EvoGen.Domain.GA.StructureGenerator;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +15,7 @@ namespace EvoGen.MoleculeValidation
     public partial class MoleculeValidationForm : Form
     {
         private Thread searchThread;
-        private volatile GA ga;
+        private volatile StructureGenerator ga;
         private volatile int timerCounter;
 
         public MoleculeValidationForm()
@@ -65,7 +65,7 @@ namespace EvoGen.MoleculeValidation
                 this.searchThread = new Thread(() =>
                 {
                     SetStatus("Iniciando população...");
-                    ga = new GA(nomenclature, populationSize, maxGenerations, mutationRate);
+                    ga = new StructureGenerator(nomenclature, populationSize, maxGenerations, mutationRate);
                     StartWatchers();
                     SetStatus("Procurando estrutura molecular...");
                     MoleculeGraph molecule = ga.FindSolution();

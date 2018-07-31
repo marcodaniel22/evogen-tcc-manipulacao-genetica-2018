@@ -80,9 +80,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EvoGen.GA_MoleculeValidation\EvoGen.GA_MoleculeValidation.csproj">
-      <Project>{2007c3f2-d482-4927-9cd1-5dda173dd941}</Project>
-      <Name>EvoGen.GA_MoleculeValidation</Name>
+    <ProjectReference Include="..\EvoGen.Domain\EvoGen.Domain.csproj">
+      <Project>{4F64EEB8-35F2-4D20-98B3-23E509ED9352}</Project>
+      <Name>EvoGen.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\EvoGen.Helper\EvoGen.Helper.csproj">
       <Project>{74094bce-d181-46c6-971b-c5307cde85bf}</Project>

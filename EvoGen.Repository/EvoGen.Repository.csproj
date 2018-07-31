@@ -63,41 +63,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collection\Atom.cs" />
-    <Compile Include="Collection\Element.cs" />
-    <Compile Include="Collection\Molecule.cs" />
-    <Compile Include="Collection\MongoDbBase.cs" />
     <Compile Include="Context\MongoDbContext.cs" />
-    <Compile Include="Enums\Category.cs" />
-    <Compile Include="Factory\AtomFactory.cs" />
-    <Compile Include="Factory\ElementFactory.cs" />
-    <Compile Include="Factory\MoleculeFactory.cs" />
-    <Compile Include="Interfaces\Factory\IAtomFactory.cs" />
-    <Compile Include="Interfaces\Factory\IElementFactory.cs" />
-    <Compile Include="Interfaces\Factory\IFactoryBase.cs" />
-    <Compile Include="Interfaces\Factory\IMoleculeFactory.cs" />
-    <Compile Include="Interfaces\Repositories\IAtomRepository.cs" />
-    <Compile Include="Interfaces\Repositories\IElementRepository.cs" />
-    <Compile Include="Interfaces\Repositories\IMoleculeRepository.cs" />
-    <Compile Include="Interfaces\Repositories\IRepositoryBase.cs" />
-    <Compile Include="Interfaces\Service\IElementService.cs" />
-    <Compile Include="Interfaces\Service\IAtomService.cs" />
-    <Compile Include="Interfaces\Service\IMoleculeService.cs" />
-    <Compile Include="Interfaces\Service\IServiceBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\AtomRepository.cs" />
-    <Compile Include="Repositories\ElementRepository.cs" />
     <Compile Include="Repositories\MoleculeRepository.cs" />
     <Compile Include="Repositories\RepositoryBase.cs" />
-    <Compile Include="Service\AtomeService.cs" />
-    <Compile Include="Service\MoleculeService.cs" />
-    <Compile Include="Service\ElementService.cs" />
-    <Compile Include="Service\ServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EvoGen.Domain\EvoGen.Domain.csproj">
+      <Project>{4F64EEB8-35F2-4D20-98B3-23E509ED9352}</Project>
+      <Name>EvoGen.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EvoGen.Helper\EvoGen.Helper.csproj">
       <Project>{74094bce-d181-46c6-971b-c5307cde85bf}</Project>
       <Name>EvoGen.Helper</Name>

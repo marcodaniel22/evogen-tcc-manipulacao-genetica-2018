@@ -8,90 +8,98 @@ namespace EvoGen.Domain.GA.StructureGenerator
 {
     public class StructureGenerator
     {
-        private volatile List<SGChromosome> population, children;
-        private volatile SGChromosome bestIndividual, worseIndividual;
-        private volatile int generation;
-        private int generations;
-        private double mutationRate;
-        private string target;
+        public List<SGChromosome> Population { get; private set; }
+        public List<SGChromosome> Children { get; private set; }
+        public SGChromosome BestIndividual { get; private set; }
+        public SGChromosome WorseIndividual { get; private set; }
+        public int Generation { get; private set; }
+        public string Target { get; private set; }
+        public bool Searching { get; private set; }
+        public bool Finished { get; private set; }
+        public List<AtomNode> Atoms { get; private set; }
 
-        public List<SGChromosome> Population
-        {
-            get { return this.population; }
-        }
+        public Queue<MoleculeGraph> ResultList { get; set; }
 
-        public List<SGChromosome> Childrem
-        {
-            get { return this.children; }
-        }
-
-        public SGChromosome BestIndividual
-        {
-            get { return this.bestIndividual; }
-        }
-
-        public SGChromosome WorseIndividual
-        {
-            get { return this.worseIndividual; }
-        }
-
-        public int Generation
-        {
-            get { return this.generation; }
-        }
-
-        private static Random random = new Random(DateTime.Now.Millisecond);
+        private int _populationSize = 0;
+        private int _maxGenerations = 0;
+        private double _mutationRate = 0.00;
+        private static Random _random = new Random(DateTime.Now.Millisecond);
 
         public StructureGenerator(string target, int populationSize, int generations, double mutationRate)
         {
-            GuardProperties(target, populationSize, generations, mutationRate);
-            this.generations = generations;
-            this.mutationRate = mutationRate;
-            this.generation = 0;
-            this.target = target;
-            InitializePopulation(populationSize);
-        }
-
-        private void GuardProperties(string target, int populationSize, int generations, double mutation_rate)
-        {
-            Guard.StringNullOrEmpty(target, "Target");
             Guard.IntLowerThanZero(populationSize, "PopulationSize");
+            this._populationSize = populationSize;
             Guard.IntLowerThanZero(generations, "Generations");
-            Guard.DoubleLowerThanZero(mutation_rate, "Mutation Rate");
+            this._maxGenerations = generations;
+            Guard.DoubleLowerThanZero(mutationRate, "Mutation Rate");
+            this._mutationRate = mutationRate;
+            Guard.StringNullOrEmpty(target, "Target");
+            this.Target = target;
+            this.Generation = 0;
+            InitializePopulation();
         }
 
-        public void InitializePopulation(int size)
+        public void InitializePopulation()
         {
-            population = new List<SGChromosome>(size);
-            var atoms = MoleculeGraph.ExtractAtomsFromNomenclature(this.target);
-            for (int i = 0; i < size; i++)
-                population.Add(new SGChromosome(new MoleculeGraph(this.target, atoms)));
+            Population = new List<SGChromosome>(_populationSize);
+            Atoms = MoleculeGraph.ExtractAtomsFromNomenclature(Target);
+            for (int i = 0; i < _populationSize; i++)
+                Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
         }
 
         public MoleculeGraph FindSolution()
         {
+            Searching = true;
             do
             {
                 GenerateChildren();
                 Selection();
                 MutatePopulation();
-                generation++;
-                GetBestIndividual();
-            } while (bestIndividual.Fitness > 0 && generation < generations);
+                Generation++;
+            } while (BestIndividual.Fitness > 0 && Generation < _maxGenerations);
 
-            return bestIndividual.Molecule;
+            Searching = false;
+            Finished = true;
+            return BestIndividual.Molecule;
+        }
+
+        public void FindSolutions()
+        {
+            ResultList = new Queue<MoleculeGraph>();
+            Searching = true;
+            do
+            {
+                GenerateChildren();
+                Selection();
+                MutatePopulation();
+                Generation++;
+                if (BestIndividual.Fitness == 0)
+                {
+                    var bestIndividuals = Population.Where(x => x.Fitness == 0);
+                    foreach (var item in bestIndividuals)
+                        ResultList.Enqueue(item.Molecule);
+                    Population.RemoveAll(x => x.Fitness == 0);
+                    do {
+                        Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
+                    } while (Population.Count < _populationSize);
+                    GetBestIndividual();
+                }
+            } while (Generation < _maxGenerations);
+
+            Searching = false;
+            Finished = true;
         }
 
         public void GenerateChildren()
         {
-            int halfSize = population.Count / 2;
-            children = new List<SGChromosome>(halfSize);
+            int halfSize = Population.Count / 2;
+            Children = new List<SGChromosome>(halfSize);
 
             for (int i = 0; i < halfSize; i++)
             {
-                var parent1 = population[i];
-                var parent2 = population[population.Count - 1 - i];
-                children.Add(parent1.Crossover(parent2));
+                var parent1 = Population[i];
+                var parent2 = Population[Population.Count - 1 - i];
+                Children.Add(parent1.Crossover(parent2));
             }
             GetBestIndividual();
             GetWorseIndividual();
@@ -99,40 +107,49 @@ namespace EvoGen.Domain.GA.StructureGenerator
 
         public void Selection()
         {
-            if (bestIndividual.Fitness < worseIndividual.Fitness)
+            if (BestIndividual.Fitness < WorseIndividual.Fitness)
             {
-                for (int i = 0; i < population.Count / 2; i++)
+                for (int i = 0; i < Children.Count; i++)
                 {
                     int x = 0;
                     do
                     {
-                        x = random.Next(population.Count);
-                        double fator = (population[x].Fitness - bestIndividual.Fitness)
-                            / (worseIndividual.Fitness - bestIndividual.Fitness);
-                        double r = random.NextDouble();
+                        x = _random.Next(Population.Count);
+                        double fator = (Population[x].Fitness - BestIndividual.Fitness)
+                            / (WorseIndividual.Fitness - BestIndividual.Fitness);
+                        double r = _random.NextDouble();
                         if (r < fator || fator == 0) break;
                     } while (true);
 
-                    if (population[x].Fitness > this.bestIndividual.Fitness)
-                        population[x] = children[i];
+                    if (Population[x].Fitness > BestIndividual.Fitness)
+                        Population[x] = Children[i];
                 }
+                GetBestIndividual();
+                GetWorseIndividual();
             }
         }
 
         public void MutatePopulation()
         {
-            for (int i = 0; i < population.Count; i++)
-                population[i].Mutate(mutationRate);
+            if (BestIndividual.Fitness > 0)
+            {
+                foreach (var individual in Population)
+                {
+                    individual.Mutate(_mutationRate);
+                }
+                GetBestIndividual();
+                GetWorseIndividual();
+            }
         }
 
         public void GetBestIndividual()
         {
-            bestIndividual = population.OrderBy(x => x.Fitness).FirstOrDefault();
+            BestIndividual = Population.First(x => x.Fitness == Population.Min(y => y.Fitness));
         }
 
         public void GetWorseIndividual()
         {
-            worseIndividual = population.OrderByDescending(x => x.Fitness).FirstOrDefault();
+            WorseIndividual = Population.First(x => x.Fitness == Population.Max(y => y.Fitness));
         }
     }
 }

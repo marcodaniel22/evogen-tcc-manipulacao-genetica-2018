@@ -97,7 +97,7 @@
             // 
             this.lblBestFitness.AutoSize = true;
             this.lblBestFitness.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBestFitness.Location = new System.Drawing.Point(440, 247);
+            this.lblBestFitness.Location = new System.Drawing.Point(437, 247);
             this.lblBestFitness.Name = "lblBestFitness";
             this.lblBestFitness.Size = new System.Drawing.Size(26, 29);
             this.lblBestFitness.TabIndex = 15;
@@ -107,7 +107,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(329, 254);
+            this.label9.Location = new System.Drawing.Point(326, 254);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(110, 20);
             this.label9.TabIndex = 14;
@@ -365,7 +365,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(30, 304);
+            this.label8.Location = new System.Drawing.Point(30, 309);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(64, 20);
             this.label8.TabIndex = 11;
@@ -375,7 +375,7 @@
             // 
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatus.Location = new System.Drawing.Point(91, 304);
+            this.lblStatus.Location = new System.Drawing.Point(91, 309);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(56, 20);
             this.lblStatus.TabIndex = 12;

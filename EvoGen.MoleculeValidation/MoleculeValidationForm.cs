@@ -106,15 +106,16 @@ namespace EvoGen.MoleculeValidation
         {
             new Task(() =>
             {
-                while (ga != null)
+                while (ga != null && !ga.Finished)
                 {
                     SetText(lblGenerations, ga.Generation.ToString());
                     Thread.Sleep(100);
                 }
+                SetText(lblGenerations, ga.Generation.ToString());
             }).Start();
             new Task(() =>
             {
-                while (ga != null)
+                while (ga != null && !ga.Finished)
                 {
                     if (ga.BestIndividual != null && ga.WorseIndividual != null)
                     {
@@ -125,6 +126,15 @@ namespace EvoGen.MoleculeValidation
                         SetChartSerie(chart1, Int32.Parse(lblGenerations.Text), worstFitness, "Maior Fitness");
                         Thread.Sleep(1000);
                     }
+                }
+                if (ga.BestIndividual != null && ga.WorseIndividual != null)
+                {
+                    var bestFitness = ga.BestIndividual.Fitness;
+                    var worstFitness = ga.WorseIndividual.Fitness;
+                    SetText(lblBestFitness, bestFitness.ToString());
+                    SetChartSerie(chart1, Int32.Parse(lblGenerations.Text), bestFitness, "Menor Fitness");
+                    SetChartSerie(chart1, Int32.Parse(lblGenerations.Text), worstFitness, "Maior Fitness");
+                    Thread.Sleep(1000);
                 }
             }).Start();
         }

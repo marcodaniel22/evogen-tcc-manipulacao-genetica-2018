@@ -9,11 +9,13 @@ namespace EvoGen.Domain.GA.StructureGenerator
     {
         public MoleculeGraph Molecule { get; private set; }
         public double Fitness { get; private set; }
+        public Guid Guid { get; private set; }
 
         private static Random random = new Random(DateTime.Now.Millisecond);
 
         public SGChromosome(MoleculeGraph molecule)
         {
+            this.Guid = Guid.NewGuid();
             this.Molecule = molecule;
             this.CalcFitness();
         }

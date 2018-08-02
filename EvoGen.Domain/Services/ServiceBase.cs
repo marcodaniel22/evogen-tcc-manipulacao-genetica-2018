@@ -1,4 +1,5 @@
-﻿using EvoGen.Domain.Collections;
+﻿using System.Linq;
+using EvoGen.Domain.Collections;
 using EvoGen.Domain.Interfaces.Repositories;
 using EvoGen.Domain.Interfaces.Services;
 
@@ -16,6 +17,11 @@ namespace EvoGen.Domain.Services
         public TCollection Create(TCollection obj)
         {
             return _repositoryBase.Create(obj);
+        }
+
+        public IQueryable<TCollection> GetAll()
+        {
+            return _repositoryBase.GetAll();
         }
     }
 }

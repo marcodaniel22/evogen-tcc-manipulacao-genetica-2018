@@ -23,7 +23,7 @@ namespace EvoGen.Repository.Context
         {
             get
             {
-                return _database.GetCollection<TColletion>(typeof(TColletion).ToString());
+                return _database.GetCollection<TColletion>(typeof(TColletion).Name);
             }
         }
     }

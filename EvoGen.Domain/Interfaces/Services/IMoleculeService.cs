@@ -4,6 +4,6 @@ namespace EvoGen.Domain.Interfaces.Services
 {
     public interface IMoleculeService : IServiceBase<Molecule>
     {
-
+        int MoleculeCount();
     }
 }

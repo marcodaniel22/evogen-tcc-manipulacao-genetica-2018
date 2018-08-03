@@ -145,6 +145,10 @@
       <Project>{4F64EEB8-35F2-4D20-98B3-23E509ED9352}</Project>
       <Name>EvoGen.Domain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EvoGen.Helper\EvoGen.Helper.csproj">
+      <Project>{74094BCE-D181-46C6-971B-C5307CDE85BF}</Project>
+      <Name>EvoGen.Helper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EvoGen.Repository\EvoGen.Repository.csproj">
       <Project>{06AEC591-EAA1-4CF9-854B-0643AA6078BB}</Project>
       <Name>EvoGen.Repository</Name>

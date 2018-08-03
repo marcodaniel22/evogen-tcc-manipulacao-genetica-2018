@@ -202,14 +202,6 @@ namespace EvoGen.MoleculeValidation
                 new Task(() => btnEnabled.Enabled = enabled).Start();
         }
 
-        public void SetDataSource(DataGridView gridView, object dataSource)
-        {
-            if (gridView.InvokeRequired)
-                new Task(() => gridView.Invoke(new MethodInvoker(() => gridView.DataSource = dataSource))).Start();
-            else
-                new Task(() => gridView.DataSource = dataSource).Start();
-        }
-
         private void SetChartSerie(Chart chart, int v, double bestFitness, string lineChart)
         {
             if (chart.InvokeRequired)

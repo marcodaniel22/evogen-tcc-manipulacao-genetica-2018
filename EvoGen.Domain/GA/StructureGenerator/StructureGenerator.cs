@@ -41,6 +41,7 @@ namespace EvoGen.Domain.GA.StructureGenerator
 
         public void InitializePopulation()
         {
+            ResultList = new Queue<MoleculeGraph>();
             Population = new List<SGChromosome>(_populationSize);
             Atoms = MoleculeGraph.ExtractAtomsFromNomenclature(Target);
             for (int i = 0; i < _populationSize; i++)
@@ -65,7 +66,6 @@ namespace EvoGen.Domain.GA.StructureGenerator
 
         public void FindSolutions()
         {
-            ResultList = new Queue<MoleculeGraph>();
             Searching = true;
             do
             {
@@ -75,11 +75,14 @@ namespace EvoGen.Domain.GA.StructureGenerator
                 Generation++;
                 if (BestIndividual.Fitness == 0)
                 {
-                    var bestIndividuals = Population.Where(x => x.Fitness == 0);
+                    var bestIndividuals = Population.Where(x => x.Fitness == 0).Select(x => x.Molecule);
                     foreach (var item in bestIndividuals)
-                        ResultList.Enqueue(item.Molecule);
+                    {
+                        ResultList.Enqueue(item);
+                    }
                     Population.RemoveAll(x => x.Fitness == 0);
-                    do {
+                    do
+                    {
                         Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
                     } while (Population.Count < _populationSize);
                     GetBestIndividual();

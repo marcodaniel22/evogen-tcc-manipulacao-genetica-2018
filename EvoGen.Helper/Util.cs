@@ -11,7 +11,7 @@ namespace EvoGen.Helper
         private static Random _randon = new Random(DateTime.Now.Millisecond);
 
         public static int MaxLinkEdges = 3;
-        public static int maxMoleculeAtoms = 50;
+        public static int MaxMoleculeAtoms = 50;
         public static List<string> ElementFilterList = new List<string> { "C", "H", "O", "N", "P", "S", "Br", "Cl", "I" };
         public static Dictionary<string, int> OoctetRule = new Dictionary<string, int> {
             { "C", 4 },

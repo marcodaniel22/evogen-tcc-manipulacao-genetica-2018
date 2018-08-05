@@ -19,8 +19,8 @@ namespace EvoGen.MoleculeSearch
         private bool Saving;
         private List<Task> TaskList;
         private Queue<MoleculeGraph> resultQueue;
-        private static Random random = new Random(DateTime.Now.Millisecond);
-        
+        private CustomRandom customRandom;
+
         public MoleculeSearchForm(IMoleculeService moleculeService)
         {
             InitializeComponent();
@@ -31,8 +31,12 @@ namespace EvoGen.MoleculeSearch
             this.TaskList = new List<Task>();
             this.timerSearch.Enabled = false;
             this.timerSave.Enabled = false;
-            this.gridQueue.DataSource = new List<Object>();
+            this.gridQueue.DataSource = new List<object>
+            {
+                new { Formula = "", IdStructure = "" }
+            };
             this.resultQueue = new Queue<MoleculeGraph>();
+            this.customRandom = new CustomRandom();
         }
 
         private void MoleculeSearchForm_Load(object sender, EventArgs e)
@@ -79,8 +83,8 @@ namespace EvoGen.MoleculeSearch
                         SetDataSource(gridQueue, resultQueue.ToList().Select(x => new
                         {
                             Formula = x.Nomenclature,
-                            IdEstrutura = "Teste"
-                        }));
+                            IdStructure = "Teste"
+                        }).ToList());
                     }
                     Thread.Sleep(1000);
                 }
@@ -119,16 +123,23 @@ namespace EvoGen.MoleculeSearch
             var atomsList = Util.OoctetRule.Keys.ToList();
             var molecule = new Dictionary<string, int>();
 
-            var totalAtomsMolecule = random.Next(Util.maxMoleculeAtoms) + 1;
-            var totalDiferentAtomsMolecule = random.Next(atomsList.Count) + 1;
+            var totalAtomsMolecule = customRandom.NextTotalMoleculeAtoms();
+            var totalDiferentAtomsMolecule = customRandom.NextDiferentMoleculeAtoms();
+
+            var carbonRate = customRandom.NextDouble();
+            if (carbonRate < 0.80)
+                molecule.Add("C", 1);
 
             if (totalDiferentAtomsMolecule > (atomsList.Count / 2))
             {
                 foreach (var atom in atomsList)
-                    molecule.Add(atom, 0);
+                {
+                    if (!molecule.ContainsKey(atom))
+                        molecule.Add(atom, 0);
+                }
                 while (molecule.Count > totalDiferentAtomsMolecule)
                 {
-                    var removeAtom = atomsList[random.Next(atomsList.Count)];
+                    var removeAtom = atomsList[customRandom.Next(atomsList.Count)];
                     if (molecule.ContainsKey(removeAtom))
                         molecule.Remove(removeAtom);
                 }
@@ -137,7 +148,7 @@ namespace EvoGen.MoleculeSearch
             {
                 while (molecule.Count < totalDiferentAtomsMolecule)
                 {
-                    var addAtom = atomsList[random.Next(atomsList.Count)];
+                    var addAtom = atomsList[customRandom.Next(atomsList.Count)];
                     if (!molecule.ContainsKey(addAtom))
                         molecule.Add(addAtom, 0);
                 }
@@ -145,10 +156,10 @@ namespace EvoGen.MoleculeSearch
             var moleculeAtoms = molecule.Keys.ToList();
             while (molecule.Sum(x => x.Value) < totalAtomsMolecule)
             {
-                var atom = moleculeAtoms[random.Next(moleculeAtoms.Count)];
+                var atom = moleculeAtoms[customRandom.Next(moleculeAtoms.Count)];
                 molecule[atom] = (molecule[atom] + 1);
             }
-            var removeAtoms = molecule.Where(x => x.Value == 0);
+            var removeAtoms = molecule.Where(x => x.Value == 0).ToList();
             foreach (var removeAtom in removeAtoms)
             {
                 molecule.Remove(removeAtom.Key);
@@ -172,33 +183,17 @@ namespace EvoGen.MoleculeSearch
 
         private int GetPopulationSize(Dictionary<string, int> molecule)
         {
-            var atomsCount = molecule.Sum(x => x.Value);
-            if (atomsCount > 20 && atomsCount < 35)
-                return 150;
-            if (atomsCount >= 35)
-                return 200;
-            else
-                return 100;
+            return 100;
         }
 
         private int GetMaxGenerations(Dictionary<string, int> molecule)
         {
-            var atomsCount = molecule.Sum(x => x.Value);
-            if (atomsCount > 20 && atomsCount < 35)
-                return 5000;
-            if (atomsCount >= 35)
-                return 10000;
-            else
-                return 2000;
+            return 2000;
         }
 
         private double GetMutationRate(Dictionary<string, int> molecule)
         {
-            var atomsCount = molecule.Sum(x => x.Value);
-            if (atomsCount <= 30)
-                return 0.20;
-            else
-                return 0.25;
+            return 0.20;
         }
 
         public void SetDataSource(DataGridView gridView, object dataSource)
@@ -212,7 +207,7 @@ namespace EvoGen.MoleculeSearch
         private void timerSearch_Tick(object sender, EventArgs e)
         {
             TaskList.RemoveAll(x => x.Status == TaskStatus.RanToCompletion);
-            while (TaskList.Count < (System.Environment.ProcessorCount - 1))
+            while (TaskList.Count < (Environment.ProcessorCount / 2))
             {
                 TaskList.Add(new Task(() =>
                 {

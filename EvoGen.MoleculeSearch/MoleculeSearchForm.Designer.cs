@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.gridQueue = new System.Windows.Forms.DataGridView();
-            this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IdEstrutura = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtQuantity = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -41,9 +41,12 @@
             this.btnSearch = new System.Windows.Forms.Button();
             this.timerSearch = new System.Windows.Forms.Timer(this.components);
             this.timerSave = new System.Windows.Forms.Timer(this.components);
+            this.gridQueue = new System.Windows.Forms.DataGridView();
+            this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IdStructure = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -55,48 +58,6 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Fila";
-            // 
-            // gridQueue
-            // 
-            this.gridQueue.AllowUserToAddRows = false;
-            this.gridQueue.AllowUserToDeleteRows = false;
-            this.gridQueue.AllowUserToResizeColumns = false;
-            this.gridQueue.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.gridQueue.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.gridQueue.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.gridQueue.BackgroundColor = System.Drawing.Color.White;
-            this.gridQueue.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.gridQueue.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridQueue.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Formula,
-            this.IdEstrutura});
-            this.gridQueue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridQueue.Location = new System.Drawing.Point(3, 16);
-            this.gridQueue.MultiSelect = false;
-            this.gridQueue.Name = "gridQueue";
-            this.gridQueue.ReadOnly = true;
-            this.gridQueue.RowHeadersVisible = false;
-            this.gridQueue.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridQueue.Size = new System.Drawing.Size(443, 241);
-            this.gridQueue.TabIndex = 0;
-            // 
-            // Formula
-            // 
-            this.Formula.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Formula.DataPropertyName = "Formula";
-            this.Formula.HeaderText = "Formula";
-            this.Formula.Name = "Formula";
-            this.Formula.ReadOnly = true;
-            this.Formula.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
-            // IdEstrutura
-            // 
-            this.IdEstrutura.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.IdEstrutura.DataPropertyName = "IdEstrutura";
-            this.IdEstrutura.HeaderText = "Id da Estrutura";
-            this.IdEstrutura.Name = "IdEstrutura";
-            this.IdEstrutura.ReadOnly = true;
             // 
             // groupBox2
             // 
@@ -166,6 +127,75 @@
             this.timerSave.Interval = 1000;
             this.timerSave.Tick += new System.EventHandler(this.timerSave_Tick);
             // 
+            // gridQueue
+            // 
+            this.gridQueue.AllowUserToAddRows = false;
+            this.gridQueue.AllowUserToDeleteRows = false;
+            this.gridQueue.AllowUserToOrderColumns = true;
+            this.gridQueue.AllowUserToResizeColumns = false;
+            this.gridQueue.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.gridQueue.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridQueue.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.gridQueue.BackgroundColor = System.Drawing.Color.White;
+            this.gridQueue.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQueue.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.gridQueue.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQueue.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Formula,
+            this.IdStructure});
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridQueue.DefaultCellStyle = dataGridViewCellStyle3;
+            this.gridQueue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridQueue.Location = new System.Drawing.Point(3, 16);
+            this.gridQueue.Name = "gridQueue";
+            this.gridQueue.ReadOnly = true;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQueue.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.gridQueue.RowHeadersVisible = false;
+            this.gridQueue.RowHeadersWidth = 50;
+            this.gridQueue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.gridQueue.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQueue.Size = new System.Drawing.Size(443, 241);
+            this.gridQueue.TabIndex = 1;
+            // 
+            // Formula
+            // 
+            this.Formula.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Formula.DataPropertyName = "Formula";
+            this.Formula.HeaderText = "Formula";
+            this.Formula.Name = "Formula";
+            this.Formula.ReadOnly = true;
+            this.Formula.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // IdStructure
+            // 
+            this.IdStructure.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.IdStructure.DataPropertyName = "IdStructure";
+            this.IdStructure.HeaderText = "Id da Estrutura";
+            this.IdStructure.Name = "IdStructure";
+            this.IdStructure.ReadOnly = true;
+            this.IdStructure.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
             // MoleculeSearchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -181,9 +211,9 @@
             this.Text = "Busca de Molecula";
             this.Load += new System.EventHandler(this.MoleculeSearchForm_Load);
             this.groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -191,9 +221,6 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.DataGridView gridQueue;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Formula;
-        private System.Windows.Forms.DataGridViewTextBoxColumn IdEstrutura;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnSearch;
@@ -201,6 +228,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timerSearch;
         private System.Windows.Forms.Timer timerSave;
+        private System.Windows.Forms.DataGridView gridQueue;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Formula;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IdStructure;
     }
 }
 

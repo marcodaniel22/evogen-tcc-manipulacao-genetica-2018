@@ -27,6 +27,12 @@ namespace EvoGen.Helper
                 throw new Exception(String.Format("Property '{0}' can't be null or empty!", prop));
         }
 
+        internal static void PrevendEndLowerThanBegin(int begin, int end, string prop)
+        {
+            if (begin > end)
+                throw new Exception(String.Format("Property '{0}' can't have EndValue lower than BeginValue!", prop));
+        }
+
         public static void DoubleLowerThanZero(double value, string prop)
         {
             if (value <= 0)

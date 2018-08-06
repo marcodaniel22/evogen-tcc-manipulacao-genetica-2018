@@ -33,20 +33,33 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gridQueue = new System.Windows.Forms.DataGridView();
+            this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IdStructure = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.txtQuantity = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnSearch = new System.Windows.Forms.Button();
             this.timerSearch = new System.Windows.Forms.Timer(this.components);
             this.timerSave = new System.Windows.Forms.Timer(this.components);
-            this.gridQueue = new System.Windows.Forms.DataGridView();
-            this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IdStructure = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.txtFound = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtProcess = new System.Windows.Forms.TextBox();
+            this.txtQuantityDatabase = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.gridSearches = new System.Windows.Forms.DataGridView();
+            this.label2 = new System.Windows.Forms.Label();
+            this.Searches = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSearches)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -54,78 +67,10 @@
             this.groupBox1.Controls.Add(this.gridQueue);
             this.groupBox1.Location = new System.Drawing.Point(12, 136);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(449, 260);
+            this.groupBox1.Size = new System.Drawing.Size(378, 260);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Fila";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.txtQuantity);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.btnSave);
-            this.groupBox2.Controls.Add(this.btnSearch);
-            this.groupBox2.Location = new System.Drawing.Point(15, 12);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(446, 118);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Serviços";
-            // 
-            // txtQuantity
-            // 
-            this.txtQuantity.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtQuantity.Location = new System.Drawing.Point(231, 52);
-            this.txtQuantity.Multiline = true;
-            this.txtQuantity.Name = "txtQuantity";
-            this.txtQuantity.ReadOnly = true;
-            this.txtQuantity.Size = new System.Drawing.Size(200, 40);
-            this.txtQuantity.TabIndex = 3;
-            this.txtQuantity.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(242, 29);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(173, 20);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Moléculas encontradas";
-            // 
-            // btnSave
-            // 
-            this.btnSave.BackColor = System.Drawing.Color.Gainsboro;
-            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.Location = new System.Drawing.Point(6, 65);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(200, 40);
-            this.btnSave.TabIndex = 1;
-            this.btnSave.Text = "Salvar em Banco";
-            this.btnSave.UseVisualStyleBackColor = false;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // btnSearch
-            // 
-            this.btnSearch.BackColor = System.Drawing.Color.Gainsboro;
-            this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSearch.Location = new System.Drawing.Point(6, 19);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(200, 40);
-            this.btnSearch.TabIndex = 0;
-            this.btnSearch.Text = "Iniciar Busca";
-            this.btnSearch.UseVisualStyleBackColor = false;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
-            // 
-            // timerSearch
-            // 
-            this.timerSearch.Interval = 1000;
-            this.timerSearch.Tick += new System.EventHandler(this.timerSearch_Tick);
-            // 
-            // timerSave
-            // 
-            this.timerSave.Interval = 1000;
-            this.timerSave.Tick += new System.EventHandler(this.timerSave_Tick);
             // 
             // gridQueue
             // 
@@ -175,7 +120,7 @@
             this.gridQueue.RowHeadersWidth = 50;
             this.gridQueue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.gridQueue.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridQueue.Size = new System.Drawing.Size(443, 241);
+            this.gridQueue.Size = new System.Drawing.Size(372, 241);
             this.gridQueue.TabIndex = 1;
             // 
             // Formula
@@ -196,12 +141,198 @@
             this.IdStructure.ReadOnly = true;
             this.IdStructure.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.btnSave);
+            this.groupBox2.Controls.Add(this.btnSearch);
+            this.groupBox2.Location = new System.Drawing.Point(15, 12);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(375, 118);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Serviços";
+            // 
+            // btnSave
+            // 
+            this.btnSave.BackColor = System.Drawing.Color.Gainsboro;
+            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSave.Location = new System.Drawing.Point(6, 65);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(363, 40);
+            this.btnSave.TabIndex = 1;
+            this.btnSave.Text = "Salvar em Banco";
+            this.btnSave.UseVisualStyleBackColor = false;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.BackColor = System.Drawing.Color.Gainsboro;
+            this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSearch.Location = new System.Drawing.Point(6, 19);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(363, 40);
+            this.btnSearch.TabIndex = 0;
+            this.btnSearch.Text = "Iniciar Busca";
+            this.btnSearch.UseVisualStyleBackColor = false;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
+            // timerSearch
+            // 
+            this.timerSearch.Interval = 1000;
+            this.timerSearch.Tick += new System.EventHandler(this.timerSearch_Tick);
+            // 
+            // timerSave
+            // 
+            this.timerSave.Interval = 1000;
+            this.timerSave.Tick += new System.EventHandler(this.timerSave_Tick);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.txtFound);
+            this.groupBox3.Controls.Add(this.label3);
+            this.groupBox3.Controls.Add(this.txtProcess);
+            this.groupBox3.Controls.Add(this.txtQuantityDatabase);
+            this.groupBox3.Controls.Add(this.label1);
+            this.groupBox3.Controls.Add(this.gridSearches);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Location = new System.Drawing.Point(396, 17);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(202, 376);
+            this.groupBox3.TabIndex = 2;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Status";
+            // 
+            // txtFound
+            // 
+            this.txtFound.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFound.Location = new System.Drawing.Point(21, 167);
+            this.txtFound.Multiline = true;
+            this.txtFound.Name = "txtFound";
+            this.txtFound.ReadOnly = true;
+            this.txtFound.Size = new System.Drawing.Size(160, 30);
+            this.txtFound.TabIndex = 7;
+            this.txtFound.Text = "0";
+            this.txtFound.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(28, 148);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(148, 16);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Moléculas encontradas";
+            // 
+            // txtProcess
+            // 
+            this.txtProcess.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtProcess.Location = new System.Drawing.Point(21, 45);
+            this.txtProcess.Multiline = true;
+            this.txtProcess.Name = "txtProcess";
+            this.txtProcess.ReadOnly = true;
+            this.txtProcess.Size = new System.Drawing.Size(160, 30);
+            this.txtProcess.TabIndex = 5;
+            this.txtProcess.Text = "0";
+            this.txtProcess.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // txtQuantityDatabase
+            // 
+            this.txtQuantityDatabase.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtQuantityDatabase.Location = new System.Drawing.Point(21, 105);
+            this.txtQuantityDatabase.Multiline = true;
+            this.txtQuantityDatabase.Name = "txtQuantityDatabase";
+            this.txtQuantityDatabase.ReadOnly = true;
+            this.txtQuantityDatabase.Size = new System.Drawing.Size(160, 30);
+            this.txtQuantityDatabase.TabIndex = 4;
+            this.txtQuantityDatabase.Text = "0";
+            this.txtQuantityDatabase.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(35, 86);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(133, 16);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Moléculas em banco";
+            // 
+            // gridSearches
+            // 
+            this.gridSearches.AllowUserToAddRows = false;
+            this.gridSearches.AllowUserToDeleteRows = false;
+            this.gridSearches.AllowUserToOrderColumns = true;
+            this.gridSearches.AllowUserToResizeColumns = false;
+            this.gridSearches.AllowUserToResizeRows = false;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.gridSearches.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
+            this.gridSearches.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.gridSearches.BackgroundColor = System.Drawing.Color.White;
+            this.gridSearches.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSearches.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            this.gridSearches.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSearches.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Searches});
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridSearches.DefaultCellStyle = dataGridViewCellStyle7;
+            this.gridSearches.Location = new System.Drawing.Point(6, 243);
+            this.gridSearches.Name = "gridSearches";
+            this.gridSearches.ReadOnly = true;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSearches.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            this.gridSearches.RowHeadersVisible = false;
+            this.gridSearches.RowHeadersWidth = 50;
+            this.gridSearches.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.gridSearches.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSearches.Size = new System.Drawing.Size(190, 127);
+            this.gridSearches.TabIndex = 2;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(64, 26);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(73, 16);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Processos";
+            // 
+            // Searches
+            // 
+            this.Searches.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Searches.DataPropertyName = "Searches";
+            this.Searches.HeaderText = "     Buscas";
+            this.Searches.Name = "Searches";
+            this.Searches.ReadOnly = true;
+            this.Searches.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
             // MoleculeSearchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DarkGray;
-            this.ClientSize = new System.Drawing.Size(473, 408);
+            this.ClientSize = new System.Drawing.Size(610, 408);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
@@ -211,9 +342,11 @@
             this.Text = "Busca de Molecula";
             this.Load += new System.EventHandler(this.MoleculeSearchForm_Load);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSearches)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -224,13 +357,20 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnSearch;
-        private System.Windows.Forms.TextBox txtQuantity;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timerSearch;
         private System.Windows.Forms.Timer timerSave;
         private System.Windows.Forms.DataGridView gridQueue;
         private System.Windows.Forms.DataGridViewTextBoxColumn Formula;
         private System.Windows.Forms.DataGridViewTextBoxColumn IdStructure;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.DataGridView gridSearches;
+        private System.Windows.Forms.TextBox txtQuantityDatabase;
+        private System.Windows.Forms.TextBox txtProcess;
+        private System.Windows.Forms.TextBox txtFound;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Searches;
     }
 }
 

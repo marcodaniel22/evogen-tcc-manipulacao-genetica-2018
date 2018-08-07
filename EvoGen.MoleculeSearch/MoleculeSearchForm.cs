@@ -20,9 +20,6 @@ namespace EvoGen.MoleculeSearch
         private int SearchCount;
         private int DatabaseCount;
         private List<Task> TaskList;
-        private Thread WatcherThread;
-        private Thread DatabaseSaveThread;
-        private List<string> SearchFormulaList;
         private Queue<MoleculeGraph> ResultQueue;
         private CustomRandom CustomRandom;
 
@@ -31,14 +28,8 @@ namespace EvoGen.MoleculeSearch
             InitializeComponent();
             this.timerSearch.Enabled = false;
             this.timerSave.Enabled = false;
-            this.gridQueue.DataSource = new List<object>
-            {
-                new { Formula = "", IdStructure = "" }
-            };
-            this.gridSearches.DataSource = new List<object>
-            {
-                new { Searches = "" }
-            };
+            this.gridQueue.DataSource = new List<object>();
+            this.gridSearches.DataSource = new List<object>();
 
             this.MoleculeService = moleculeService;
             this.Searching = false;
@@ -48,7 +39,6 @@ namespace EvoGen.MoleculeSearch
             this.TaskList = new List<Task>();
             this.ResultQueue = new Queue<MoleculeGraph>();
             this.CustomRandom = new CustomRandom();
-            this.SearchFormulaList = new List<string>();
         }
 
         private void MoleculeSearchForm_Load(object sender, EventArgs e)
@@ -82,35 +72,54 @@ namespace EvoGen.MoleculeSearch
             Searching = true;
             timerSearch.Enabled = true;
             timerSearch.Start();
+        }
 
-            WatcherThread = new Thread(() =>
+        private void AddQueueDataSource(MoleculeGraph molecule)
+        {
+            var searchesFormula = (List<object>)gridQueue.DataSource;
+            searchesFormula.Remove(new { Formula = "", IdStructure = "" });
+            searchesFormula.Add(new
             {
-                while (Searching)
-                {
-                    //if (ResultQueue.Count > 0)
-                    //{
-                    //    SetDataSource(gridQueue, ResultQueue.ToList().Select(x => new
-                    //    {
-                    //        Formula = x.Nomenclature,
-                    //        IdStructure = "Teste"
-                    //    }).ToList());
-                    //}
-                    if (SearchFormulaList.Count > 0)
-                    {
-                        SetDataSource(gridSearches, SearchFormulaList.Select(x => new
-                        {
-                            Searches = x
-                        }).ToList());
-                    }
-
-                    SetText(txtProcess, TaskList.Count.ToString());
-                    SetText(txtQuantityDatabase, DatabaseCount.ToString());
-                    SetText(txtFound, SearchCount.ToString());
-
-                    Thread.Sleep(1000);
-                }
+                Formula = molecule.Nomenclature,
+                IdStructure = "Teste"
             });
-            WatcherThread.Start();
+            SetDataSource(gridQueue, searchesFormula.ToList());
+        }
+
+        private void RemoveQueueDataSource(MoleculeGraph molecule)
+        {
+            var searchesFormula = (List<object>)gridQueue.DataSource;
+            searchesFormula.Remove(new
+            {
+                Formula = molecule.Nomenclature,
+                IdStructure = "Teste"
+            });
+            if (searchesFormula.Count == 0)
+                searchesFormula.Add(new { Formula = "", IdStructure = "" });
+            SetDataSource(gridQueue, searchesFormula.ToList());
+        }
+
+        private void AddSearchDataSource(string formula)
+        {
+            var searchesFormula = (List<object>)gridSearches.DataSource;
+            searchesFormula.Remove(new { Searches = "" });
+            searchesFormula.Add(new
+            {
+                Searches = formula
+            });
+            SetDataSource(gridSearches, searchesFormula.ToList());
+        }
+
+        private void RemoveSearchDataSource(string formula)
+        {
+            var searchesFormula = (List<object>)gridSearches.DataSource;
+            searchesFormula.Remove(new
+            {
+                Searches = formula
+            });
+            if (searchesFormula.Count == 0)
+                searchesFormula.Add(new { Searches = "" });
+            SetDataSource(gridSearches, searchesFormula.ToList());
         }
 
         private void StopSearch()
@@ -120,10 +129,6 @@ namespace EvoGen.MoleculeSearch
             Searching = false;
             timerSearch.Enabled = false;
             timerSearch.Stop();
-
-            if (WatcherThread != null && WatcherThread.IsAlive)
-                WatcherThread.Abort();
-            WatcherThread = null;
         }
 
         private void Save()
@@ -133,15 +138,6 @@ namespace EvoGen.MoleculeSearch
             Saving = true;
             timerSave.Enabled = true;
             timerSave.Start();
-
-            DatabaseSaveThread = new Thread(() =>
-            {
-                while (Saving)
-                {
-                    Thread.Sleep(1000);
-                }
-            });
-            DatabaseSaveThread.Start();
         }
 
         private void StopSave()
@@ -151,11 +147,74 @@ namespace EvoGen.MoleculeSearch
             Saving = false;
             timerSave.Enabled = false;
             timerSave.Stop();
-
-            if (DatabaseSaveThread != null && DatabaseSaveThread.IsAlive)
-                DatabaseSaveThread.Abort();
-            DatabaseSaveThread = null;
         }
+
+        private void timerSearch_Tick(object sender, EventArgs e)
+        {
+            while (TaskList.Count < (Environment.ProcessorCount / 2))
+            //while (TaskList.Count < (1))
+            {
+                TaskList.Add(new Task(() =>
+                {
+                    var moleculeAtoms = GenerateFormula();
+                    var formula = GetFormulaFromMolecule(moleculeAtoms);
+                    if (!string.IsNullOrEmpty(formula))
+                    {
+                        AddSearchDataSource(formula);
+                        var ga = new StructureGenerator(
+                            formula,
+                            GetPopulationSize(moleculeAtoms),
+                            GetMaxGenerations(moleculeAtoms),
+                            GetMutationRate(moleculeAtoms)
+                        );
+                        new Task(() => ga.FindSolutions()).Start();
+                        while (!ga.Finished)
+                        {
+                            if (ga.ResultList.Count > 0)
+                            {
+                                var molecule = ga.ResultList.Dequeue();
+                                AddQueueDataSource(molecule);
+                                ResultQueue.Enqueue(molecule);
+                            }
+                        }
+                        RemoveSearchDataSource(formula);
+                    }
+                }));
+            }
+
+            TaskList.Where(x => x.Status == TaskStatus.Created).ToList().ForEach(x => x.Start());
+            var finalizedTasks = TaskList.Where(x => x.Status == TaskStatus.RanToCompletion).ToList();
+            finalizedTasks.ForEach(x =>
+            {
+                x.Dispose();
+                TaskList.Remove(x);
+            });
+
+            txtProcess.Text = TaskList.Count.ToString();
+            txtQuantityDatabase.Text = DatabaseCount.ToString();
+            txtFound.Text = SearchCount.ToString();
+        }
+
+        private void timerSave_Tick(object sender, EventArgs e)
+        {
+
+        }
+
+        public void SetDataSource(DataGridView gridView, object dataSource)
+        {
+            if (gridView.InvokeRequired)
+                new Task(() => gridView.Invoke(new MethodInvoker(() => gridView.DataSource = dataSource))).Start();
+            else
+                new Task(() => gridView.DataSource = dataSource).Start();
+        }
+
+        //public void SetText(TextBox txtBox, string texto)
+        //{
+        //    if (txtBox.InvokeRequired)
+        //        new Task(() => txtBox.Invoke(new MethodInvoker(() => txtBox.Text = texto))).Start();
+        //    else
+        //        new Task(() => txtBox.Text = texto).Start();
+        //}
 
         private Dictionary<string, int> GenerateFormula()
         {
@@ -233,69 +292,6 @@ namespace EvoGen.MoleculeSearch
         private double GetMutationRate(Dictionary<string, int> molecule)
         {
             return 0.20;
-        }
-
-        private void timerSearch_Tick(object sender, EventArgs e)
-        {
-            var finalizedTasks = TaskList.Where(x => x.Status == TaskStatus.RanToCompletion).ToList();
-            finalizedTasks.ForEach(x =>
-            {
-                x.Dispose();
-                TaskList.Remove(x);
-            });
-
-            while (TaskList.Count < (Environment.ProcessorCount))
-            //while (TaskList.Count < (1))
-            {
-                TaskList.Add(new Task(() =>
-                {
-                    var molecule = GenerateFormula();
-                    var formula = GetFormulaFromMolecule(molecule);
-                    if (!string.IsNullOrEmpty(formula))
-                    {
-                        SearchFormulaList.Add(formula);
-                        var ga = new StructureGenerator(
-                            formula,
-                            GetPopulationSize(molecule),
-                            GetMaxGenerations(molecule),
-                            GetMutationRate(molecule)
-                        );
-                        new Task(() => ga.FindSolutions()).Start();
-                        while (!ga.Finished)
-                        {
-                            if (ga.ResultList.Count > 0)
-                            {
-                                var result = ga.ResultList.Dequeue();
-                                ResultQueue.Enqueue(result);
-                            }
-                        }
-                        SearchFormulaList.Remove(formula);
-                        SearchFormulaList.RemoveAll(x => string.IsNullOrEmpty(x));
-                    }
-                }));
-            }
-            TaskList.Where(x => x.Status == TaskStatus.Created).ToList().ForEach(x => x.Start());
-        }
-
-        private void timerSave_Tick(object sender, EventArgs e)
-        {
-
-        }
-
-        public void SetDataSource(DataGridView gridView, object dataSource)
-        {
-            if (gridView.InvokeRequired)
-                new Task(() => gridView.Invoke(new MethodInvoker(() => gridView.DataSource = dataSource))).Start();
-            else
-                new Task(() => gridView.DataSource = dataSource).Start();
-        }
-
-        public void SetText(TextBox txtBox, string texto)
-        {
-            if (txtBox.InvokeRequired)
-                new Task(() => txtBox.Invoke(new MethodInvoker(() => txtBox.Text = texto))).Start();
-            else
-                new Task(() => txtBox.Text = texto).Start();
         }
     }
 }

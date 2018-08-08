@@ -22,6 +22,7 @@ namespace EvoGen.MoleculeSearch
         private List<Task> TaskList;
         private Queue<MoleculeGraph> ResultQueue;
         private CustomRandom CustomRandom;
+        private List<string> ids;
 
         public MoleculeSearchForm(IMoleculeService moleculeService)
         {
@@ -39,6 +40,7 @@ namespace EvoGen.MoleculeSearch
             this.TaskList = new List<Task>();
             this.ResultQueue = new Queue<MoleculeGraph>();
             this.CustomRandom = new CustomRandom();
+            this.ids = new List<string>();
         }
 
         private void MoleculeSearchForm_Load(object sender, EventArgs e)
@@ -81,7 +83,7 @@ namespace EvoGen.MoleculeSearch
             searchesFormula.Add(new
             {
                 Formula = molecule.Nomenclature,
-                IdStructure = "Teste"
+                IdStructure = molecule.IdStructure
             });
             SetDataSource(gridQueue, searchesFormula.ToList());
         }
@@ -92,7 +94,7 @@ namespace EvoGen.MoleculeSearch
             searchesFormula.Remove(new
             {
                 Formula = molecule.Nomenclature,
-                IdStructure = "Teste"
+                IdStructure = molecule.IdStructure
             });
             if (searchesFormula.Count == 0)
                 searchesFormula.Add(new { Formula = "", IdStructure = "" });
@@ -173,8 +175,13 @@ namespace EvoGen.MoleculeSearch
                             if (ga.ResultList.Count > 0)
                             {
                                 var molecule = ga.ResultList.Dequeue();
-                                AddQueueDataSource(molecule);
-                                ResultQueue.Enqueue(molecule);
+                                molecule.IdStructure = MoleculeGraph.GetIdStructure(molecule.LinkEdges);
+                                if (!ids.Contains(molecule.IdStructure))
+                                {
+                                    ids.Add(molecule.IdStructure);
+                                    AddQueueDataSource(molecule);
+                                    ResultQueue.Enqueue(molecule);
+                                }
                             }
                         }
                         RemoveSearchDataSource(formula);

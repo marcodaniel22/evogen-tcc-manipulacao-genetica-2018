@@ -39,8 +39,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.gridQueue = new System.Windows.Forms.DataGridView();
-            this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IdStructure = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnSearch = new System.Windows.Forms.Button();
@@ -53,8 +51,10 @@
             this.txtQuantityDatabase = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.gridSearches = new System.Windows.Forms.DataGridView();
-            this.label2 = new System.Windows.Forms.Label();
             this.Searches = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label2 = new System.Windows.Forms.Label();
+            this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IdStructure = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -122,24 +122,6 @@
             this.gridQueue.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQueue.Size = new System.Drawing.Size(372, 241);
             this.gridQueue.TabIndex = 1;
-            // 
-            // Formula
-            // 
-            this.Formula.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Formula.DataPropertyName = "Formula";
-            this.Formula.HeaderText = "Formula";
-            this.Formula.Name = "Formula";
-            this.Formula.ReadOnly = true;
-            this.Formula.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
-            // IdStructure
-            // 
-            this.IdStructure.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.IdStructure.DataPropertyName = "IdStructure";
-            this.IdStructure.HeaderText = "Id da Estrutura";
-            this.IdStructure.Name = "IdStructure";
-            this.IdStructure.ReadOnly = true;
-            this.IdStructure.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
             // groupBox2
             // 
@@ -307,6 +289,15 @@
             this.gridSearches.Size = new System.Drawing.Size(190, 127);
             this.gridSearches.TabIndex = 2;
             // 
+            // Searches
+            // 
+            this.Searches.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Searches.DataPropertyName = "Searches";
+            this.Searches.HeaderText = "     Buscas";
+            this.Searches.Name = "Searches";
+            this.Searches.ReadOnly = true;
+            this.Searches.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -317,14 +308,24 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Processos";
             // 
-            // Searches
+            // Formula
             // 
-            this.Searches.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Searches.DataPropertyName = "Searches";
-            this.Searches.HeaderText = "     Buscas";
-            this.Searches.Name = "Searches";
-            this.Searches.ReadOnly = true;
-            this.Searches.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Formula.DataPropertyName = "Formula";
+            this.Formula.FillWeight = 81.21828F;
+            this.Formula.HeaderText = "Formula";
+            this.Formula.Name = "Formula";
+            this.Formula.ReadOnly = true;
+            this.Formula.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // IdStructure
+            // 
+            this.IdStructure.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.IdStructure.DataPropertyName = "IdStructure";
+            this.IdStructure.FillWeight = 118.7817F;
+            this.IdStructure.HeaderText = "Id da Estrutura";
+            this.IdStructure.Name = "IdStructure";
+            this.IdStructure.ReadOnly = true;
+            this.IdStructure.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
             // MoleculeSearchForm
             // 
@@ -360,8 +361,6 @@
         private System.Windows.Forms.Timer timerSearch;
         private System.Windows.Forms.Timer timerSave;
         private System.Windows.Forms.DataGridView gridQueue;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Formula;
-        private System.Windows.Forms.DataGridViewTextBoxColumn IdStructure;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
@@ -371,6 +370,8 @@
         private System.Windows.Forms.TextBox txtFound;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DataGridViewTextBoxColumn Searches;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Formula;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IdStructure;
     }
 }
 

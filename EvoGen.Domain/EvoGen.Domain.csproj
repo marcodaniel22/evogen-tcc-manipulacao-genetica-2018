@@ -52,9 +52,13 @@
     <Compile Include="GA\Graph\MoleculeGraph.cs" />
     <Compile Include="Interfaces\Repositories\IMoleculeRepository.cs" />
     <Compile Include="Interfaces\Repositories\IRepositoryBase.cs" />
+    <Compile Include="Interfaces\Services\IAtomService.cs" />
+    <Compile Include="Interfaces\Services\ILinkService.cs" />
     <Compile Include="Interfaces\Services\IMoleculeService.cs" />
     <Compile Include="Interfaces\Services\IServiceBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AtomService.cs" />
+    <Compile Include="Services\LinkService.cs" />
     <Compile Include="Services\MoleculeService.cs" />
     <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="GA\StructureGenerator\SGChromosome.cs" />

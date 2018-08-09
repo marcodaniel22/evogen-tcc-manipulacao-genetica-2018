@@ -22,6 +22,8 @@ namespace EvoGen.MoleculeSearch
             var container = new InjectContainer();
             container.Register<IMoleculeService, MoleculeService>();
             container.Register<IMoleculeRepository, MoleculeRepository>();
+            container.Register<IAtomService, AtomService>();
+            container.Register<ILinkService, LinkService>();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

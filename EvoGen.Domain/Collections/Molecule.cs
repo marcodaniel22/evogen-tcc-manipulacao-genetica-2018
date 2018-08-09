@@ -11,5 +11,6 @@ namespace EvoGen.Domain.Collections
         public List<Atom> Atoms { get; set; }
         public List<Link> Links { get; set; }
         public string Nomenclature { get; set; }
+        public string IdStructure { get; set; }
     }
 }

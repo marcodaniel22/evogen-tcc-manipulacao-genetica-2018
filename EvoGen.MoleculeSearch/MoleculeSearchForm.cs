@@ -20,7 +20,7 @@ namespace EvoGen.MoleculeSearch
         private bool SavingMolecules;
         private int SearchCount;
         private int DatabaseCount;
-        private List<Task> TaskList;
+        private List<Thread> ThreadList;
         private Queue<MoleculeGraph> ResultQueue;
         private List<string> SearchList;
         private CustomRandom CustomRandom;
@@ -41,7 +41,7 @@ namespace EvoGen.MoleculeSearch
             this.Saving = false;
             this.SearchCount = 0;
             this.DatabaseCount = 0;
-            this.TaskList = new List<Task>();
+            this.ThreadList = new List<Thread>();
             this.ResultQueue = new Queue<MoleculeGraph>();
             this.SearchList = new List<string>();
             this.CustomRandom = new CustomRandom();
@@ -116,10 +116,10 @@ namespace EvoGen.MoleculeSearch
 
         private void timerSearch_Tick(object sender, EventArgs e)
         {
-            while (TaskList.Count < (Environment.ProcessorCount / 2))
+            if (ThreadList.Count < (Environment.ProcessorCount / 2))
             //while (TaskList.Count < (1))
             {
-                TaskList.Add(new Task(() =>
+                ThreadList.Add(new Thread(() =>
                 {
                     var moleculeAtoms = GenerateFormula();
                     var formula = GetFormulaFromMolecule(moleculeAtoms);
@@ -166,18 +166,10 @@ namespace EvoGen.MoleculeSearch
                 }));
             }
 
-            TaskList.Where(x => x.Status == TaskStatus.Created).ToList().ForEach(x => x.Start());
-            var finalizedTasks = TaskList.Where(x =>
-                x.Status == TaskStatus.RanToCompletion ||
-                x.Status == TaskStatus.Faulted
-            ).ToList();
-            finalizedTasks.ForEach(x =>
-            {
-                x.Dispose();
-                TaskList.Remove(x);
-            });
+            ThreadList.Where(x => x.ThreadState == ThreadState.Unstarted).ToList().ForEach(x => x.Start());
+            ThreadList.RemoveAll(x => !x.IsAlive);
 
-            txtProcess.Text = TaskList.Count.ToString();
+            txtProcess.Text = ThreadList.Count.ToString();
             txtQuantityDatabase.Text = DatabaseCount.ToString();
             txtFound.Text = SearchCount.ToString();
         }

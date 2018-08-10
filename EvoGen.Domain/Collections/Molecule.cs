@@ -8,7 +8,7 @@ namespace EvoGen.Domain.Collections
 {
     public class Molecule : MongoDbBase
     {
-        public List<Atom> Atoms { get; set; }
+        public int AtomsCount { get; set; }
         public List<Link> Links { get; set; }
         public string Nomenclature { get; set; }
         public string IdStructure { get; set; }

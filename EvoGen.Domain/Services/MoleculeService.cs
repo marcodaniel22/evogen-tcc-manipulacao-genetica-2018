@@ -37,11 +37,7 @@ namespace EvoGen.Domain.Services
             collection.guidString = Guid.NewGuid().ToString();
             collection.Nomenclature = molecule.Nomenclature;
             collection.IdStructure = molecule.IdStructure;
-            collection.Atoms = new List<Atom>();
-            foreach (var atom in molecule.AtomNodes)
-            {
-                collection.Atoms.Add(_atomService.GetCollectionFromNode(atom));
-            }
+            collection.AtomsCount = molecule.AtomNodes.Count;
             collection.Links = new List<Link>();
             foreach (var link in molecule.LinkEdges)
             {

@@ -22,8 +22,11 @@ namespace EvoGen.MoleculeSearch
         private int DatabaseCount;
         private List<Task> TaskList;
         private Queue<MoleculeGraph> ResultQueue;
+        private List<string> SearchList;
         private CustomRandom CustomRandom;
-        private List<string> ids;
+        private List<string> Ids;
+        private Object queueObjectLock;
+        private Object listObjectLock;
 
         public MoleculeSearchForm(IMoleculeService moleculeService)
         {
@@ -40,8 +43,11 @@ namespace EvoGen.MoleculeSearch
             this.DatabaseCount = 0;
             this.TaskList = new List<Task>();
             this.ResultQueue = new Queue<MoleculeGraph>();
+            this.SearchList = new List<string>();
             this.CustomRandom = new CustomRandom();
-            this.ids = new List<string>();
+            this.Ids = new List<string>();
+            this.queueObjectLock = new object();
+            this.listObjectLock = new object();
         }
 
         private void MoleculeSearchForm_Load(object sender, EventArgs e)
@@ -119,7 +125,11 @@ namespace EvoGen.MoleculeSearch
                     var formula = GetFormulaFromMolecule(moleculeAtoms);
                     if (!string.IsNullOrEmpty(formula))
                     {
-                        AddSearchDataSource(formula);
+                        lock (listObjectLock)
+                        {
+                            SearchList.Add(formula);
+                            ShowSearchDataSource();
+                        }
                         var ga = new StructureGenerator(
                             formula,
                             GetPopulationSize(moleculeAtoms),
@@ -127,27 +137,40 @@ namespace EvoGen.MoleculeSearch
                             GetMutationRate(moleculeAtoms)
                         );
                         new Task(() => ga.FindSolutions()).Start();
+                        string idStructure = string.Empty;
                         while (!ga.Finished)
                         {
                             if (ga.ResultList.Count > 0)
                             {
                                 var molecule = ga.ResultList.Dequeue();
-                                molecule.IdStructure = MoleculeGraph.GetIdStructure(molecule.LinkEdges);
-                                if (!ids.Contains(molecule.IdStructure))
+                                idStructure = MoleculeGraph.GetIdStructure(molecule.LinkEdges);
+                                molecule.IdStructure = idStructure;
+                                if (!Ids.Contains(molecule.IdStructure))
                                 {
-                                    ids.Add(molecule.IdStructure);
-                                    AddQueueDataSource(molecule);
-                                    ResultQueue.Enqueue(molecule);
+                                    Ids.Add(molecule.IdStructure);
+                                    lock (queueObjectLock)
+                                    {
+                                        ResultQueue.Enqueue(molecule);
+                                        ShowQueueDataSource();
+                                    }
                                 }
                             }
                         }
-                        RemoveSearchDataSource(formula);
+                        lock (listObjectLock)
+                        {
+                            Ids.RemoveAll(x => x == idStructure);
+                            SearchList.RemoveAll(x => x == formula);
+                            ShowSearchDataSource();
+                        }
                     }
                 }));
             }
 
             TaskList.Where(x => x.Status == TaskStatus.Created).ToList().ForEach(x => x.Start());
-            var finalizedTasks = TaskList.Where(x => x.Status == TaskStatus.RanToCompletion).ToList();
+            var finalizedTasks = TaskList.Where(x =>
+                x.Status == TaskStatus.RanToCompletion ||
+                x.Status == TaskStatus.Faulted
+            ).ToList();
             finalizedTasks.ForEach(x =>
             {
                 x.Dispose();
@@ -164,77 +187,53 @@ namespace EvoGen.MoleculeSearch
             if (!SavingMolecules)
             {
                 SavingMolecules = true;
-                while (ResultQueue.Count > 0)
+                new Task(() =>
                 {
-                    var molecule = ResultQueue.Dequeue();
-                    var tries = 3;
-                    Molecule saved = null;
-                    do
+                    while (ResultQueue.Count > 0)
                     {
-                        try
+                        MoleculeGraph molecule;
+                        lock (queueObjectLock)
                         {
-                            if (MoleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
-                                saved = MoleculeService.Create(molecule);
+                            molecule = ResultQueue.Dequeue();
+                            ShowQueueDataSource();
                         }
-                        catch (Exception) { }
-                    } while (--tries > 0 && saved == null);
-                    if (saved != null)
-                    {
-                        SearchCount++;
-                        DatabaseCount++;
+                        var tries = 3;
+                        Molecule saved = null;
+                        do
+                        {
+                            try
+                            {
+                                if (MoleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
+                                    saved = MoleculeService.Create(molecule);
+                            }
+                            catch (Exception) { }
+                        } while (--tries > 0 && saved == null);
+                        if (saved != null)
+                        {
+                            SearchCount++;
+                            DatabaseCount++;
+                        }
                     }
-                    RemoveQueueDataSource(molecule);
-                }
-                SavingMolecules = false;
+                    SavingMolecules = false;
+                }).Start();
             }
         }
 
-        private void AddQueueDataSource(MoleculeGraph molecule)
+        private void ShowQueueDataSource()
         {
-            var searchesFormula = (List<object>)gridQueue.DataSource;
-            searchesFormula.Remove(new { Formula = "", IdStructure = "" });
-            searchesFormula.Add(new
+            SetDataSource(gridQueue, ResultQueue.ToList().Select(x => new
             {
-                Formula = molecule.Nomenclature,
-                IdStructure = molecule.IdStructure
-            });
-            SetDataSource(gridQueue, searchesFormula.ToList());
+                Formula = x.Nomenclature,
+                IdStructure = x.IdStructure
+            }).ToList());
         }
 
-        private void RemoveQueueDataSource(MoleculeGraph molecule)
+        private void ShowSearchDataSource()
         {
-            var searchesFormula = (List<object>)gridQueue.DataSource;
-            searchesFormula.Remove(new
+            SetDataSource(gridSearches, SearchList.Select(x => new
             {
-                Formula = molecule.Nomenclature,
-                IdStructure = molecule.IdStructure
-            });
-            if (searchesFormula.Count == 0)
-                searchesFormula.Add(new { Formula = "", IdStructure = "" });
-            SetDataSource(gridQueue, searchesFormula.ToList());
-        }
-
-        private void AddSearchDataSource(string formula)
-        {
-            var searchesFormula = (List<object>)gridSearches.DataSource;
-            searchesFormula.Remove(new { Searches = "" });
-            searchesFormula.Add(new
-            {
-                Searches = formula
-            });
-            SetDataSource(gridSearches, searchesFormula.ToList());
-        }
-
-        private void RemoveSearchDataSource(string formula)
-        {
-            var searchesFormula = (List<object>)gridSearches.DataSource;
-            searchesFormula.Remove(new
-            {
-                Searches = formula
-            });
-            if (searchesFormula.Count == 0)
-                searchesFormula.Add(new { Searches = "" });
-            SetDataSource(gridSearches, searchesFormula.ToList());
+                Searches = x
+            }).ToList());
         }
 
         public void SetText(TextBox lblText, string texto)
@@ -309,9 +308,7 @@ namespace EvoGen.MoleculeSearch
             foreach (var atom in atomsList)
             {
                 if (molecule.ContainsKey(atom))
-                {
                     nomenclature += String.Format("{0}{1}", atom, molecule[atom] > 1 ? molecule[atom].ToString() : "");
-                }
             }
             return nomenclature;
         }

@@ -21,7 +21,7 @@ namespace EvoGen.Helper
         public int NextTotalMoleculeAtoms()
         {
             var limitsList = new List<ProporcionalLimit>();
-            limitsList.Add(new ProporcionalLimit(0, 50, 1, 15));
+            limitsList.Add(new ProporcionalLimit(0, 50, 2, 15));
             limitsList.Add(new ProporcionalLimit(50, 75, 16, 25));
             limitsList.Add(new ProporcionalLimit(75, 90, 26, 35));
             limitsList.Add(new ProporcionalLimit(90, 100, 36, 50));

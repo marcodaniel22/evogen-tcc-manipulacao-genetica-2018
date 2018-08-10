@@ -44,53 +44,61 @@ namespace EvoGen.Domain.GA.StructureGenerator
             ResultList = new Queue<MoleculeGraph>();
             Population = new List<SGChromosome>(_populationSize);
             Atoms = MoleculeGraph.ExtractAtomsFromNomenclature(Target);
-            for (int i = 0; i < _populationSize; i++)
-                Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
+            if (Atoms.Count > 1)
+                for (int i = 0; i < _populationSize; i++)
+                    Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
         }
 
         public MoleculeGraph FindSolution()
         {
-            Searching = true;
-            do
+            if (Atoms.Count > 1)
             {
-                GenerateChildren();
-                Selection();
-                MutatePopulation();
-                Generation++;
-            } while (BestIndividual.Fitness > 0 && Generation < _maxGenerations);
+                Searching = true;
+                do
+                {
+                    GenerateChildren();
+                    Selection();
+                    MutatePopulation();
+                    Generation++;
+                } while (BestIndividual.Fitness > 0 && Generation < _maxGenerations);
 
-            Searching = false;
-            Finished = true;
-            return BestIndividual.Molecule;
+                Searching = false;
+                Finished = true;
+                return BestIndividual.Molecule;
+            }
+            return null;
         }
 
         public void FindSolutions()
         {
-            Searching = true;
-            do
+            if (Atoms.Count > 1)
             {
-                GenerateChildren();
-                Selection();
-                MutatePopulation();
-                Generation++;
-                if (BestIndividual.Fitness == 0)
+                Searching = true;
+                do
                 {
-                    var bestIndividuals = Population.Where(x => x.Fitness == 0).Select(x => x.Molecule);
-                    foreach (var item in bestIndividuals)
+                    GenerateChildren();
+                    Selection();
+                    MutatePopulation();
+                    Generation++;
+                    if (BestIndividual.Fitness == 0)
                     {
-                        ResultList.Enqueue(item);
+                        var bestIndividuals = Population.Where(x => x.Fitness == 0).Select(x => x.Molecule);
+                        foreach (var item in bestIndividuals)
+                        {
+                            ResultList.Enqueue(item);
+                        }
+                        Population.RemoveAll(x => x.Fitness == 0);
+                        do
+                        {
+                            Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
+                        } while (Population.Count < _populationSize);
+                        GetBestIndividual();
                     }
-                    Population.RemoveAll(x => x.Fitness == 0);
-                    do
-                    {
-                        Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
-                    } while (Population.Count < _populationSize);
-                    GetBestIndividual();
-                }
-            } while (Generation < _maxGenerations);
+                } while (Generation < _maxGenerations);
 
-            Searching = false;
-            Finished = true;
+                Searching = false;
+                Finished = true;
+            }
         }
 
         public void GenerateChildren()

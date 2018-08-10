@@ -143,15 +143,18 @@ namespace EvoGen.MoleculeSearch
                             if (ga.ResultList.Count > 0)
                             {
                                 var molecule = ga.ResultList.Dequeue();
-                                idStructure = MoleculeGraph.GetIdStructure(molecule.LinkEdges);
-                                molecule.IdStructure = idStructure;
-                                if (!Ids.Contains(molecule.IdStructure))
+                                if (molecule != null)
                                 {
-                                    Ids.Add(molecule.IdStructure);
-                                    lock (queueObjectLock)
+                                    idStructure = MoleculeGraph.GetIdStructure(molecule.LinkEdges);
+                                    molecule.IdStructure = idStructure;
+                                    if (!Ids.Contains(molecule.IdStructure))
                                     {
-                                        ResultQueue.Enqueue(molecule);
-                                        ShowQueueDataSource();
+                                        Ids.Add(molecule.IdStructure);
+                                        lock (queueObjectLock)
+                                        {
+                                            ResultQueue.Enqueue(molecule);
+                                            ShowQueueDataSource();
+                                        }
                                     }
                                 }
                             }
@@ -195,7 +198,7 @@ namespace EvoGen.MoleculeSearch
                         {
                             try
                             {
-                                if (MoleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
+                                if (molecule != null && MoleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
                                     saved = MoleculeService.Create(molecule);
                             }
                             catch (Exception) { }

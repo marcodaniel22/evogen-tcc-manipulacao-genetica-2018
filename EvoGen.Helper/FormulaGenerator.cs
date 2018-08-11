@@ -6,17 +6,23 @@ namespace EvoGen.Helper
 {
     public class FormulaGenerator
     {
-        public static Dictionary<string, int> GenerateFormula()
+        private CustomRandom customRandom;
+
+        public FormulaGenerator()
         {
-            CustomRandom customRandom = new CustomRandom();
+            customRandom = new CustomRandom();
+        }
+
+        public Dictionary<string, int> GenerateFormula()
+        {
             var atomsList = Util.OoctetRule.Keys.ToList();
             var molecule = new Dictionary<string, int>();
-
+            
             var totalAtomsMolecule = customRandom.NextTotalMoleculeAtoms();
             var totalDiferentAtomsMolecule = customRandom.NextDiferentMoleculeAtoms();
             if (totalDiferentAtomsMolecule == 1 && totalAtomsMolecule > 3)
                 totalAtomsMolecule = 3;
-
+            
             var carbonRate = customRandom.NextDouble();
             if (totalDiferentAtomsMolecule > 1 && carbonRate < 0.80)
                 molecule.Add("C", 1);
@@ -58,7 +64,7 @@ namespace EvoGen.Helper
             return molecule;
         }
 
-        public static string GetFormulaFromMolecule(Dictionary<string, int> molecule)
+        public string GetFormulaFromMolecule(Dictionary<string, int> molecule)
         {
             var atomsList = Util.OoctetRule.Keys.ToList();
             var nomenclature = String.Empty;

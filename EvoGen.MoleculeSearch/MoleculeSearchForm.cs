@@ -116,8 +116,9 @@ namespace EvoGen.MoleculeSearch
             {
                 ThreadList.Add(new Thread(() =>
                 {
-                    var moleculeAtoms = FormulaGenerator.GenerateFormula();
-                    var formula = FormulaGenerator.GetFormulaFromMolecule(moleculeAtoms);
+                    var fg = new FormulaGenerator();
+                    var moleculeAtoms = fg.GenerateFormula();
+                    var formula = fg.GetFormulaFromMolecule(moleculeAtoms);
                     if (!string.IsNullOrEmpty(formula))
                     {
                         lock (listObjectLock)
@@ -179,30 +180,37 @@ namespace EvoGen.MoleculeSearch
                 SavingMolecules = true;
                 new Task(() =>
                 {
-                    while (ResultQueue.Count > 0)
+                    if (ResultQueue.Count > 0)
                     {
-                        MoleculeGraph molecule;
-                        lock (queueObjectLock)
+                        while (ResultQueue.Count > 0)
                         {
-                            molecule = ResultQueue.Dequeue();
-                            ShowQueueDataSource();
-                        }
-                        var tries = 3;
-                        Molecule saved = null;
-                        do
-                        {
-                            try
+                            MoleculeGraph molecule;
+                            lock (queueObjectLock)
                             {
-                                if (molecule != null && MoleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
-                                    saved = MoleculeService.Create(molecule);
+                                molecule = ResultQueue.Dequeue();
+                                ShowQueueDataSource();
                             }
-                            catch (Exception) { }
-                        } while (--tries > 0 && saved == null);
-                        if (saved != null)
-                        {
-                            SearchCount++;
-                            DatabaseCount++;
+                            var tries = 3;
+                            Molecule saved = null;
+                            do
+                            {
+                                try
+                                {
+                                    if (molecule != null && MoleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
+                                        saved = MoleculeService.Create(molecule);
+                                }
+                                catch (Exception) { }
+                            } while (--tries > 0 && saved == null);
+                            if (saved != null)
+                            {
+                                SearchCount++;
+                                DatabaseCount++;
+                            }
                         }
+                    }
+                    else
+                    {
+                        DatabaseCount = MoleculeService.MoleculeCount();
                     }
                     SavingMolecules = false;
                 }).Start();
@@ -247,9 +255,9 @@ namespace EvoGen.MoleculeSearch
             if (molecule.Count < 5)
                 return 100;
             else if (molecule.Count >= 5 && molecule.Count < 7)
-                return 500;
+                return 200;
             else
-                return 1000;
+                return 400;
         }
 
         private int GetMaxGenerations(Dictionary<string, int> molecule)
@@ -258,7 +266,7 @@ namespace EvoGen.MoleculeSearch
             if (atomsCount < 40)
                 return 2000;
             else
-                return 6000;
+                return 4000;
         }
 
         private double GetMutationRate(Dictionary<string, int> molecule)

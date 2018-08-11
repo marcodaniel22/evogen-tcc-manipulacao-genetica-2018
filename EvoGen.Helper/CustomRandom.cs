@@ -5,7 +5,7 @@ namespace EvoGen.Helper
 {
     public class CustomRandom : Random
     {
-        public CustomRandom() : base(DateTime.Now.Millisecond) { }
+        public CustomRandom() : base() { }
 
         private int CalculateFromLimits(List<ProporcionalLimit> limitsList)
         {
@@ -21,20 +21,20 @@ namespace EvoGen.Helper
         public int NextTotalMoleculeAtoms()
         {
             var limitsList = new List<ProporcionalLimit>();
-            limitsList.Add(new ProporcionalLimit(0, 24, 2, 10));
-            limitsList.Add(new ProporcionalLimit(25, 74, 11, 25));
-            limitsList.Add(new ProporcionalLimit(75, 89, 26, 35));
-            limitsList.Add(new ProporcionalLimit(90, 100, 36, 50));
+            limitsList.Add(new ProporcionalLimit(0, 25, 2, 10));
+            limitsList.Add(new ProporcionalLimit(25, 80, 11, 25));
+            limitsList.Add(new ProporcionalLimit(80, 95, 26, 35));
+            limitsList.Add(new ProporcionalLimit(95, 100, 36, 50));
             return CalculateFromLimits(limitsList);
         }
 
         public int NextDiferentMoleculeAtoms()
         {
             var limitsList = new List<ProporcionalLimit>();
-            limitsList.Add(new ProporcionalLimit(0, 50, 1, 3));
-            limitsList.Add(new ProporcionalLimit(50, 75, 4, 5));
-            limitsList.Add(new ProporcionalLimit(75, 95, 6, 7));
-            limitsList.Add(new ProporcionalLimit(95, 100, 8, 9));
+            limitsList.Add(new ProporcionalLimit(0, 70, 1, 3));
+            limitsList.Add(new ProporcionalLimit(70, 90, 4, 5));
+            limitsList.Add(new ProporcionalLimit(90, 98, 6, 7));
+            limitsList.Add(new ProporcionalLimit(98, 100, 8, 9));
             return CalculateFromLimits(limitsList);
         }
     }

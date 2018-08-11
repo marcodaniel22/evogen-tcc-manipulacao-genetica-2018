@@ -10,9 +10,7 @@ namespace EvoGen.Domain.Collections
         public int Octet { get; private set; }
         public int AtomId { get; private set; }
         public double AtomFitiness { get; private set; }
-
-        private static Random random = new Random(DateTime.Now.Millisecond);
-
+        
         public AtomNode(string symbol, int atomId)
         {
             this.Symbol = symbol;

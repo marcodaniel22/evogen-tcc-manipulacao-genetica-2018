@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace EvoGen.Domain.Collections
+namespace EvoGen.Domain.Collections.ValueObjects
 {
-    public class Link : MongoDbBase
+    public class Link
     {
         public Atom From { get; set; }
         public Atom To { get; set; }

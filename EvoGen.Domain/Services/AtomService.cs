@@ -1,6 +1,6 @@
 ﻿using EvoGen.Domain.Collections;
+using EvoGen.Domain.Collections.ValueObjects;
 using EvoGen.Domain.Interfaces.Services;
-using System;
 
 namespace EvoGen.Domain.Services
 {

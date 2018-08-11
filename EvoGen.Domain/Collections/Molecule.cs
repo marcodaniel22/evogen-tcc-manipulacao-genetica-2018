@@ -1,8 +1,6 @@
-﻿using EvoGen.Helper;
+﻿using EvoGen.Domain.Collections.ValueObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace EvoGen.Domain.Collections
 {

@@ -15,18 +15,19 @@ namespace EvoGen.MoleculeSearch
     public partial class MoleculeSearchForm : Form
     {
         private readonly IMoleculeService MoleculeService;
+
         private bool Searching;
         private bool Saving;
         private bool SavingMolecules;
-        private int SearchCount;
-        private int DatabaseCount;
         private List<Thread> ThreadList;
-        private Queue<MoleculeGraph> ResultQueue;
-        private List<string> SearchList;
-        private CustomRandom CustomRandom;
-        private List<string> Ids;
         private Object queueObjectLock;
         private Object listObjectLock;
+
+        private static volatile List<string> SearchList = new List<string>();
+        private static volatile List<string> Ids = new List<string>();
+        private static volatile int SearchCount = 0;
+        private static volatile int DatabaseCount = 0;
+        private static volatile Queue<MoleculeGraph> ResultQueue = new Queue<MoleculeGraph>();
 
         public MoleculeSearchForm(IMoleculeService moleculeService)
         {
@@ -39,13 +40,7 @@ namespace EvoGen.MoleculeSearch
             this.MoleculeService = moleculeService;
             this.Searching = false;
             this.Saving = false;
-            this.SearchCount = 0;
-            this.DatabaseCount = 0;
             this.ThreadList = new List<Thread>();
-            this.ResultQueue = new Queue<MoleculeGraph>();
-            this.SearchList = new List<string>();
-            this.CustomRandom = new CustomRandom();
-            this.Ids = new List<string>();
             this.queueObjectLock = new object();
             this.listObjectLock = new object();
         }
@@ -121,8 +116,8 @@ namespace EvoGen.MoleculeSearch
             {
                 ThreadList.Add(new Thread(() =>
                 {
-                    var moleculeAtoms = GenerateFormula();
-                    var formula = GetFormulaFromMolecule(moleculeAtoms);
+                    var moleculeAtoms = FormulaGenerator.GenerateFormula();
+                    var formula = FormulaGenerator.GetFormulaFromMolecule(moleculeAtoms);
                     if (!string.IsNullOrEmpty(formula))
                     {
                         lock (listObjectLock)
@@ -247,75 +242,23 @@ namespace EvoGen.MoleculeSearch
                 new Task(() => gridView.DataSource = dataSource).Start();
         }
 
-        private Dictionary<string, int> GenerateFormula()
-        {
-            var atomsList = Util.OoctetRule.Keys.ToList();
-            var molecule = new Dictionary<string, int>();
-
-            var totalAtomsMolecule = CustomRandom.NextTotalMoleculeAtoms();
-            var totalDiferentAtomsMolecule = CustomRandom.NextDiferentMoleculeAtoms();
-
-            var carbonRate = CustomRandom.NextDouble();
-            if (carbonRate < 0.80)
-                molecule.Add("C", 1);
-
-            if (totalDiferentAtomsMolecule > (atomsList.Count / 2))
-            {
-                foreach (var atom in atomsList)
-                {
-                    if (!molecule.ContainsKey(atom))
-                        molecule.Add(atom, 0);
-                }
-                while (molecule.Count > totalDiferentAtomsMolecule)
-                {
-                    var removeAtom = atomsList[CustomRandom.Next(atomsList.Count)];
-                    if (molecule.ContainsKey(removeAtom))
-                        molecule.Remove(removeAtom);
-                }
-            }
-            else
-            {
-                while (molecule.Count < totalDiferentAtomsMolecule)
-                {
-                    var addAtom = atomsList[CustomRandom.Next(atomsList.Count)];
-                    if (!molecule.ContainsKey(addAtom))
-                        molecule.Add(addAtom, 0);
-                }
-            }
-            var moleculeAtoms = molecule.Keys.ToList();
-            while (molecule.Sum(x => x.Value) < totalAtomsMolecule)
-            {
-                var atom = moleculeAtoms[CustomRandom.Next(moleculeAtoms.Count)];
-                molecule[atom] = (molecule[atom] + 1);
-            }
-            var removeAtoms = molecule.Where(x => x.Value == 0).ToList();
-            foreach (var removeAtom in removeAtoms)
-            {
-                molecule.Remove(removeAtom.Key);
-            }
-            return molecule;
-        }
-
-        private string GetFormulaFromMolecule(Dictionary<string, int> molecule)
-        {
-            var atomsList = Util.OoctetRule.Keys.ToList();
-            var nomenclature = String.Empty;
-            foreach (var atom in atomsList)
-            {
-                if (molecule.ContainsKey(atom))
-                    nomenclature += String.Format("{0}{1}", atom, molecule[atom] > 1 ? molecule[atom].ToString() : "");
-            }
-            return nomenclature;
-        }
-
         private int GetPopulationSize(Dictionary<string, int> molecule)
         {
-            return 100;
+            if (molecule.Count < 5)
+                return 100;
+            else if (molecule.Count >= 5 && molecule.Count < 7)
+                return 500;
+            else
+                return 1000;
         }
 
         private int GetMaxGenerations(Dictionary<string, int> molecule)
         {
-            return 2000;
+            var atomsCount = molecule.Sum(x => x.Value);
+            if (atomsCount < 40)
+                return 2000;
+            else
+                return 6000;
         }
 
         private double GetMutationRate(Dictionary<string, int> molecule)

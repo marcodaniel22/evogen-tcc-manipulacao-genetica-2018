@@ -13,7 +13,7 @@ namespace EvoGen.Domain.Collections
         public string Nomenclature { get; private set; }
         public string IdStructure { get; set; }
 
-        private static Random random = new Random(DateTime.Now.Millisecond);
+        private Random _random;
 
         public static List<AtomNode> ExtractAtomsFromNomenclature(string nomenclature)
         {
@@ -110,12 +110,13 @@ namespace EvoGen.Domain.Collections
 
         private void GenerateRandomLinks()
         {
+            _random = new Random(DateTime.Now.Millisecond);
             foreach (AtomNode fromAtom in this.AtomNodes)
             {
                 AtomNode toAtom = null;
                 do
                 {
-                    toAtom = this.AtomNodes[random.Next(this.AtomNodes.Count)];
+                    toAtom = this.AtomNodes[_random.Next(this.AtomNodes.Count)];
                 } while (!this.NewLink(fromAtom, toAtom));
             }
         }

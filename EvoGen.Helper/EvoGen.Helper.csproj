@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomRandom.cs" />
+    <Compile Include="FormulaGenerator.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProporcionalLimit.cs" />

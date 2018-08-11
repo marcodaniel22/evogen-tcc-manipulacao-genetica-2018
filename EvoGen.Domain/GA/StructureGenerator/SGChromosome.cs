@@ -10,7 +10,7 @@ namespace EvoGen.Domain.GA.StructureGenerator
         public MoleculeGraph Molecule { get; private set; }
         public double Fitness { get; private set; }
 
-        private static Random random = new Random(DateTime.Now.Millisecond);
+        private Random _random;
 
         public SGChromosome(MoleculeGraph molecule)
         {
@@ -68,14 +68,15 @@ namespace EvoGen.Domain.GA.StructureGenerator
 
         public void Mutate(double rate)
         {
-            double randonrate = random.NextDouble();
+            _random = new Random(DateTime.Now.Millisecond);
+            double randonrate = _random.NextDouble();
             if (randonrate < rate)
             {
                 bool mutated = false;
                 do
                 {
-                    var link1 = this.Molecule.LinkEdges[random.Next(this.Molecule.LinkEdges.Count)];
-                    var link2 = this.Molecule.LinkEdges[random.Next(this.Molecule.LinkEdges.Count)];
+                    var link1 = this.Molecule.LinkEdges[_random.Next(this.Molecule.LinkEdges.Count)];
+                    var link2 = this.Molecule.LinkEdges[_random.Next(this.Molecule.LinkEdges.Count)];
                     mutated = (link1.From.AtomId != link2.To.AtomId) && (link2.From.AtomId != link1.To.AtomId);
                     if (mutated)
                     {
@@ -85,16 +86,16 @@ namespace EvoGen.Domain.GA.StructureGenerator
                     }
                 } while (!mutated);
 
-                var newMutationRate = random.NextDouble();
+                var newMutationRate = _random.NextDouble();
                 if ((this.Molecule.AtomNodes.Count - 1) < this.Molecule.LinkEdges.Count && newMutationRate > 0.90)
-                    this.Molecule.LinkEdges.RemoveAt(random.Next(this.Molecule.LinkEdges.Count));
+                    this.Molecule.LinkEdges.RemoveAt(_random.Next(this.Molecule.LinkEdges.Count));
                 else if (newMutationRate < 0.10)
                 {
                     bool create = false;
                     do
                     {
-                        var atom1 = this.Molecule.AtomNodes[random.Next(this.Molecule.AtomNodes.Count)];
-                        var atom2 = this.Molecule.AtomNodes[random.Next(this.Molecule.AtomNodes.Count)];
+                        var atom1 = this.Molecule.AtomNodes[_random.Next(this.Molecule.AtomNodes.Count)];
+                        var atom2 = this.Molecule.AtomNodes[_random.Next(this.Molecule.AtomNodes.Count)];
                         create = atom1.AtomId != atom2.AtomId;
                         if (create)
                         {

@@ -23,7 +23,7 @@ namespace EvoGen.Domain.GA.StructureGenerator
         private int _populationSize = 0;
         private int _maxGenerations = 0;
         private double _mutationRate = 0.00;
-        private static Random _random = new Random(DateTime.Now.Millisecond);
+        private Random _random;
 
         public StructureGenerator(string target, int populationSize, int generations, double mutationRate)
         {
@@ -51,51 +51,67 @@ namespace EvoGen.Domain.GA.StructureGenerator
 
         public MoleculeGraph FindSolution()
         {
-            if (Atoms.Count > 1)
+            try
             {
-                Searching = true;
-                do
+                if (Atoms.Count > 1)
                 {
-                    GenerateChildren();
-                    Selection();
-                    MutatePopulation();
-                    Generation++;
-                } while (BestIndividual.Fitness > 0 && Generation < _maxGenerations);
+                    Searching = true;
+                    do
+                    {
+                        GenerateChildren();
+                        Selection();
+                        MutatePopulation();
+                        Generation++;
+                    } while (BestIndividual.Fitness > 0 && Generation < _maxGenerations);
 
+                    Searching = false;
+                    Finished = true;
+                    return BestIndividual.Molecule;
+                }
+                return null;
+            }
+            catch (Exception) { return null; }
+            finally
+            {
                 Searching = false;
                 Finished = true;
-                return BestIndividual.Molecule;
             }
-            return null;
+
         }
 
         public void FindSolutions()
         {
-            if (Atoms.Count > 1)
+            try
             {
-                Searching = true;
-                do
+                if (Atoms.Count > 1)
                 {
-                    GenerateChildren();
-                    Selection();
-                    MutatePopulation();
-                    Generation++;
-                    if (BestIndividual.Fitness == 0)
+                    Searching = true;
+                    do
                     {
-                        var bestIndividuals = Population.Where(x => x.Fitness == 0).Select(x => x.Molecule);
-                        foreach (var item in bestIndividuals)
+                        GenerateChildren();
+                        Selection();
+                        MutatePopulation();
+                        Generation++;
+                        if (BestIndividual.Fitness == 0)
                         {
-                            ResultList.Enqueue(item);
+                            var bestIndividuals = Population.Where(x => x.Fitness == 0).Select(x => x.Molecule);
+                            foreach (var item in bestIndividuals)
+                            {
+                                ResultList.Enqueue(item);
+                            }
+                            Population.RemoveAll(x => x.Fitness == 0);
+                            do
+                            {
+                                Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
+                            } while (Population.Count < _populationSize);
+                            GetBestIndividual();
                         }
-                        Population.RemoveAll(x => x.Fitness == 0);
-                        do
-                        {
-                            Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
-                        } while (Population.Count < _populationSize);
-                        GetBestIndividual();
-                    }
-                } while (Generation < _maxGenerations);
-
+                    } while (Generation < _maxGenerations);
+                }
+            }
+            catch (Exception) { }
+            finally
+            {
                 Searching = false;
                 Finished = true;
             }
@@ -120,6 +136,7 @@ namespace EvoGen.Domain.GA.StructureGenerator
         {
             if (BestIndividual.Fitness < WorseIndividual.Fitness)
             {
+                _random = new Random(DateTime.Now.Millisecond);
                 for (int i = 0; i < Children.Count; i++)
                 {
                     int x = 0;

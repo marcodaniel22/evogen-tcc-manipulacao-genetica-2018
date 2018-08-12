@@ -18,8 +18,9 @@ namespace EvoGen.MoleculeSearch
 
         private bool Searching;
         private bool Saving;
-        private bool SavingMolecules;
-        private List<Thread> ThreadList;
+        private List<Thread> ThreadSearch;
+        private Thread ThreadSave;
+        private DateTime ThreadSaveInit;
         private Object queueObjectLock;
         private Object listObjectLock;
 
@@ -40,7 +41,7 @@ namespace EvoGen.MoleculeSearch
             this.MoleculeService = moleculeService;
             this.Searching = false;
             this.Saving = false;
-            this.ThreadList = new List<Thread>();
+            this.ThreadSearch = new List<Thread>();
             this.queueObjectLock = new object();
             this.listObjectLock = new object();
         }
@@ -111,10 +112,10 @@ namespace EvoGen.MoleculeSearch
 
         private void timerSearch_Tick(object sender, EventArgs e)
         {
-            if (ThreadList.Count < (Environment.ProcessorCount / 2))
+            if (ThreadSearch.Count < (Environment.ProcessorCount / 2))
             //while (TaskList.Count < (1))
             {
-                ThreadList.Add(new Thread(() =>
+                ThreadSearch.Add(new Thread(() =>
                 {
                     var fg = new FormulaGenerator();
                     var moleculeAtoms = fg.GenerateFormula();
@@ -165,20 +166,20 @@ namespace EvoGen.MoleculeSearch
                 }));
             }
 
-            ThreadList.Where(x => x.ThreadState == ThreadState.Unstarted).ToList().ForEach(x => x.Start());
-            ThreadList.RemoveAll(x => !x.IsAlive);
+            ThreadSearch.Where(x => x.ThreadState == ThreadState.Unstarted).ToList().ForEach(x => x.Start());
+            ThreadSearch.RemoveAll(x => !x.IsAlive);
 
-            txtProcess.Text = ThreadList.Count.ToString();
+            txtProcess.Text = ThreadSearch.Count.ToString();
             txtQuantityDatabase.Text = DatabaseCount.ToString();
             txtFound.Text = SearchCount.ToString();
         }
 
         private void timerSave_Tick(object sender, EventArgs e)
         {
-            if (!SavingMolecules)
+            if (ThreadSave == null || (ThreadSave != null && !ThreadSave.IsAlive))
             {
-                SavingMolecules = true;
-                new Task(() =>
+                ThreadSaveInit = DateTime.Now;
+                ThreadSave = new Thread(() =>
                 {
                     if (ResultQueue.Count > 0)
                     {
@@ -212,8 +213,14 @@ namespace EvoGen.MoleculeSearch
                     {
                         DatabaseCount = MoleculeService.MoleculeCount();
                     }
-                    SavingMolecules = false;
-                }).Start();
+                });
+                ThreadSave.Start();
+            }
+            else if (ThreadSaveInit != null && ThreadSaveInit < DateTime.Now.AddMinutes(-10))
+            {
+                if (ThreadSave != null)
+                    ThreadSave.Abort();
+                ThreadSave = null;
             }
         }
 

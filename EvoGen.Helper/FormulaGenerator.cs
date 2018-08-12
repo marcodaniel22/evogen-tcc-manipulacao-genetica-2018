@@ -27,6 +27,10 @@ namespace EvoGen.Helper
             if (totalDiferentAtomsMolecule > 1 && carbonRate < 0.80)
                 molecule.Add("C", 1);
 
+            var hydrogenRate = customRandom.NextDouble();
+            if (totalDiferentAtomsMolecule > 1 && hydrogenRate < 0.80)
+                molecule.Add("H", 1);
+
             if (totalDiferentAtomsMolecule > (atomsList.Count / 2))
             {
                 foreach (var atom in atomsList)

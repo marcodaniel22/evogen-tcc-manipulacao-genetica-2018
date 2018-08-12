@@ -37,8 +37,11 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MoleculeSearchForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.gridQueue = new System.Windows.Forms.DataGridView();
+            this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IdStructure = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnSearch = new System.Windows.Forms.Button();
@@ -53,8 +56,6 @@
             this.gridSearches = new System.Windows.Forms.DataGridView();
             this.Searches = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label2 = new System.Windows.Forms.Label();
-            this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IdStructure = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -122,6 +123,25 @@
             this.gridQueue.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQueue.Size = new System.Drawing.Size(372, 241);
             this.gridQueue.TabIndex = 1;
+            // 
+            // Formula
+            // 
+            this.Formula.DataPropertyName = "Formula";
+            this.Formula.FillWeight = 81.21828F;
+            this.Formula.HeaderText = "Fórmula";
+            this.Formula.Name = "Formula";
+            this.Formula.ReadOnly = true;
+            this.Formula.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // IdStructure
+            // 
+            this.IdStructure.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.IdStructure.DataPropertyName = "IdStructure";
+            this.IdStructure.FillWeight = 118.7817F;
+            this.IdStructure.HeaderText = "Id da Estrutura";
+            this.IdStructure.Name = "IdStructure";
+            this.IdStructure.ReadOnly = true;
+            this.IdStructure.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
             // groupBox2
             // 
@@ -308,25 +328,6 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Processos";
             // 
-            // Formula
-            // 
-            this.Formula.DataPropertyName = "Formula";
-            this.Formula.FillWeight = 81.21828F;
-            this.Formula.HeaderText = "Formula";
-            this.Formula.Name = "Formula";
-            this.Formula.ReadOnly = true;
-            this.Formula.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
-            // IdStructure
-            // 
-            this.IdStructure.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.IdStructure.DataPropertyName = "IdStructure";
-            this.IdStructure.FillWeight = 118.7817F;
-            this.IdStructure.HeaderText = "Id da Estrutura";
-            this.IdStructure.Name = "IdStructure";
-            this.IdStructure.ReadOnly = true;
-            this.IdStructure.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
             // MoleculeSearchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -337,10 +338,11 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MoleculeSearchForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Busca de Molecula";
+            this.Text = "Busca de Molécula";
             this.Load += new System.EventHandler(this.MoleculeSearchForm_Load);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).EndInit();

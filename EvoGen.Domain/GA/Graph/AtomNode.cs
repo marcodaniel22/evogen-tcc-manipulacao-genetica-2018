@@ -14,7 +14,7 @@ namespace EvoGen.Domain.Collections
         public AtomNode(string symbol, int atomId)
         {
             this.Symbol = symbol;
-            this.Octet = Util.OoctetRule[symbol];
+            this.Octet = Constants.OoctetRule[symbol];
             this.AtomId = atomId;
         }
 

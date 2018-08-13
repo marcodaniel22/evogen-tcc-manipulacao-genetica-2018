@@ -1,4 +1,6 @@
 ﻿using EvoGen.Domain.Collections;
+using EvoGen.Domain.ValueObjects;
+using System.Collections.Generic;
 
 namespace EvoGen.Domain.Interfaces.Services
 {
@@ -8,5 +10,6 @@ namespace EvoGen.Domain.Interfaces.Services
         Molecule Create(MoleculeGraph molecule);
         Molecule GetCollectionFromGraph(MoleculeGraph molecule);
         Molecule GetByIdStructure(string nomenclature, string idStructure);
+        List<Cycle> GetMoleculeCycles(Molecule molecule);
     }
 }

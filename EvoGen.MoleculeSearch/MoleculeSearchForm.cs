@@ -259,21 +259,23 @@ namespace EvoGen.MoleculeSearch
 
         private int GetPopulationSize(Dictionary<string, int> molecule)
         {
-            if (molecule.Count < 5)
-                return 100;
-            else if (molecule.Count >= 5 && molecule.Count < 7)
-                return 200;
-            else
-                return 400;
+            //if (molecule.Count < 5)
+            //    return 100;
+            //else if (molecule.Count >= 5 && molecule.Count < 7)
+            //    return 200;
+            //else
+            //    return 400;
+            return 200;
         }
 
         private int GetMaxGenerations(Dictionary<string, int> molecule)
         {
-            var atomsCount = molecule.Sum(x => x.Value);
-            if (atomsCount < 40)
-                return 2000;
-            else
-                return 4000;
+            //var atomsCount = molecule.Sum(x => x.Value);
+            //if (atomsCount < 40)
+            //    return 2000;
+            //else
+            //    return 4000;
+            return 10000;
         }
 
         private double GetMutationRate(Dictionary<string, int> molecule)

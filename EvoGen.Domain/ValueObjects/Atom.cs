@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EvoGen.Domain.Collections.ValueObjects
+namespace EvoGen.Domain.ValueObjects
 {
     public class Atom
     {

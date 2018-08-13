@@ -1,5 +1,5 @@
 ﻿using EvoGen.Domain.Collections;
-using EvoGen.Domain.Collections.ValueObjects;
+using EvoGen.Domain.ValueObjects;
 
 namespace EvoGen.Domain.Interfaces.Services
 {

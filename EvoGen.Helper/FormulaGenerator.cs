@@ -15,7 +15,7 @@ namespace EvoGen.Helper
 
         public Dictionary<string, int> GenerateFormula()
         {
-            var atomsList = Util.OoctetRule.Keys.ToList();
+            var atomsList = Constants.OoctetRule.Keys.ToList();
             var molecule = new Dictionary<string, int>();
             
             var totalAtomsMolecule = customRandom.NextTotalMoleculeAtoms();
@@ -70,7 +70,7 @@ namespace EvoGen.Helper
 
         public string GetFormulaFromMolecule(Dictionary<string, int> molecule)
         {
-            var atomsList = Util.OoctetRule.Keys.ToList();
+            var atomsList = Constants.OoctetRule.Keys.ToList();
             var nomenclature = String.Empty;
             foreach (var atom in atomsList)
             {

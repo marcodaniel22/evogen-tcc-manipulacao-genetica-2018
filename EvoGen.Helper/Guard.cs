@@ -17,7 +17,7 @@ namespace EvoGen.Helper
 
         public static void ElementFilter(string symbol)
         {
-            if (!Util.ElementFilterList.Contains(symbol))
+            if (!Constants.ElementFilterList.Contains(symbol))
                 throw new Exception(String.Format("Element '{0}' can't be used at this time!", symbol));
         }
 

@@ -1,4 +1,4 @@
-﻿using EvoGen.Domain.Collections.ValueObjects;
+﻿using EvoGen.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 

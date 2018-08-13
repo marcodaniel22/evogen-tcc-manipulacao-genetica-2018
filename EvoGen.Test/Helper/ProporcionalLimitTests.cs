@@ -1,6 +1,5 @@
 ﻿using EvoGen.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace EvoGen.Test.Helper
 {

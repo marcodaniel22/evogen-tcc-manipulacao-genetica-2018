@@ -1,7 +1,6 @@
 ﻿using EvoGen.Domain.Collections;
 using EvoGen.Domain.GA.StructureGenerator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace EvoGen.Test.Domain.GA
 {

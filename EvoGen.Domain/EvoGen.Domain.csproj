@@ -43,10 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collections\ValueObjects\Atom.cs" />
-    <Compile Include="Collections\ValueObjects\Link.cs" />
+    <Compile Include="ValueObjects\Atom.cs" />
+    <Compile Include="ValueObjects\Cycle.cs" />
+    <Compile Include="ValueObjects\Link.cs" />
     <Compile Include="Collections\Molecule.cs" />
     <Compile Include="Collections\MongoDbBase.cs" />
+    <Compile Include="ValueObjects\Node.cs" />
     <Compile Include="GA\Graph\AtomNode.cs" />
     <Compile Include="GA\Graph\LinkEdge.cs" />
     <Compile Include="GA\Graph\MoleculeGraph.cs" />

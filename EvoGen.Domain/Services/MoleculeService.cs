@@ -58,38 +58,59 @@ namespace EvoGen.Domain.Services
             var links = molecule.Links.Where(x => Constants.CyclicCompoundAtoms.Contains(x.From.Symbol) && Constants.CyclicCompoundAtoms.Contains(x.To.Symbol)).ToList();
             foreach (var link in links)
             {
+                var cycled = false;
                 var visited = new List<Atom>();
-                var stack = new Stack<Node>();
+                var queue = new Queue<Node<Atom>>();
                 var firstAtom = link.From;
 
-                Node atomNode = new Node();
+                var atomNode = new Node<Atom>();
                 atomNode.Value = firstAtom;
-                stack.Push(atomNode);
+                queue.Enqueue(atomNode);
 
-                while (stack.Count > 0)
+                while (queue.Count > 0)
                 {
-                    atomNode = stack.Pop();
-                    if (!visited.Contains(atomNode.Value))
+                    atomNode = queue.Dequeue();
+                    if (!visited.Any(x => x.AtomId == atomNode.Value.AtomId))
                     {
                         visited.Add(atomNode.Value);
-                        var atomLinks = _linkService.GetLinksFromAtom(atomNode.Value, links);
-                        foreach (var atomLink in atomLinks)
+                        var atoms = links.Where(x => x.From.AtomId == atomNode.Value.AtomId).Select(x => x.To).ToList();
+                        var neighbors = atoms.Select(x => new Node<Atom>()
                         {
-                            var newNode = new Node();
-                            newNode.Parent = atomNode;
-                            newNode.Value = atomLink.To;
+                            Parent = atomNode,
+                            Value = x
+                        }).ToList();
 
-                            if (newNode.Value == firstAtom)
+                        if (neighbors.Where(x => x.Value.AtomId == firstAtom.AtomId).Any(x => x.Parent.Parent.Value.AtomId != firstAtom.AtomId))
+                        {
+                            atomNode = neighbors.FirstOrDefault(x => x.Value.AtomId == firstAtom.AtomId);
+                            cycled = true;
+                            break;
+                        }
+                        else
+                        {
+                            foreach (var item in neighbors)
                             {
-                                atomNode = newNode;
-                                break;
-                            }
-                            else
-                            {
-                                stack.Push(newNode);
+                                queue.Enqueue(item);
                             }
                         }
+
                     }
+                }
+                if (cycled && atomNode.Parent != null)
+                {
+                    var cycle = new Cycle();
+                    do
+                    {
+                        var from = atomNode.Value;
+                        var toAtoms = _linkService.GetLinksFromAtom(atomNode.Value, links)
+                            .Where(x => x.To.AtomId == atomNode.Parent.Value.AtomId).ToList();
+                        cycle.Links.AddRange(toAtoms);
+
+                        atomNode = atomNode.Parent;
+                    } while (atomNode.Parent != null);
+
+                    cycle.SetDiferentAtoms();
+                    cycles.Add(cycle);
                 }
             }
 

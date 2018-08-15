@@ -40,7 +40,6 @@ namespace EvoGen.Domain.Services
             collection.Nomenclature = molecule.Nomenclature;
             collection.IdStructure = molecule.IdStructure;
             collection.AtomsCount = molecule.AtomNodes.Count;
-            collection.Links = new List<Link>();
             collection.Links = molecule.LinkEdges.Select(x => _linkService.GetCollectionFromEdge(x)).ToList();
             return collection;
 
@@ -110,11 +109,13 @@ namespace EvoGen.Domain.Services
                     } while (atomNode.Parent != null);
 
                     cycle.SetDiferentAtoms();
-                    cycles.Add(cycle);
+                    cycle.CycliId = _linkService.GetIdStructure(cycle.Links);
+                    if (!cycles.Any(x => x.CycliId == cycle.CycliId))
+                        cycles.Add(cycle);
                 }
             }
 
-            return new List<Cycle>();
+            return cycles;
         }
     }
 }

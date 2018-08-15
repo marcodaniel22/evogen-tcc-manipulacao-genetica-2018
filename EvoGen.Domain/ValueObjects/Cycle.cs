@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace EvoGen.Domain.ValueObjects
 {
@@ -6,6 +7,7 @@ namespace EvoGen.Domain.ValueObjects
     {
         public List<Link> Links { get; private set; }
         public int DiferentAtoms { get; private set; }
+        public string CycliId { get; set; }
 
         public Cycle()
         {
@@ -23,6 +25,11 @@ namespace EvoGen.Domain.ValueObjects
                     atomIds.Add(link.To.AtomId);
             }
             this.DiferentAtoms = atomIds.Count;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("{0}-{1}", this.DiferentAtoms, this.CycliId);
         }
     }
 }

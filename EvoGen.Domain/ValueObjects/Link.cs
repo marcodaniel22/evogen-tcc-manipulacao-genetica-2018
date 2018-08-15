@@ -6,6 +6,14 @@ namespace EvoGen.Domain.ValueObjects
     {
         public Atom From { get; set; }
         public Atom To { get; set; }
+
+        public Link() { }
+
+        public Link(Atom from, Atom to)
+        {
+            this.From = from;
+            this.To = to;
+        }
         
         public override string ToString()
         {

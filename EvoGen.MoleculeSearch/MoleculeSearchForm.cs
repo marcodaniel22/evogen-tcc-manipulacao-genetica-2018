@@ -14,7 +14,8 @@ namespace EvoGen.MoleculeSearch
 {
     public partial class MoleculeSearchForm : Form
     {
-        private readonly IMoleculeService MoleculeService;
+        private readonly IMoleculeService _moleculeService;
+        private readonly ILinkService _linkService;
 
         private bool Searching;
         private bool Saving;
@@ -38,7 +39,7 @@ namespace EvoGen.MoleculeSearch
             this.gridQueue.DataSource = new List<object>();
             this.gridSearches.DataSource = new List<object>();
 
-            this.MoleculeService = moleculeService;
+            this._moleculeService = moleculeService;
             this.Searching = false;
             this.Saving = false;
             this.ThreadSearch = new List<Thread>();
@@ -52,7 +53,7 @@ namespace EvoGen.MoleculeSearch
             {
                 new Task(() =>
                 {
-                    DatabaseCount = MoleculeService.MoleculeCount();
+                    DatabaseCount = _moleculeService.MoleculeCount();
                     SetText(txtQuantityDatabase, DatabaseCount.ToString());
                 }).Start();
             }
@@ -142,7 +143,7 @@ namespace EvoGen.MoleculeSearch
                                 var molecule = ga.ResultList.Dequeue();
                                 if (molecule != null)
                                 {
-                                    idStructure = MoleculeGraph.GetIdStructure(molecule.LinkEdges);
+                                    idStructure = _linkService.GetIdStructure(molecule.LinkEdges);
                                     molecule.IdStructure = idStructure;
                                     if (!Ids.Contains(molecule.IdStructure))
                                     {
@@ -197,8 +198,8 @@ namespace EvoGen.MoleculeSearch
                             {
                                 try
                                 {
-                                    if (molecule != null && MoleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
-                                        saved = MoleculeService.Create(molecule);
+                                    if (molecule != null && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
+                                        saved = _moleculeService.Create(molecule);
                                 }
                                 catch (Exception) { }
                             } while (--tries > 0 && saved == null);
@@ -211,7 +212,7 @@ namespace EvoGen.MoleculeSearch
                     }
                     else
                     {
-                        DatabaseCount = MoleculeService.MoleculeCount();
+                        DatabaseCount = _moleculeService.MoleculeCount();
                     }
                 });
                 ThreadSave.Start();

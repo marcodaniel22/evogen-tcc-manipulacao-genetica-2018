@@ -43,6 +43,8 @@
             this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IdStructure = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.btnJsonLoad = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnSearch = new System.Windows.Forms.Button();
             this.timerSearch = new System.Windows.Forms.Timer(this.components);
@@ -145,6 +147,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.button2);
+            this.groupBox2.Controls.Add(this.btnJsonLoad);
             this.groupBox2.Controls.Add(this.btnSave);
             this.groupBox2.Controls.Add(this.btnSearch);
             this.groupBox2.Location = new System.Drawing.Point(15, 12);
@@ -154,13 +158,36 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Serviços";
             // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.Gainsboro;
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(194, 65);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(175, 40);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "-";
+            this.button2.UseVisualStyleBackColor = false;
+            // 
+            // btnJsonLoad
+            // 
+            this.btnJsonLoad.BackColor = System.Drawing.Color.Gainsboro;
+            this.btnJsonLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnJsonLoad.Location = new System.Drawing.Point(194, 18);
+            this.btnJsonLoad.Name = "btnJsonLoad";
+            this.btnJsonLoad.Size = new System.Drawing.Size(175, 40);
+            this.btnJsonLoad.TabIndex = 2;
+            this.btnJsonLoad.Text = "Carregar Json";
+            this.btnJsonLoad.UseVisualStyleBackColor = false;
+            this.btnJsonLoad.Click += new System.EventHandler(this.btnJsonLoad_Click);
+            // 
             // btnSave
             // 
             this.btnSave.BackColor = System.Drawing.Color.Gainsboro;
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSave.Location = new System.Drawing.Point(6, 65);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(363, 40);
+            this.btnSave.Size = new System.Drawing.Size(175, 40);
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "Salvar em Banco";
             this.btnSave.UseVisualStyleBackColor = false;
@@ -172,7 +199,7 @@
             this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSearch.Location = new System.Drawing.Point(6, 19);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(363, 40);
+            this.btnSearch.Size = new System.Drawing.Size(175, 40);
             this.btnSearch.TabIndex = 0;
             this.btnSearch.Text = "Iniciar Busca";
             this.btnSearch.UseVisualStyleBackColor = false;
@@ -374,6 +401,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Searches;
         private System.Windows.Forms.DataGridViewTextBoxColumn Formula;
         private System.Windows.Forms.DataGridViewTextBoxColumn IdStructure;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnJsonLoad;
     }
 }
 

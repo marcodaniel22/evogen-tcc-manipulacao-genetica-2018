@@ -24,7 +24,7 @@ namespace EvoGen.Domain.GA.StructureGenerator
             foreach (var atom in this.Molecule.AtomNodes)
             {
                 double atomFitness = 0;
-                var atomLinks = this.Molecule.GetLinksFromAtom(atom);
+                var atomLinks = this.Molecule.GetAllLinksFromAtom(atom);
                 // Rule 1
                 var v = atom.Octet;
                 var l = atom.Octet - atomLinks.Count;

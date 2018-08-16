@@ -60,7 +60,7 @@ namespace EvoGen.Domain.Collections
             {
                 atomsCounter++;
                 var atom = stack.Pop();
-                var links = this.GetLinksFromAtom(atom);
+                var links = this.GetAllLinksFromAtom(atom);
                 foreach (var link in links)
                 {
                     if (!visited.Contains(link.To.AtomId))
@@ -93,7 +93,7 @@ namespace EvoGen.Domain.Collections
             return link;
         }
 
-        public List<LinkEdge> GetLinksFromAtom(AtomNode atom)
+        public List<LinkEdge> GetAllLinksFromAtom(AtomNode atom)
         {
             var links = this.LinkEdges.Where(x => x.From.AtomId == atom.AtomId).ToList();
             var outLinks = this.LinkEdges.Where(x => x.To.AtomId == atom.AtomId);
@@ -101,5 +101,54 @@ namespace EvoGen.Domain.Collections
                 links.Add(new LinkEdge(link.To, link.From));
             return links;
         }
+
+        public void ReorganizeLinks()
+        {
+            var newLinks = new List<LinkEdge>();
+            var stack = new Stack<LinkEdge>();
+            var stackedLinks = new List<string>();
+            AtomNode lastAtom = null;
+
+            stack.Push(this.LinkEdges.FirstOrDefault());
+            while (stack.Count > 0)
+            {
+                var link = stack.Pop();
+                if (!stackedLinks.Contains(link.ToString()))
+                {
+                    stackedLinks.Add(link.ToString());
+                    if (lastAtom == null)
+                    {
+                        var linksFrom = GetAllLinksFromAtom(link.From);
+                        var linksTo = GetAllLinksFromAtom(link.To);
+                        lastAtom = linksFrom.Count >= linksTo.Count ? link.From : link.To;
+                    }
+                    if (link.From.AtomId == lastAtom.AtomId)
+                    {
+                        newLinks.Add(new LinkEdge(link.From, link.To));
+                        var toStackAfter = this.LinkEdges.Where(x => x.From.AtomId == link.To.AtomId || x.To.AtomId == link.To.AtomId).ToList();
+                        toStackAfter.Remove(link);
+                        foreach (var item in toStackAfter)
+                        {
+                            stack.Push(item);
+                        }
+                    }
+                    else
+                    {
+                        newLinks.Add(new LinkEdge(link.To, link.From));
+                        lastAtom = link.From;
+                    }
+
+                    var toStack = this.LinkEdges.Where(x => x.From.AtomId == lastAtom.AtomId || x.To.AtomId == lastAtom.AtomId).ToList();
+                    toStack.Remove(link);
+                    foreach (var item in toStack)
+                    {
+                        stack.Push(item);
+                    }
+                }
+            }
+            this.LinkEdges = newLinks;
+        }
+
+
     }
 }

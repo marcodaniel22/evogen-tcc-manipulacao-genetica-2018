@@ -1,8 +1,9 @@
-﻿using System;
+﻿using EvoGen.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EvoGen.Helper
+namespace EvoGen.Domain.DataGen
 {
     public class FormulaGenerator
     {

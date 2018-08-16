@@ -141,6 +141,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EvoGen.Domain.DataGen\EvoGen.Domain.DataGen.csproj">
+      <Project>{2D169427-7A32-42C4-8E37-8945522D7D88}</Project>
+      <Name>EvoGen.Domain.DataGen</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EvoGen.Domain\EvoGen.Domain.csproj">
       <Project>{4F64EEB8-35F2-4D20-98B3-23E509ED9352}</Project>
       <Name>EvoGen.Domain</Name>

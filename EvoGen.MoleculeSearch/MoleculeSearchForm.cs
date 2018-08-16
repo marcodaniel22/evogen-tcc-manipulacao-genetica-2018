@@ -1,7 +1,7 @@
 ﻿using EvoGen.Domain.Collections;
+using EvoGen.Domain.DataGen;
 using EvoGen.Domain.GA.StructureGenerator;
 using EvoGen.Domain.Interfaces.Services;
-using EvoGen.Helper;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -21,6 +21,7 @@ namespace EvoGen.MoleculeSearch
         private bool Saving;
         private List<Thread> ThreadSearch;
         private Thread ThreadSave;
+
         private DateTime ThreadSaveInit;
         private Object queueObjectLock;
         private Object listObjectLock;
@@ -30,8 +31,10 @@ namespace EvoGen.MoleculeSearch
         private static volatile int SearchCount = 0;
         private static volatile int DatabaseCount = 0;
         private static volatile Queue<MoleculeGraph> ResultQueue = new Queue<MoleculeGraph>();
+        private static volatile JsonDataSet JsonLoader;
+        private static volatile FormulaGenerator FormulaGenerator;
 
-        public MoleculeSearchForm(IMoleculeService moleculeService)
+        public MoleculeSearchForm(IMoleculeService moleculeService, ILinkService linkService)
         {
             InitializeComponent();
             this.timerSearch.Enabled = false;
@@ -40,6 +43,8 @@ namespace EvoGen.MoleculeSearch
             this.gridSearches.DataSource = new List<object>();
 
             this._moleculeService = moleculeService;
+            this._linkService = linkService;
+
             this.Searching = false;
             this.Saving = false;
             this.ThreadSearch = new List<Thread>();
@@ -65,62 +70,83 @@ namespace EvoGen.MoleculeSearch
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            if (!Searching) Search();
-            else StopSearch();
+            if (!Searching)
+            {
+                Searching = true;
+                SetButtonStyle(btnSearch, "Parar Busca", Color.Gray);
+                btnJsonLoad.Enabled = false;
+                timerSearch.Enabled = true;
+                timerSearch.Start();
+            }
+            else
+            {
+                Searching = false;
+                SetButtonStyle(btnSearch, "Iniciar Busca", Color.Gainsboro);
+                btnJsonLoad.Enabled = true;
+                timerSearch.Enabled = false;
+                timerSearch.Stop();
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!Saving) Save();
-            else StopSave();
+            if (!Saving)
+            {
+                Saving = true;
+                SetButtonStyle(btnSave, "Parar de Salvar", Color.Gray);
+                btnJsonLoad.Enabled = false;
+                timerSave.Enabled = true;
+                timerSave.Start();
+            }
+            else
+            {
+                Saving = false;
+                SetButtonStyle(btnSave, "Salvar em Banco", Color.Gainsboro);
+                btnJsonLoad.Enabled = true;
+                timerSave.Enabled = false;
+                timerSave.Stop();
+            }
         }
 
-        private void Search()
+        private void btnJsonLoad_Click(object sender, EventArgs e)
         {
-            btnSearch.Text = "Parar Busca";
-            btnSearch.BackColor = Color.Gray;
-            Searching = true;
-            timerSearch.Enabled = true;
-            timerSearch.Start();
-        }
-
-        private void StopSearch()
-        {
-            btnSearch.Text = "Iniciar Busca";
-            btnSearch.BackColor = Color.Gainsboro;
-            Searching = false;
-            timerSearch.Enabled = false;
-            timerSearch.Stop();
-        }
-
-        private void Save()
-        {
-            btnSave.Text = "Parar de Salvar";
-            btnSave.BackColor = Color.Gray;
-            Saving = true;
-            timerSave.Enabled = true;
-            timerSave.Start();
-        }
-
-        private void StopSave()
-        {
-            btnSave.Text = "Salvar em Banco";
-            btnSave.BackColor = Color.Gainsboro;
-            Saving = false;
-            timerSave.Enabled = false;
-            timerSave.Stop();
+            SetButtonStyle(btnJsonLoad, "Carregando...", Color.Gray);
+            btnSave.Enabled = false;
+            btnSearch.Enabled = false;
+            new Thread(() =>
+            {
+                try
+                {
+                    JsonLoader = new JsonDataSet();
+                }
+                catch (Exception) { }
+                finally
+                {
+                    SetButtonStyle(btnJsonLoad, "Carregar Json", Color.Gainsboro);
+                    SetButtonEnabled(btnSave, false);
+                    SetButtonEnabled(btnSearch, false);
+                }
+            }).Start();
         }
 
         private void timerSearch_Tick(object sender, EventArgs e)
         {
-            if (ThreadSearch.Count < (Environment.ProcessorCount / 2))
-            //while (TaskList.Count < (1))
+            //if(ThreadSearch.Count < (Environment.ProcessorCount / 2))
+            if(ThreadSearch.Count < (1))
             {
                 ThreadSearch.Add(new Thread(() =>
                 {
-                    var fg = new FormulaGenerator();
-                    var moleculeAtoms = fg.GenerateFormula();
-                    var formula = fg.GetFormulaFromMolecule(moleculeAtoms);
+                    string formula = string.Empty;
+                    Dictionary<string, int> moleculeAtoms;
+                    FormulaGenerator = new FormulaGenerator();
+
+                    if (JsonLoader != null && JsonLoader.FormulasQueue.Count > 0)
+                        moleculeAtoms = JsonLoader.GetMolecule();
+                    else
+                        moleculeAtoms = FormulaGenerator.GenerateFormula();
+
+                    formula = FormulaGenerator.GetFormulaFromMolecule(moleculeAtoms);
+                    formula = "C2H6O";
                     if (!string.IsNullOrEmpty(formula))
                     {
                         lock (listObjectLock)
@@ -130,9 +156,9 @@ namespace EvoGen.MoleculeSearch
                         }
                         var ga = new StructureGenerator(
                             formula,
-                            GetPopulationSize(moleculeAtoms),
-                            GetMaxGenerations(moleculeAtoms),
-                            GetMutationRate(moleculeAtoms)
+                            GetPopulationSize(moleculeAtoms, true),
+                            GetMaxGenerations(moleculeAtoms, true),
+                            GetMutationRate(moleculeAtoms, true)
                         );
                         new Task(() => ga.FindSolutions()).Start();
                         string idStructure = string.Empty;
@@ -143,6 +169,7 @@ namespace EvoGen.MoleculeSearch
                                 var molecule = ga.ResultList.Dequeue();
                                 if (molecule != null)
                                 {
+                                    molecule.ReorganizeLinks();
                                     idStructure = _linkService.GetIdStructure(molecule.LinkEdges);
                                     molecule.IdStructure = idStructure;
                                     if (!Ids.Contains(molecule.IdStructure))
@@ -242,6 +269,29 @@ namespace EvoGen.MoleculeSearch
             }).ToList());
         }
 
+        public void SetButtonStyle(Button button, string label, Color color)
+        {
+            if (button.InvokeRequired)
+                new Task(() => button.Invoke(new MethodInvoker(() =>
+                {
+                    button.Text = label;
+                    button.BackColor = color;
+                }))).Start();
+            else
+            {
+                button.Text = label;
+                button.BackColor = color;
+            }
+        }
+
+        public void SetButtonEnabled(Button button, bool enabled)
+        {
+            if (button.InvokeRequired)
+                new Task(() => button.Invoke(new MethodInvoker(() => button.Enabled = enabled))).Start();
+            else
+                new Task(() => button.Enabled = enabled).Start();
+        }
+
         public void SetText(TextBox lblText, string texto)
         {
             if (lblText.InvokeRequired)
@@ -258,28 +308,34 @@ namespace EvoGen.MoleculeSearch
                 new Task(() => gridView.DataSource = dataSource).Start();
         }
 
-        private int GetPopulationSize(Dictionary<string, int> molecule)
+        private int GetPopulationSize(Dictionary<string, int> molecule, bool firstSearch)
         {
-            //if (molecule.Count < 5)
-            //    return 100;
-            //else if (molecule.Count >= 5 && molecule.Count < 7)
-            //    return 200;
-            //else
-            //    return 400;
+            if (firstSearch)
+            {
+                if (molecule.Count < 5)
+                    return 100;
+                else if (molecule.Count >= 5 && molecule.Count < 7)
+                    return 200;
+                else
+                    return 400;
+            }
             return 200;
         }
 
-        private int GetMaxGenerations(Dictionary<string, int> molecule)
+        private int GetMaxGenerations(Dictionary<string, int> molecule, bool firstSearch)
         {
-            //var atomsCount = molecule.Sum(x => x.Value);
-            //if (atomsCount < 40)
-            //    return 2000;
-            //else
-            //    return 4000;
+            if (firstSearch)
+            {
+                var atomsCount = molecule.Sum(x => x.Value);
+                if (atomsCount < 40)
+                    return 2000;
+                else
+                    return 4000;
+            }
             return 10000;
         }
 
-        private double GetMutationRate(Dictionary<string, int> molecule)
+        private double GetMutationRate(Dictionary<string, int> molecule, bool firstSearch)
         {
             return 0.20;
         }

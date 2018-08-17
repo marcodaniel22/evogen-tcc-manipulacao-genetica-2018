@@ -28,7 +28,7 @@ namespace EvoGen.Domain.Services
             return Create(GetCollectionFromGraph(molecule));
         }
 
-        public int MoleculeCount()
+        public int GetMoleculeCount()
         {
             return _moleculeRepository.GetAll().Count();
         }
@@ -39,8 +39,11 @@ namespace EvoGen.Domain.Services
             collection.guidString = Guid.NewGuid().ToString();
             collection.Nomenclature = molecule.Nomenclature;
             collection.IdStructure = molecule.IdStructure;
-            collection.AtomsCount = molecule.AtomNodes.Count;
-            collection.Links = molecule.LinkEdges.Select(x => _linkService.GetCollectionFromEdge(x)).ToList();
+            if (molecule.AtomNodes != null && molecule.AtomNodes.Count > 0)
+            {
+                collection.AtomsCount = molecule.AtomNodes.Count;
+                collection.Links = molecule.LinkEdges.Select(x => _linkService.GetCollectionFromEdge(x)).ToList();
+            }
             return collection;
 
         }
@@ -116,6 +119,16 @@ namespace EvoGen.Domain.Services
             }
 
             return cycles;
+        }
+
+        public Molecule Delete(Molecule molecule)
+        {
+            return _moleculeRepository.Delete(molecule.guidString);
+        }
+
+        public int GetNotEmptyMoleculeCount(string nomenclature)
+        {
+            return _moleculeRepository.GetAll().Count(x => x.Nomenclature == nomenclature && !string.IsNullOrEmpty(x.IdStructure));
         }
     }
 }

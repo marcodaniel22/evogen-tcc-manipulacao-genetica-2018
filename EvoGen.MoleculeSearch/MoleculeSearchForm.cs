@@ -58,7 +58,7 @@ namespace EvoGen.MoleculeSearch
             {
                 new Task(() =>
                 {
-                    DatabaseCount = _moleculeService.MoleculeCount();
+                    DatabaseCount = _moleculeService.GetMoleculeCount();
                     SetText(txtQuantityDatabase, DatabaseCount.ToString());
                 }).Start();
             }
@@ -132,7 +132,7 @@ namespace EvoGen.MoleculeSearch
         private void timerSearch_Tick(object sender, EventArgs e)
         {
             //if(ThreadSearch.Count < (Environment.ProcessorCount / 2))
-            if(ThreadSearch.Count < (1))
+            if (ThreadSearch.Count < (1))
             {
                 ThreadSearch.Add(new Thread(() =>
                 {
@@ -146,7 +146,7 @@ namespace EvoGen.MoleculeSearch
                         moleculeAtoms = FormulaGenerator.GenerateFormula();
 
                     formula = FormulaGenerator.GetFormulaFromMolecule(moleculeAtoms);
-                    formula = "C2H6O";
+                    formula = "C2H2";
                     if (!string.IsNullOrEmpty(formula))
                     {
                         lock (listObjectLock)
@@ -162,6 +162,7 @@ namespace EvoGen.MoleculeSearch
                         );
                         new Task(() => ga.FindSolutions()).Start();
                         string idStructure = string.Empty;
+                        int counter = 0;
                         while (!ga.Finished)
                         {
                             if (ga.ResultList.Count > 0)
@@ -169,6 +170,7 @@ namespace EvoGen.MoleculeSearch
                                 var molecule = ga.ResultList.Dequeue();
                                 if (molecule != null)
                                 {
+                                    counter++;
                                     molecule.ReorganizeLinks();
                                     idStructure = _linkService.GetIdStructure(molecule.LinkEdges);
                                     molecule.IdStructure = idStructure;
@@ -182,6 +184,14 @@ namespace EvoGen.MoleculeSearch
                                         }
                                     }
                                 }
+                            }
+                        }
+                        if (counter == 0)
+                        {
+                            lock (queueObjectLock)
+                            {
+                                ResultQueue.Enqueue(new MoleculeGraph(formula, null));
+                                ShowQueueDataSource();
                             }
                         }
                         lock (listObjectLock)
@@ -209,38 +219,42 @@ namespace EvoGen.MoleculeSearch
                 ThreadSaveInit = DateTime.Now;
                 ThreadSave = new Thread(() =>
                 {
-                    if (ResultQueue.Count > 0)
+                    while (ResultQueue.Count > 0)
                     {
-                        while (ResultQueue.Count > 0)
+                        MoleculeGraph molecule = null;
+                        Molecule saved = null;
+
+                        lock (queueObjectLock)
                         {
-                            MoleculeGraph molecule;
-                            lock (queueObjectLock)
+                            molecule = ResultQueue.Dequeue();
+                            ShowQueueDataSource();
+                        }
+
+                        if (molecule != null && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
+                        {
+                            if (!string.IsNullOrEmpty(molecule.IdStructure))
+                                saved = _moleculeService.Create(molecule);
+
+                            var emptyMolecule = _moleculeService.GetByIdStructure(molecule.Nomenclature, null);
+                            if (emptyMolecule != null)
                             {
-                                molecule = ResultQueue.Dequeue();
-                                ShowQueueDataSource();
+                                if (_moleculeService.GetNotEmptyMoleculeCount(molecule.Nomenclature) > 0)
+                                    _moleculeService.Delete(emptyMolecule);
                             }
-                            var tries = 3;
-                            Molecule saved = null;
-                            do
+                            else if (string.IsNullOrEmpty(molecule.IdStructure))
                             {
-                                try
-                                {
-                                    if (molecule != null && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
-                                        saved = _moleculeService.Create(molecule);
-                                }
-                                catch (Exception) { }
-                            } while (--tries > 0 && saved == null);
-                            if (saved != null)
-                            {
-                                SearchCount++;
-                                DatabaseCount++;
+                                if (_moleculeService.GetNotEmptyMoleculeCount(molecule.Nomenclature) == 0)
+                                    saved = _moleculeService.Create(molecule);
                             }
                         }
+
+                        if (saved != null)
+                        {
+                            SearchCount++;
+                            DatabaseCount++;
+                        }
                     }
-                    else
-                    {
-                        DatabaseCount = _moleculeService.MoleculeCount();
-                    }
+                    DatabaseCount = _moleculeService.GetMoleculeCount();
                 });
                 ThreadSave.Start();
             }

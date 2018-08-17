@@ -75,14 +75,17 @@ namespace EvoGen.Domain.Collections
 
         private void GenerateRandomLinks()
         {
-            _random = new Random(DateTime.Now.Millisecond);
-            foreach (AtomNode fromAtom in this.AtomNodes)
+            if (this.AtomNodes != null)
             {
-                AtomNode toAtom = null;
-                do
+                _random = new Random(DateTime.Now.Millisecond);
+                foreach (AtomNode fromAtom in this.AtomNodes)
                 {
-                    toAtom = this.AtomNodes[_random.Next(this.AtomNodes.Count)];
-                } while (!this.NewLink(fromAtom, toAtom));
+                    AtomNode toAtom = null;
+                    do
+                    {
+                        toAtom = this.AtomNodes[_random.Next(this.AtomNodes.Count)];
+                    } while (!this.NewLink(fromAtom, toAtom));
+                }
             }
         }
 

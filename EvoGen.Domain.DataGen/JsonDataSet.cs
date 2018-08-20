@@ -11,12 +11,16 @@ namespace EvoGen.Domain.DataGen
     public class JsonDataSet
     {
         public Queue<Dictionary<string, int>> FormulasQueue { get; private set; }
+        public bool Finished { get; private set; }
+
         private Object queueLock = new object();
+        private string jsonPath = string.Empty;
+        private List<string> jsonFiles = null;
 
         public JsonDataSet()
         {
-            var jsonPath = ConfigurationManager.AppSettings["ScriptPath"];
-            var jsonFiles = new List<string>
+            this.jsonPath = ConfigurationManager.AppSettings["ScriptPath"];
+            this.jsonFiles = new List<string>
             {
                 "pubChem_p_00000001_00025000",
                 "pubChem_p_00025001_00050000",
@@ -31,29 +35,32 @@ namespace EvoGen.Domain.DataGen
             };
 
             this.FormulasQueue = new Queue<Dictionary<string, int>> ();
-            this.ConsumeJsonFiles(jsonPath, jsonFiles);
+            this.Finished = false;
         }
 
-        private void ConsumeJsonFiles(string jsonPath, List<string> jsonFiles)
+        public void ConsumeJsonFiles()
         {
-            var fg = new FormulaGenerator();
             foreach (var jsonFile in jsonFiles)
             {
                 using (StreamReader file = File.OpenText(jsonPath + jsonFile + ".json"))
-                using (JsonTextReader reader = new JsonTextReader(file))
                 {
-                    foreach (var molecule in JToken.ReadFrom(reader))
+                    Console.WriteLine(string.Format("\nAbrindo arquivo {0}.json", jsonFile));
+                    using (JsonTextReader reader = new JsonTextReader(file))
                     {
-                        try
+                        foreach (var molecule in JToken.ReadFrom(reader))
                         {
-                            var atomsMolecule = GetAtoms(molecule);
-                            if (atomsMolecule != null && !FormulasQueue.Contains(atomsMolecule))
-                                FormulasQueue.Enqueue(atomsMolecule);
+                            try
+                            {
+                                var atomsMolecule = GetAtoms(molecule);
+                                if (atomsMolecule != null && !FormulasQueue.Contains(atomsMolecule))
+                                    FormulasQueue.Enqueue(atomsMolecule);
+                            }
+                            catch (Exception) { }
                         }
-                        catch (Exception) { }
                     }
                 }
             }
+            Finished = true;
         }
 
         private Dictionary<string, int> GetAtoms(JToken json)

@@ -12,31 +12,65 @@ namespace EvoGen.Domain.Services
     public class MoleculeService : ServiceBase<Molecule>, IMoleculeService
     {
         private readonly IMoleculeRepository _moleculeRepository;
-        private readonly IAtomService _atomService;
+        private readonly ILogRepository _logRepository;
         private readonly ILinkService _linkService;
 
-        public MoleculeService(IMoleculeRepository moleculeRepository, IAtomService atomService, ILinkService linkService)
+        public MoleculeService(IMoleculeRepository moleculeRepository, ILogRepository logRepository, ILinkService linkService)
             : base(moleculeRepository)
         {
             this._moleculeRepository = moleculeRepository;
-            this._atomService = atomService;
+            this._logRepository = logRepository;
             this._linkService = linkService;
         }
 
-        public Molecule Create(MoleculeGraph molecule)
-        {
-            return Create(GetCollectionFromGraph(molecule));
-        }
+        #region RepositoryAcess
 
         public int GetMoleculeCount()
         {
             return _moleculeRepository.GetAll().Count();
         }
 
+        public List<Molecule> GetByNomenclature(string nomenclature)
+        {
+            return _moleculeRepository.GetAll().Where(x => x.Nomenclature == nomenclature).ToList();
+        }
+
+        public Molecule GetByIdStructure(string nomenclature, string idStructure)
+        {
+            return _moleculeRepository.GetAll()
+                .FirstOrDefault(x => x.Nomenclature == nomenclature && x.IdStructure == idStructure);
+        }
+
+        public Molecule Create(MoleculeGraph molecule)
+        {
+            return _moleculeRepository.Create(GetCollectionFromGraph(molecule));
+        }
+
+        public Molecule Delete(Molecule molecule)
+        {
+            return _moleculeRepository.Delete(molecule.guidString);
+        }
+
+        public int GetNotEmptyMoleculeCount(string nomenclature)
+        {
+            return _moleculeRepository.GetAll().Count(x => x.Nomenclature == nomenclature && !string.IsNullOrEmpty(x.IdStructure));
+        }
+
+        public Molecule GetFirstEmpty()
+        {
+            return _moleculeRepository.GetAll().First(x => string.IsNullOrEmpty(x.IdStructure)
+                && (_logRepository.GetAll().FirstOrDefault(y => y.Nomenclature == x.Nomenclature) == null
+                    || _logRepository.GetAll().FirstOrDefault(y => y.Nomenclature == x.Nomenclature).SearchCounter
+                    == _logRepository.GetAll().Min(y => y.SearchCounter)));
+        }
+
+        #endregion
+
+        #region CustomServices
+
         public Molecule GetCollectionFromGraph(MoleculeGraph molecule)
         {
             var collection = new Molecule();
-            collection.guidString = Guid.NewGuid().ToString();
             collection.Nomenclature = molecule.Nomenclature;
             collection.IdStructure = molecule.IdStructure;
             if (molecule.AtomNodes != null && molecule.AtomNodes.Count > 0)
@@ -46,12 +80,6 @@ namespace EvoGen.Domain.Services
             }
             return collection;
 
-        }
-
-        public Molecule GetByIdStructure(string nomenclature, string idStructure)
-        {
-            return _moleculeRepository.GetAll()
-                .FirstOrDefault(x => x.Nomenclature == nomenclature && x.IdStructure == idStructure);
         }
 
         public List<Cycle> GetMoleculeCycles(Molecule molecule)
@@ -121,14 +149,6 @@ namespace EvoGen.Domain.Services
             return cycles;
         }
 
-        public Molecule Delete(Molecule molecule)
-        {
-            return _moleculeRepository.Delete(molecule.guidString);
-        }
-
-        public int GetNotEmptyMoleculeCount(string nomenclature)
-        {
-            return _moleculeRepository.GetAll().Count(x => x.Nomenclature == nomenclature && !string.IsNullOrEmpty(x.IdStructure));
-        }
+        #endregion
     }
 }

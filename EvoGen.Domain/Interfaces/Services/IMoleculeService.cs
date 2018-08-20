@@ -7,11 +7,14 @@ namespace EvoGen.Domain.Interfaces.Services
     public interface IMoleculeService : IServiceBase<Molecule>
     {
         int GetMoleculeCount();
+        List<Molecule> GetByNomenclature(string nomenclature);
+        Molecule GetByIdStructure(string nomenclature, string idStructure);
         Molecule Create(MoleculeGraph molecule);
         Molecule Delete(Molecule molecule);
-        Molecule GetCollectionFromGraph(MoleculeGraph molecule);
-        Molecule GetByIdStructure(string nomenclature, string idStructure);
         int GetNotEmptyMoleculeCount(string nomenclature);
+        Molecule GetFirstEmpty();
+
+        Molecule GetCollectionFromGraph(MoleculeGraph molecule);
         List<Cycle> GetMoleculeCycles(Molecule molecule);
     }
 }

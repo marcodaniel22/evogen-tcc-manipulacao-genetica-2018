@@ -2,6 +2,7 @@
 using EvoGen.Domain.Interfaces.Repositories;
 using EvoGen.Repository.Context;
 using MongoDB.Driver;
+using System;
 using System.Linq;
 
 namespace EvoGen.Repository.Repositories
@@ -17,6 +18,7 @@ namespace EvoGen.Repository.Repositories
 
         public TCollection Create(TCollection obj)
         {
+            obj.guidString = Guid.NewGuid().ToString();
             Context.Collection.InsertOne(obj);
             return GetById(obj.guidString);
         }

@@ -108,7 +108,8 @@ namespace EvoGen.Domain.Collections
         public void ReorganizeLinks()
         {
             var newLinks = new List<LinkEdge>();
-            var stack = new Stack<LinkEdge>();
+            var queue = new Queue<AtomNode>();
+            var stack = new Stack<LinkEdge>(this.LinkEdges);
             var stackedLinks = new List<string>();
             AtomNode lastAtom = null;
 
@@ -118,38 +119,58 @@ namespace EvoGen.Domain.Collections
                 var link = stack.Pop();
                 if (!stackedLinks.Contains(link.ToString()))
                 {
-                    stackedLinks.Add(link.ToString());
                     if (lastAtom == null)
                     {
-                        var linksFrom = GetAllLinksFromAtom(link.From);
-                        var linksTo = GetAllLinksFromAtom(link.To);
-                        lastAtom = linksFrom.Count >= linksTo.Count ? link.From : link.To;
+                        lastAtom = link.From;
+                        queue.Enqueue(lastAtom);
                     }
+
+                    var sameLinks = this.LinkEdges.Where(x =>
+                            (x.From.AtomId == link.From.AtomId && x.To.AtomId == link.To.AtomId)
+                            || (x.From.AtomId == link.To.AtomId && x.To.AtomId == link.From.AtomId)
+                        ).ToList();
                     if (link.From.AtomId == lastAtom.AtomId)
                     {
-                        newLinks.Add(new LinkEdge(link.From, link.To));
-                        var toStackAfter = this.LinkEdges.Where(x => x.From.AtomId == link.To.AtomId || x.To.AtomId == link.To.AtomId).ToList();
-                        toStackAfter.Remove(link);
-                        foreach (var item in toStackAfter)
+                        foreach (var item in sameLinks)
                         {
-                            stack.Push(item);
+                            newLinks.Add(new LinkEdge(link.From, link.To));
+                            stackedLinks.Add(item.ToString());
                         }
+                        lastAtom = link.To;
+                    }
+                    else if (link.To.AtomId == lastAtom.AtomId)
+                    {
+                        foreach (var item in sameLinks)
+                        {
+                            newLinks.Add(new LinkEdge(link.To, link.From));
+                            stackedLinks.Add(item.ToString());
+                        }
+                        lastAtom = link.From;
                     }
                     else
                     {
-                        newLinks.Add(new LinkEdge(link.To, link.From));
-                        lastAtom = link.From;
+                        lastAtom = queue.Dequeue();
+                        queue.Enqueue(lastAtom);
+                        stack.Push(link);
+                        continue;
                     }
 
+                    if (!queue.Any(x => x.AtomId == lastAtom.AtomId))
+                        queue.Enqueue(lastAtom);
+
                     var toStack = this.LinkEdges.Where(x => x.From.AtomId == lastAtom.AtomId || x.To.AtomId == lastAtom.AtomId).ToList();
-                    toStack.Remove(link);
+                    toStack.RemoveAll(x =>
+                            (x.From.AtomId == link.From.AtomId && x.To.AtomId == link.To.AtomId)
+                            || (x.From.AtomId == link.To.AtomId && x.To.AtomId == link.From.AtomId)
+                        );
                     foreach (var item in toStack)
-                    {
                         stack.Push(item);
-                    }
                 }
             }
-            this.LinkEdges = newLinks;
+            if (newLinks.Count == this.LinkEdges.Count)
+                this.LinkEdges = newLinks;
+            else
+                throw new Exception("Erro ao reorganizar links.");
         }
 
 

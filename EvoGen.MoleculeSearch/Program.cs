@@ -22,15 +22,18 @@ namespace EvoGen.MoleculeSearch
             var container = new InjectContainer();
             container.Register<IMoleculeService, MoleculeService>();
             container.Register<IMoleculeRepository, MoleculeRepository>();
+            container.Register<ILogService, LogService>();
+            container.Register<ILogRepository, LogRepository>();
             container.Register<IAtomService, AtomService>();
             container.Register<ILinkService, LinkService>();
 
             var moleculeService = container.Resolve<IMoleculeService>();
+            var logService = container.Resolve<ILogService>();
             var linkService = container.Resolve<ILinkService>();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MoleculeSearchForm(moleculeService, linkService));
+            Application.Run(new MoleculeSearchForm(moleculeService, logService, linkService));
         }
     }
 }

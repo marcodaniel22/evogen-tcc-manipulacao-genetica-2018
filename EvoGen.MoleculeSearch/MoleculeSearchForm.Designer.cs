@@ -43,8 +43,6 @@
             this.Formula = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IdStructure = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.btnJsonLoad = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnSearch = new System.Windows.Forms.Button();
             this.timerSearch = new System.Windows.Forms.Timer(this.components);
@@ -58,11 +56,15 @@
             this.gridSearches = new System.Windows.Forms.DataGridView();
             this.Searches = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label2 = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.rbEmpty = new System.Windows.Forms.RadioButton();
+            this.rbRandom = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridQueue)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridSearches)).BeginInit();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -147,39 +149,14 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.button2);
-            this.groupBox2.Controls.Add(this.btnJsonLoad);
             this.groupBox2.Controls.Add(this.btnSave);
             this.groupBox2.Controls.Add(this.btnSearch);
             this.groupBox2.Location = new System.Drawing.Point(15, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(375, 118);
+            this.groupBox2.Size = new System.Drawing.Size(200, 118);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Serviços";
-            // 
-            // button2
-            // 
-            this.button2.BackColor = System.Drawing.Color.Gainsboro;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(194, 65);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(175, 40);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "-";
-            this.button2.UseVisualStyleBackColor = false;
-            // 
-            // btnJsonLoad
-            // 
-            this.btnJsonLoad.BackColor = System.Drawing.Color.Gainsboro;
-            this.btnJsonLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnJsonLoad.Location = new System.Drawing.Point(194, 18);
-            this.btnJsonLoad.Name = "btnJsonLoad";
-            this.btnJsonLoad.Size = new System.Drawing.Size(175, 40);
-            this.btnJsonLoad.TabIndex = 2;
-            this.btnJsonLoad.Text = "Carregar Json";
-            this.btnJsonLoad.UseVisualStyleBackColor = false;
-            this.btnJsonLoad.Click += new System.EventHandler(this.btnJsonLoad_Click);
+            this.groupBox2.Text = "Ações";
             // 
             // btnSave
             // 
@@ -187,7 +164,7 @@
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSave.Location = new System.Drawing.Point(6, 65);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(175, 40);
+            this.btnSave.Size = new System.Drawing.Size(188, 40);
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "Salvar em Banco";
             this.btnSave.UseVisualStyleBackColor = false;
@@ -199,7 +176,7 @@
             this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSearch.Location = new System.Drawing.Point(6, 19);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(175, 40);
+            this.btnSearch.Size = new System.Drawing.Size(188, 40);
             this.btnSearch.TabIndex = 0;
             this.btnSearch.Text = "Iniciar Busca";
             this.btnSearch.UseVisualStyleBackColor = false;
@@ -355,12 +332,50 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Processos";
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.rbRandom);
+            this.groupBox4.Controls.Add(this.rbEmpty);
+            this.groupBox4.Location = new System.Drawing.Point(221, 12);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(169, 118);
+            this.groupBox4.TabIndex = 2;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Tipos de busca";
+            // 
+            // rbEmpty
+            // 
+            this.rbEmpty.AutoSize = true;
+            this.rbEmpty.Checked = true;
+            this.rbEmpty.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rbEmpty.Location = new System.Drawing.Point(30, 35);
+            this.rbEmpty.Name = "rbEmpty";
+            this.rbEmpty.Size = new System.Drawing.Size(104, 24);
+            this.rbEmpty.TabIndex = 0;
+            this.rbEmpty.TabStop = true;
+            this.rbEmpty.Text = "Em branco";
+            this.rbEmpty.UseVisualStyleBackColor = true;
+            this.rbEmpty.CheckedChanged += new System.EventHandler(this.rbEmpty_CheckedChanged);
+            // 
+            // rbRandom
+            // 
+            this.rbRandom.AutoSize = true;
+            this.rbRandom.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rbRandom.Location = new System.Drawing.Point(30, 65);
+            this.rbRandom.Name = "rbRandom";
+            this.rbRandom.Size = new System.Drawing.Size(90, 24);
+            this.rbRandom.TabIndex = 1;
+            this.rbRandom.Text = "Aleatória";
+            this.rbRandom.UseVisualStyleBackColor = true;
+            this.rbRandom.CheckedChanged += new System.EventHandler(this.rbRandom_CheckedChanged);
+            // 
             // MoleculeSearchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DarkGray;
             this.ClientSize = new System.Drawing.Size(610, 408);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -377,6 +392,8 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridSearches)).EndInit();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -401,8 +418,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Searches;
         private System.Windows.Forms.DataGridViewTextBoxColumn Formula;
         private System.Windows.Forms.DataGridViewTextBoxColumn IdStructure;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button btnJsonLoad;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.RadioButton rbRandom;
+        private System.Windows.Forms.RadioButton rbEmpty;
     }
 }
 

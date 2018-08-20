@@ -43,6 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\Log.cs" />
+    <Compile Include="Interfaces\Repositories\ILogRepository.cs" />
+    <Compile Include="Interfaces\Services\ILogService.cs" />
+    <Compile Include="Services\LogService.cs" />
     <Compile Include="ValueObjects\Atom.cs" />
     <Compile Include="ValueObjects\Cycle.cs" />
     <Compile Include="ValueObjects\Link.cs" />

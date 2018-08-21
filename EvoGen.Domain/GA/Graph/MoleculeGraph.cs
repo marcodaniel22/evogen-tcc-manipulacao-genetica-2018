@@ -12,6 +12,7 @@ namespace EvoGen.Domain.Collections
         public List<LinkEdge> LinkEdges { get; private set; }
         public string Nomenclature { get; private set; }
         public string IdStructure { get; set; }
+        public int Energy { get; set; }
 
         private Random _random;
 
@@ -171,6 +172,31 @@ namespace EvoGen.Domain.Collections
                 this.LinkEdges = newLinks;
             else
                 throw new Exception("Erro ao reorganizar links.");
+        }
+
+        public void SetEnergy()
+        {
+            var calculedLinks = new List<string>();
+            var energy = 0;
+            foreach (var link in this.LinkEdges)
+            {
+                if (!calculedLinks.Contains(link.ToString()))
+                {
+                    calculedLinks.Add(link.ToString());
+                    var sameLinksCount = this.LinkEdges.Count(x => x.From.AtomId == link.From.AtomId && x.To.AtomId == link.To.AtomId);
+                    var hash = new Tuple<string, int, string>(link.From.Symbol, sameLinksCount, link.To.Symbol);
+                    var reverseHash = new Tuple<string, int, string>(link.To.Symbol, sameLinksCount, link.From.Symbol);
+                    if (Constants.EnergyTable.ContainsKey(hash))
+                    {
+                        energy += Constants.EnergyTable[hash];
+                    }
+                    else if(Constants.EnergyTable.ContainsKey(reverseHash))
+                    {
+                        energy += Constants.EnergyTable[reverseHash];
+                    }
+                }
+            }
+            this.Energy = energy;
         }
 
 

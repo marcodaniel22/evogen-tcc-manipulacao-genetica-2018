@@ -11,6 +11,7 @@ namespace EvoGen.Domain.Collections
         public List<Link> Links { get; set; }
         public string Nomenclature { get; set; }
         public string IdStructure { get; set; }
+        public int Energy { get; set; }
         public bool Searched { get; set; }
         public bool FromDataSet { get; set; }
     }

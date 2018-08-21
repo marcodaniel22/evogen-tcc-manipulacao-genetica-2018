@@ -58,10 +58,14 @@ namespace EvoGen.Domain.Services
 
         public Molecule GetFirstEmpty()
         {
-            return _moleculeRepository.GetAll().First(x => string.IsNullOrEmpty(x.IdStructure)
-                && (_logRepository.GetAll().FirstOrDefault(y => y.Nomenclature == x.Nomenclature) == null
-                    || _logRepository.GetAll().FirstOrDefault(y => y.Nomenclature == x.Nomenclature).SearchCounter
-                    == _logRepository.GetAll().Min(y => y.SearchCounter)));
+            if (_logRepository.GetAll().Count() > 0)
+            {
+                var minSearched = _logRepository.GetAll().Min(x => x.SearchCounter);
+                var query = (from molecule in _moleculeRepository.GetAll()
+                             join log in _moleculeRepository.GetAll() on molecule.Nomenclature equals log.Nomenclature
+                             select new { molecule, log });
+            }
+            return _moleculeRepository.GetAll().First(x => string.IsNullOrEmpty(x.IdStructure));
         }
 
         #endregion

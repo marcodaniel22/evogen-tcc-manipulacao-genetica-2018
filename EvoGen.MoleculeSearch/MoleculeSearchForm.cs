@@ -158,6 +158,7 @@ namespace EvoGen.MoleculeSearch
                     {
                         lock (listObjectLock)
                         {
+                            _logService.NewSearch(formula);
                             SearchList.Add(formula);
                             ShowSearchDataSource();
                         }
@@ -177,6 +178,7 @@ namespace EvoGen.MoleculeSearch
                                 if (molecule != null)
                                 {
                                     molecule.ReorganizeLinks();
+                                    molecule.SetEnergy();
                                     idStructure = _linkService.GetIdStructure(molecule.LinkEdges);
                                     molecule.IdStructure = idStructure;
                                     if (!Ids.Contains(molecule.IdStructure))
@@ -197,7 +199,6 @@ namespace EvoGen.MoleculeSearch
                             SearchList.RemoveAll(x => x == formula);
                             ShowSearchDataSource();
                         }
-                        _logService.NewSearch(formula);
                     }
                 }));
             }
@@ -234,16 +235,8 @@ namespace EvoGen.MoleculeSearch
                                 saved = _moleculeService.Create(molecule);
 
                             var emptyMolecule = _moleculeService.GetByIdStructure(molecule.Nomenclature, null);
-                            if (emptyMolecule != null)
-                            {
-                                if (_moleculeService.GetNotEmptyMoleculeCount(molecule.Nomenclature) > 0)
-                                    _moleculeService.Delete(emptyMolecule);
-                            }
-                            else if (string.IsNullOrEmpty(molecule.IdStructure))
-                            {
-                                if (_moleculeService.GetNotEmptyMoleculeCount(molecule.Nomenclature) == 0)
-                                    saved = _moleculeService.Create(molecule);
-                            }
+                            if (emptyMolecule != null && _moleculeService.GetNotEmptyMoleculeCount(molecule.Nomenclature) > 0)
+                                _moleculeService.Delete(emptyMolecule);
                         }
 
                         if (saved != null)

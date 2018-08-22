@@ -126,8 +126,8 @@ namespace EvoGen.MoleculeSearch
 
         private void timerSearch_Tick(object sender, EventArgs e)
         {
-            //if(ThreadSearch.Count < (Environment.ProcessorCount / 2))
-            if (ThreadSearch.Count < (1))
+            if(ThreadSearch.Count < (Environment.ProcessorCount / 2))
+            //if (ThreadSearch.Count < (1))
             {
                 ThreadSearch.Add(new Thread(() =>
                 {
@@ -135,6 +135,7 @@ namespace EvoGen.MoleculeSearch
                     int atomsCount = 0;
                     int diferentAtomsCount = 0;
                     int searchCounter = 0;
+                    bool fromDataSet = false;
                     FormulaGenerator fg = new FormulaGenerator();
 
                     if (FromEmpty)
@@ -143,6 +144,7 @@ namespace EvoGen.MoleculeSearch
                         formula = molecule.Nomenclature;
                         atomsCount = molecule.AtomsCount;
                         diferentAtomsCount = molecule.DiferentAtomsCount;
+                        fromDataSet = molecule.FromDataSet;
                         searchCounter = _logService.GetCounter(formula);
                     }
                     else if (FromRandom)
@@ -153,12 +155,13 @@ namespace EvoGen.MoleculeSearch
                         diferentAtomsCount = moleculeAtoms.Count;
                         searchCounter = _logService.GetCounter(formula);
                     }
-                    
+
                     if (!string.IsNullOrEmpty(formula))
                     {
                         lock (listObjectLock)
                         {
-                            _logService.NewSearch(formula);
+                            if (fromDataSet)
+                                _logService.NewSearch(formula);
                             SearchList.Add(formula);
                             ShowSearchDataSource();
                         }
@@ -170,6 +173,7 @@ namespace EvoGen.MoleculeSearch
                         );
                         new Task(() => ga.FindSolutions()).Start();
                         string idStructure = string.Empty;
+                        int resultCounter = 0;
                         while (!ga.Finished)
                         {
                             if (ga.ResultList.Count > 0)
@@ -177,8 +181,10 @@ namespace EvoGen.MoleculeSearch
                                 var molecule = ga.ResultList.Dequeue();
                                 if (molecule != null)
                                 {
+                                    resultCounter++;
                                     molecule.ReorganizeLinks();
                                     molecule.SetEnergy();
+                                    molecule.FromDataSet = fromDataSet;
                                     idStructure = _linkService.GetIdStructure(molecule.LinkEdges);
                                     molecule.IdStructure = idStructure;
                                     if (!Ids.Contains(molecule.IdStructure))
@@ -195,6 +201,8 @@ namespace EvoGen.MoleculeSearch
                         }
                         lock (listObjectLock)
                         {
+                            if (!fromDataSet && resultCounter > 0)
+                                _logService.NewSearch(formula);
                             Ids.RemoveAll(x => x == idStructure);
                             SearchList.RemoveAll(x => x == formula);
                             ShowSearchDataSource();
@@ -315,33 +323,31 @@ namespace EvoGen.MoleculeSearch
 
         private int GetPopulationSize(int atomsCount, int diferentAtomsCount, int searchCounter)
         {
-            if (searchCounter == 0)
-            {
-                if (atomsCount < 5)
-                    return 100;
-                else if (atomsCount >= 5 && atomsCount < 7)
-                    return 200;
-                else
-                    return 400;
-            }
-            return 200;
+            var result = 0;
+            if (atomsCount < 5)
+                result = 100;
+            else if (atomsCount >= 5 && atomsCount < 7)
+                result = 200;
+            else
+                result = 400;
+            return (result * (searchCounter + 1));
         }
 
         private int GetMaxGenerations(int atomsCount, int diferentAtomsCount, int searchCounter)
         {
-            if (searchCounter == 0)
-            {
-                if (atomsCount < 40)
-                    return 2000;
-                else
-                    return 4000;
-            }
-            return 10000;
+            var result = 0;
+            if (atomsCount < 40)
+                result = 2000;
+            else
+                result = 4000;
+            return (result * (searchCounter + 1));
         }
 
         private double GetMutationRate(int atomsCount, int diferentAtomsCount, int searchCounter)
         {
-            return 0.20;
+            if ((searchCounter % 2) == 0)
+                return 0.20;
+            return 0.25;
         }
     }
 }

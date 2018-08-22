@@ -60,10 +60,20 @@ namespace EvoGen.Domain.Services
         {
             if (_logRepository.GetAll().Count() > 0)
             {
-                var minSearched = _logRepository.GetAll().Min(x => x.SearchCounter);
-                var query = (from molecule in _moleculeRepository.GetAll()
-                             join log in _moleculeRepository.GetAll() on molecule.Nomenclature equals log.Nomenclature
-                             select new { molecule, log });
+                var randon = new Random();
+                var emptyCounter = _moleculeRepository.GetAll().Count(x => string.IsNullOrEmpty(x.IdStructure));
+                if(emptyCounter > 0)
+                {
+                    var skipElements = randon.Next(_moleculeRepository.GetAll().Count(x => string.IsNullOrEmpty(x.IdStructure)));
+                    return _moleculeRepository.GetAll().Skip(skipElements).FirstOrDefault();
+                }
+                else
+                {
+                    var minSearches = _logRepository.GetAll().Min(x => x.SearchCounter);
+                    var skipElements = randon.Next(_logRepository.GetAll().Count(x => x.SearchCounter == minSearches));
+                    var nomenclature = _logRepository.GetAll().Skip(skipElements).FirstOrDefault().Nomenclature;
+                    return _moleculeRepository.GetAll().Where(x => x.Nomenclature == nomenclature).FirstOrDefault();
+                }
             }
             return _moleculeRepository.GetAll().First(x => string.IsNullOrEmpty(x.IdStructure));
         }

@@ -13,8 +13,9 @@ namespace EvoGen.Domain.Collections
         public string Nomenclature { get; private set; }
         public string IdStructure { get; set; }
         public int Energy { get; set; }
+        public bool FromDataSet { get; set; }
 
-        private Random _random;
+        private static Random _random = new Random(DateTime.Now.Millisecond);
 
         public static List<AtomNode> ExtractAtomsFromNomenclature(string nomenclature)
         {
@@ -78,7 +79,6 @@ namespace EvoGen.Domain.Collections
         {
             if (this.AtomNodes != null)
             {
-                _random = new Random(DateTime.Now.Millisecond);
                 foreach (AtomNode fromAtom in this.AtomNodes)
                 {
                     AtomNode toAtom = null;

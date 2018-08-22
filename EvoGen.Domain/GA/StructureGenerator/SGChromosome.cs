@@ -10,7 +10,7 @@ namespace EvoGen.Domain.GA.StructureGenerator
         public MoleculeGraph Molecule { get; private set; }
         public double Fitness { get; private set; }
 
-        private Random _random;
+        private static Random _random = new Random(DateTime.Now.Millisecond);
 
         public SGChromosome(MoleculeGraph molecule)
         {
@@ -68,7 +68,6 @@ namespace EvoGen.Domain.GA.StructureGenerator
 
         public void Mutate(double rate)
         {
-            _random = new Random(DateTime.Now.Millisecond);
             double randonrate = _random.NextDouble();
             if (randonrate < rate)
             {

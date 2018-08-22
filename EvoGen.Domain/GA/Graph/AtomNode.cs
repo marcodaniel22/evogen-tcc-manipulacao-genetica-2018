@@ -10,7 +10,7 @@ namespace EvoGen.Domain.Collections
         public int Octet { get; private set; }
         public int AtomId { get; private set; }
         public double AtomFitiness { get; private set; }
-        
+
         public AtomNode(string symbol, int atomId)
         {
             this.Symbol = symbol;

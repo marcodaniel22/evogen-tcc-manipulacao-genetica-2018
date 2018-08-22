@@ -23,7 +23,7 @@ namespace EvoGen.Domain.GA.StructureGenerator
         private int _populationSize = 0;
         private int _maxGenerations = 0;
         private double _mutationRate = 0.00;
-        private Random _random;
+        private static Random _random = new Random(DateTime.Now.Millisecond);
 
         public StructureGenerator(string target, int populationSize, int generations, double mutationRate)
         {
@@ -136,7 +136,6 @@ namespace EvoGen.Domain.GA.StructureGenerator
         {
             if (BestIndividual.Fitness < WorseIndividual.Fitness)
             {
-                _random = new Random(DateTime.Now.Millisecond);
                 for (int i = 0; i < Children.Count; i++)
                 {
                     int x = 0;

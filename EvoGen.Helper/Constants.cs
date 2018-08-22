@@ -22,7 +22,6 @@ namespace EvoGen.Helper
         public static readonly List<string> CyclicCompoundAtoms = new List<string> { "C", "O", "N", "P", "S" };
         public static readonly Dictionary<Tuple<string, int, string>, int> EnergyTable = new Dictionary<Tuple<string, int, string>, int> {
             { new Tuple<string, int, string>("C", 1, "H"), 412 },
-            { new Tuple<string, int, string>("C", 1, "H"), 412 },
             { new Tuple<string, int, string>("C", 1, "C"), 348 },
             { new Tuple<string, int, string>("C", 2, "C"), 612 },
             { new Tuple<string, int, string>("C", 3, "C"), 837 },

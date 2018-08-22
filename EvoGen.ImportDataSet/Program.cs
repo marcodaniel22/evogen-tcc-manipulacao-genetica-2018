@@ -39,7 +39,8 @@ namespace EvoGen.ImportDataSet
                         {
                             var molecule = JsonLoader.GetMolecule();
                             var formula = fg.GetFormulaFromMolecule(molecule);
-                            if (moleculeService.GetByNomenclature(formula).Count == 0)
+                            if (moleculeService.GetByNomenclature(formula).Count == 0 
+                                && (molecule.Sum(x => x.Value) >= 2 && molecule.Sum(x => x.Value) <= 50))
                             {
                                 Console.WriteLine(string.Format("{0} - Salvando molécula {1}", counter++, formula));
                                 moleculeService.Create(new Molecule()

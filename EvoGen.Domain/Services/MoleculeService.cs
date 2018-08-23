@@ -6,6 +6,7 @@ using EvoGen.Domain.ValueObjects;
 using EvoGen.Domain.Interfaces.Repositories;
 using EvoGen.Domain.Interfaces.Services;
 using EvoGen.Helper;
+using System.Threading;
 
 namespace EvoGen.Domain.Services
 {
@@ -27,55 +28,181 @@ namespace EvoGen.Domain.Services
 
         public int GetMoleculeCount()
         {
-            return _moleculeRepository.GetAll().Count();
+            var tries = 3;
+            while (tries >= 0)
+            {
+                try
+                {
+                    return _moleculeRepository.GetAll().Count();
+                }
+                catch (Exception)
+                {
+                    tries--;
+                    if (tries == 2)
+                        Thread.Sleep(10000);
+                    else if (tries == 1)
+                        Thread.Sleep(60000);
+                    else if (tries == 0)
+                        Thread.Sleep(300000);
+                }
+            }
+            return 0;
         }
 
         public List<Molecule> GetByNomenclature(string nomenclature)
         {
-            return _moleculeRepository.GetAll().Where(x => x.Nomenclature == nomenclature).ToList();
+            var tries = 3;
+            while (tries >= 0)
+            {
+                try
+                {
+                    return _moleculeRepository.GetAll().Where(x => x.Nomenclature == nomenclature).ToList();
+                }
+                catch (Exception)
+                {
+                    tries--;
+                    if (tries == 2)
+                        Thread.Sleep(10000);
+                    else if (tries == 1)
+                        Thread.Sleep(60000);
+                    else if (tries == 0)
+                        Thread.Sleep(300000);
+                }
+            }
+            return new List<Molecule>();
         }
 
         public Molecule GetByIdStructure(string nomenclature, string idStructure)
         {
-            return _moleculeRepository.GetAll()
-                .FirstOrDefault(x => x.Nomenclature == nomenclature && x.IdStructure == idStructure);
+            var tries = 3;
+            while (tries >= 0)
+            {
+                try
+                {
+                    return _moleculeRepository.GetAll()
+                        .FirstOrDefault(x => x.Nomenclature == nomenclature && x.IdStructure == idStructure);
+                }
+                catch (Exception)
+                {
+                    tries--;
+                    if (tries == 2)
+                        Thread.Sleep(10000);
+                    else if (tries == 1)
+                        Thread.Sleep(60000);
+                    else if (tries == 0)
+                        Thread.Sleep(300000);
+                }
+            }
+            return null;
         }
 
         public Molecule Create(MoleculeGraph molecule)
         {
-            return _moleculeRepository.Create(GetCollectionFromGraph(molecule));
+            var tries = 3;
+            while (tries >= 0)
+            {
+                try
+                {
+                    return _moleculeRepository.Create(GetCollectionFromGraph(molecule));
+                }
+                catch (Exception)
+                {
+                    tries--;
+                    if (tries == 2)
+                        Thread.Sleep(10000);
+                    else if (tries == 1)
+                        Thread.Sleep(60000);
+                    else if (tries == 0)
+                        Thread.Sleep(300000);
+                }
+            }
+            return null;
         }
 
         public Molecule Delete(Molecule molecule)
         {
-            return _moleculeRepository.Delete(molecule.guidString);
+            var tries = 3;
+            while (tries >= 0)
+            {
+                try
+                {
+                    return _moleculeRepository.Delete(molecule.guidString);
+                }
+                catch (Exception)
+                {
+                    tries--;
+                    if (tries == 2)
+                        Thread.Sleep(10000);
+                    else if (tries == 1)
+                        Thread.Sleep(60000);
+                    else if (tries == 0)
+                        Thread.Sleep(300000);
+                }
+            }
+            return null;
         }
 
         public int GetNotEmptyMoleculeCount(string nomenclature)
         {
-            return _moleculeRepository.GetAll().Count(x => x.Nomenclature == nomenclature && !string.IsNullOrEmpty(x.IdStructure));
+            var tries = 3;
+            while (tries >= 0)
+            {
+                try
+                {
+                    return _moleculeRepository.GetAll().Count(x => x.Nomenclature == nomenclature && !string.IsNullOrEmpty(x.IdStructure));
+                }
+                catch (Exception)
+                {
+                    tries--;
+                    if (tries == 2)
+                        Thread.Sleep(10000);
+                    else if (tries == 1)
+                        Thread.Sleep(60000);
+                    else if (tries == 0)
+                        Thread.Sleep(300000);
+                }
+            }
+            return 0;
         }
 
         public Molecule GetFirstEmpty()
         {
-            if (_logRepository.GetAll().Count() > 0)
+            var tries = 3;
+            while (tries >= 0)
             {
-                var randon = new Random();
-                var emptyCounter = _moleculeRepository.GetAll().Count(x => string.IsNullOrEmpty(x.IdStructure));
-                if(emptyCounter > 0)
+                try
                 {
-                    var skipElements = randon.Next(_moleculeRepository.GetAll().Count(x => string.IsNullOrEmpty(x.IdStructure)));
-                    return _moleculeRepository.GetAll().Skip(skipElements).FirstOrDefault();
+                    if (_logRepository.GetAll().Count() > 0)
+                    {
+                        var randon = new Random();
+                        var emptyCounter = _moleculeRepository.GetAll().Count(x => string.IsNullOrEmpty(x.IdStructure));
+                        if (emptyCounter > 0)
+                        {
+                            var skipElements = randon.Next(_moleculeRepository.GetAll().Count(x => string.IsNullOrEmpty(x.IdStructure)));
+                            return _moleculeRepository.GetAll().Skip(skipElements).FirstOrDefault();
+                        }
+                        else
+                        {
+                            var minSearches = _logRepository.GetAll().Min(x => x.SearchCounter);
+                            var skipElements = randon.Next(_logRepository.GetAll().Count(x => x.SearchCounter == minSearches));
+                            var nomenclature = _logRepository.GetAll().Skip(skipElements).FirstOrDefault().Nomenclature;
+                            return _moleculeRepository.GetAll().Where(x => x.Nomenclature == nomenclature).FirstOrDefault();
+                        }
+                    }
+                    return _moleculeRepository.GetAll().First(x => string.IsNullOrEmpty(x.IdStructure));
                 }
-                else
+                catch (Exception)
                 {
-                    var minSearches = _logRepository.GetAll().Min(x => x.SearchCounter);
-                    var skipElements = randon.Next(_logRepository.GetAll().Count(x => x.SearchCounter == minSearches));
-                    var nomenclature = _logRepository.GetAll().Skip(skipElements).FirstOrDefault().Nomenclature;
-                    return _moleculeRepository.GetAll().Where(x => x.Nomenclature == nomenclature).FirstOrDefault();
+                    tries--;
+                    if (tries == 2)
+                        Thread.Sleep(10000);
+                    else if (tries == 1)
+                        Thread.Sleep(60000);
+                    else if (tries == 0)
+                        Thread.Sleep(300000);
                 }
             }
-            return _moleculeRepository.GetAll().First(x => string.IsNullOrEmpty(x.IdStructure));
+            return null;
         }
 
         #endregion

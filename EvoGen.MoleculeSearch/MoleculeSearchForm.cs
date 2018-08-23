@@ -23,7 +23,7 @@ namespace EvoGen.MoleculeSearch
         private bool FromRandom;
         private bool FromEmpty;
 
-        private List<Thread> ThreadSearch;
+        private Dictionary<DateTime, Thread> ThreadSearch;
         private Thread ThreadSave;
         private DateTime ThreadSaveInit;
 
@@ -53,7 +53,7 @@ namespace EvoGen.MoleculeSearch
             this.FromRandom = false;
             this.FromEmpty = true;
 
-            this.ThreadSearch = new List<Thread>();
+            this.ThreadSearch = new Dictionary<DateTime, Thread>();
             this.queueObjectLock = new object();
             this.listObjectLock = new object();
         }
@@ -126,10 +126,10 @@ namespace EvoGen.MoleculeSearch
 
         private void timerSearch_Tick(object sender, EventArgs e)
         {
-            if(ThreadSearch.Count < (Environment.ProcessorCount / 2))
+            if (ThreadSearch.Count < (Environment.ProcessorCount / 2))
             //if (ThreadSearch.Count < (1))
             {
-                ThreadSearch.Add(new Thread(() =>
+                ThreadSearch.Add(DateTime.Now, new Thread(() =>
                 {
                     string formula = string.Empty;
                     int atomsCount = 0;
@@ -137,82 +137,100 @@ namespace EvoGen.MoleculeSearch
                     int searchCounter = 0;
                     bool fromDataSet = false;
                     FormulaGenerator fg = new FormulaGenerator();
+                    try
+                    {
+                        if (FromEmpty)
+                        {
+                            var molecule = _moleculeService.GetFirstEmpty();
+                            formula = molecule.Nomenclature;
+                            atomsCount = molecule.AtomsCount;
+                            diferentAtomsCount = molecule.DiferentAtomsCount;
+                            fromDataSet = molecule.FromDataSet;
+                            searchCounter = _logService.GetCounter(formula);
+                        }
+                        else if (FromRandom)
+                        {
+                            var moleculeAtoms = fg.GenerateFormula();
+                            formula = fg.GetFormulaFromMolecule(moleculeAtoms);
+                            atomsCount = moleculeAtoms.Sum(x => x.Value);
+                            diferentAtomsCount = moleculeAtoms.Count;
+                            searchCounter = _logService.GetCounter(formula);
+                        }
 
-                    if (FromEmpty)
-                    {
-                        var molecule = _moleculeService.GetFirstEmpty();
-                        formula = molecule.Nomenclature;
-                        atomsCount = molecule.AtomsCount;
-                        diferentAtomsCount = molecule.DiferentAtomsCount;
-                        fromDataSet = molecule.FromDataSet;
-                        searchCounter = _logService.GetCounter(formula);
-                    }
-                    else if (FromRandom)
-                    {
-                        var moleculeAtoms = fg.GenerateFormula();
-                        formula = fg.GetFormulaFromMolecule(moleculeAtoms);
-                        atomsCount = moleculeAtoms.Sum(x => x.Value);
-                        diferentAtomsCount = moleculeAtoms.Count;
-                        searchCounter = _logService.GetCounter(formula);
-                    }
-
-                    if (!string.IsNullOrEmpty(formula))
-                    {
-                        lock (listObjectLock)
+                        if (!string.IsNullOrEmpty(formula))
                         {
                             if (fromDataSet)
                                 _logService.NewSearch(formula);
-                            SearchList.Add(formula);
-                            ShowSearchDataSource();
-                        }
-                        var ga = new StructureGenerator(
-                            formula,
-                            GetPopulationSize(atomsCount, diferentAtomsCount, searchCounter),
-                            GetMaxGenerations(atomsCount, diferentAtomsCount, searchCounter),
-                            GetMutationRate(atomsCount, diferentAtomsCount, searchCounter)
-                        );
-                        new Task(() => ga.FindSolutions()).Start();
-                        string idStructure = string.Empty;
-                        int resultCounter = 0;
-                        while (!ga.Finished)
-                        {
-                            if (ga.ResultList.Count > 0)
+                            lock (listObjectLock)
                             {
-                                var molecule = ga.ResultList.Dequeue();
-                                if (molecule != null)
+                                SearchList.Add(formula);
+                                ShowSearchDataSource();
+                            }
+                            var ga = new StructureGenerator(
+                                formula,
+                                GetPopulationSize(atomsCount, diferentAtomsCount, searchCounter),
+                                GetMaxGenerations(atomsCount, diferentAtomsCount, searchCounter),
+                                GetMutationRate(atomsCount, diferentAtomsCount, searchCounter)
+                            );
+                            new Task(() => ga.FindSolutions()).Start();
+                            string idStructure = string.Empty;
+                            int resultCounter = 0;
+                            while (!ga.Finished)
+                            {
+                                if (ga.ResultList.Count > 0)
                                 {
-                                    resultCounter++;
-                                    molecule.ReorganizeLinks();
-                                    molecule.SetEnergy();
-                                    molecule.FromDataSet = fromDataSet;
-                                    idStructure = _linkService.GetIdStructure(molecule.LinkEdges);
-                                    molecule.IdStructure = idStructure;
-                                    if (!Ids.Contains(molecule.IdStructure))
+                                    var molecule = ga.ResultList.Dequeue();
+                                    if (molecule != null)
                                     {
-                                        Ids.Add(molecule.IdStructure);
-                                        lock (queueObjectLock)
+                                        resultCounter++;
+                                        molecule.ReorganizeLinks();
+                                        molecule.SetEnergy();
+                                        molecule.FromDataSet = fromDataSet;
+                                        idStructure = _linkService.GetIdStructure(molecule.LinkEdges);
+                                        molecule.IdStructure = idStructure;
+                                        if (!Ids.Contains(molecule.IdStructure))
                                         {
-                                            ResultQueue.Enqueue(molecule);
-                                            ShowQueueDataSource();
+                                            Ids.Add(molecule.IdStructure);
+                                            lock (queueObjectLock)
+                                            {
+                                                ResultQueue.Enqueue(molecule);
+                                                ShowQueueDataSource();
+                                            }
                                         }
                                     }
                                 }
                             }
+                            lock (listObjectLock)
+                            {
+                                if (!fromDataSet && resultCounter > 0)
+                                    _logService.NewSearch(formula);
+                                Ids.RemoveAll(x => x == idStructure);
+                                SearchList.RemoveAll(x => x == formula);
+                                ShowSearchDataSource();
+                            }
                         }
-                        lock (listObjectLock)
-                        {
-                            if (!fromDataSet && resultCounter > 0)
-                                _logService.NewSearch(formula);
-                            Ids.RemoveAll(x => x == idStructure);
+                    }
+                    catch (Exception) { }
+                    finally
+                    {
+                        if (SearchList.Contains(formula))
                             SearchList.RemoveAll(x => x == formula);
-                            ShowSearchDataSource();
-                        }
+                        ShowSearchDataSource();
                     }
                 }));
             }
 
-            ThreadSearch.Where(x => x.ThreadState == ThreadState.Unstarted).ToList().ForEach(x => x.Start());
-            ThreadSearch.RemoveAll(x => !x.IsAlive);
+            ThreadSearch.Where(x => x.Value.ThreadState == ThreadState.Unstarted).ToList().ForEach(x =>
+            {
+                x.Value.IsBackground = true;
+                x.Value.Start();
+            });
+            var deleteThreads = ThreadSearch.Where(x => !x.Value.IsAlive || x.Key < DateTime.Now.AddMinutes(-10)).Select(x => x.Key).ToList();
+            foreach (var date in deleteThreads)
+            {
+                ThreadSearch[date].Abort();
+                ThreadSearch.Remove(date);
+            }
 
             txtProcess.Text = ThreadSearch.Count.ToString();
             txtQuantityDatabase.Text = DatabaseCount.ToString();

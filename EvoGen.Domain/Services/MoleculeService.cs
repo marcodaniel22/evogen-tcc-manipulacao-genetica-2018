@@ -87,9 +87,12 @@ namespace EvoGen.Domain.Services
             var collection = new Molecule();
             collection.Nomenclature = molecule.Nomenclature;
             collection.IdStructure = molecule.IdStructure;
+            collection.Energy = molecule.Energy;
+            collection.FromDataSet = molecule.FromDataSet;
             if (molecule.AtomNodes != null && molecule.AtomNodes.Count > 0)
             {
                 collection.AtomsCount = molecule.AtomNodes.Count;
+                collection.DiferentAtomsCount = molecule.AtomNodes.GroupBy(x => x.Symbol).Count();
                 collection.Links = molecule.LinkEdges.Select(x => _linkService.GetCollectionFromEdge(x)).ToList();
             }
             return collection;

@@ -222,14 +222,15 @@ namespace EvoGen.MoleculeSearch
 
             ThreadSearch.Where(x => x.Value.ThreadState == ThreadState.Unstarted).ToList().ForEach(x =>
             {
-                x.Value.IsBackground = true;
                 x.Value.Start();
             });
             var deleteThreads = ThreadSearch.Where(x => !x.Value.IsAlive || x.Key < DateTime.Now.AddMinutes(-10)).Select(x => x.Key).ToList();
             foreach (var date in deleteThreads)
             {
-                ThreadSearch[date].Abort();
+                if (ThreadSearch[date].IsAlive)
+                    ThreadSearch[date].Abort();
                 ThreadSearch.Remove(date);
+                date = null;
             }
 
             txtProcess.Text = ThreadSearch.Count.ToString();
@@ -244,13 +245,12 @@ namespace EvoGen.MoleculeSearch
                 ThreadSaveInit = DateTime.Now;
                 ThreadSave = new Thread(() =>
                 {
+                    MoleculeGraph molecule = null;
+                    Molecule saved = null;
                     try
                     {
                         while (ResultQueue.Count > 0)
                         {
-                            MoleculeGraph molecule = null;
-                            Molecule saved = null;
-
                             lock (queueObjectLock)
                             {
                                 molecule = ResultQueue.Dequeue();
@@ -275,13 +275,21 @@ namespace EvoGen.MoleculeSearch
                         }
                         DatabaseCount = _moleculeService.GetMoleculeCount();
                     }
-                    catch (Exception) { }
+                    catch (Exception)
+                    {
+                        lock (queueObjectLock)
+                        {
+                            if (molecule != null && saved == null)
+                                ResultQueue.Enqueue(molecule);
+                            ShowQueueDataSource();
+                        }
+                    }
                 });
                 ThreadSave.Start();
             }
             else if (ThreadSaveInit != null && ThreadSaveInit < DateTime.Now.AddMinutes(-10))
             {
-                if (ThreadSave != null)
+                if (ThreadSave != null && ThreadSave.IsAlive)
                     ThreadSave.Abort();
                 ThreadSave = null;
             }

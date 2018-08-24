@@ -230,7 +230,6 @@ namespace EvoGen.MoleculeSearch
                 if (ThreadSearch[date].IsAlive)
                     ThreadSearch[date].Abort();
                 ThreadSearch.Remove(date);
-                date = null;
             }
 
             txtProcess.Text = ThreadSearch.Count.ToString();

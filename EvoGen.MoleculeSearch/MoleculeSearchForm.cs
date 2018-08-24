@@ -345,10 +345,10 @@ namespace EvoGen.MoleculeSearch
             if (atomsCount < 5)
                 result = 100;
             else if (atomsCount >= 5 && atomsCount < 7)
-                result = 200;
+                result = 150;
             else
-                result = 400;
-            return (result * (searchCounter + 1));
+                result = 200;
+            return result + Convert.ToInt32(result * (searchCounter + 1) * 0.1);
         }
 
         private int GetMaxGenerations(int atomsCount, int diferentAtomsCount, int searchCounter)
@@ -365,7 +365,7 @@ namespace EvoGen.MoleculeSearch
         {
             if ((searchCounter % 2) == 0)
                 return 0.20;
-            return 0.25;
+            return 0.15;
         }
     }
 }

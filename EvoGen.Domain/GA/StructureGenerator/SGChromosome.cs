@@ -71,39 +71,20 @@ namespace EvoGen.Domain.GA.StructureGenerator
             double randonrate = _random.NextDouble();
             if (randonrate < rate)
             {
-                bool mutated = false;
+                this.Molecule.LinkEdges.RemoveAt(_random.Next(this.Molecule.LinkEdges.Count));
+                bool create = false;
                 do
                 {
-                    var link1 = this.Molecule.LinkEdges[_random.Next(this.Molecule.LinkEdges.Count)];
-                    var link2 = this.Molecule.LinkEdges[_random.Next(this.Molecule.LinkEdges.Count)];
-                    mutated = (link1.From.AtomId != link2.To.AtomId) && (link2.From.AtomId != link1.To.AtomId);
-                    if (mutated)
+                    var atom1 = this.Molecule.AtomNodes[_random.Next(this.Molecule.AtomNodes.Count)];
+                    var atom2 = this.Molecule.AtomNodes[_random.Next(this.Molecule.AtomNodes.Count)];
+                    create = atom1.AtomId != atom2.AtomId;
+                    if (create)
                     {
-                        var bag = link1.To;
-                        link1.To = link2.To;
-                        link2.To = bag;
+                        var from = new AtomNode(atom1.Symbol, atom1.AtomId);
+                        var to = new AtomNode(atom2.Symbol, atom2.AtomId);
+                        this.Molecule.LinkEdges.Add(new LinkEdge(from, to));
                     }
-                } while (!mutated);
-
-                var newMutationRate = _random.NextDouble();
-                if ((this.Molecule.AtomNodes.Count - 1) < this.Molecule.LinkEdges.Count && newMutationRate > 0.90)
-                    this.Molecule.LinkEdges.RemoveAt(_random.Next(this.Molecule.LinkEdges.Count));
-                else if (newMutationRate < 0.10)
-                {
-                    bool create = false;
-                    do
-                    {
-                        var atom1 = this.Molecule.AtomNodes[_random.Next(this.Molecule.AtomNodes.Count)];
-                        var atom2 = this.Molecule.AtomNodes[_random.Next(this.Molecule.AtomNodes.Count)];
-                        create = atom1.AtomId != atom2.AtomId;
-                        if (create)
-                        {
-                            var from = new AtomNode(atom1.Symbol, atom1.AtomId);
-                            var to = new AtomNode(atom2.Symbol, atom2.AtomId);
-                            this.Molecule.LinkEdges.Add(new LinkEdge(from, to));
-                        }
-                    } while (!create);
-                }
+                } while (!create);
 
                 this.CalcFitness();
             }

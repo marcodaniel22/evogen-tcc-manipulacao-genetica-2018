@@ -14,6 +14,7 @@ namespace EvoGen.Domain.Collections
         public string IdStructure { get; set; }
         public int Energy { get; set; }
         public bool FromDataSet { get; set; }
+        public int MaxLinksCounter { get; private set; }
 
         private static Random _random = new Random(DateTime.Now.Millisecond);
 
@@ -39,6 +40,7 @@ namespace EvoGen.Domain.Collections
         {
             this.Nomenclature = nomenclature;
             this.AtomNodes = atoms;
+            this.GetMaxLinksCounter();
             this.LinkEdges = new List<LinkEdge>();
             this.GenerateRandomLinks();
         }
@@ -47,6 +49,7 @@ namespace EvoGen.Domain.Collections
         {
             this.Nomenclature = nomenclature;
             this.AtomNodes = atoms;
+            this.GetMaxLinksCounter();
             this.LinkEdges = links;
         }
 
@@ -79,15 +82,29 @@ namespace EvoGen.Domain.Collections
         {
             if (this.AtomNodes != null)
             {
-                foreach (AtomNode fromAtom in this.AtomNodes)
+                while (this.LinkEdges.Count < this.MaxLinksCounter)
                 {
+                    AtomNode fromAtom = null;
                     AtomNode toAtom = null;
                     do
                     {
+                        fromAtom = this.AtomNodes[_random.Next(this.AtomNodes.Count)];
                         toAtom = this.AtomNodes[_random.Next(this.AtomNodes.Count)];
                     } while (!this.NewLink(fromAtom, toAtom));
                 }
             }
+        }
+
+        private void GetMaxLinksCounter()
+        {
+            int count = 0;
+            foreach (var atomGroup in this.AtomNodes.GroupBy(x => x.Symbol))
+            {
+                var atomQuantity = atomGroup.Count();
+                var octetRule = atomGroup.Key == "H" ? 1 : (8 - Constants.OoctetRule[atomGroup.Key]);
+                count += (atomQuantity * octetRule);
+            }
+            this.MaxLinksCounter = (count / 2);
         }
 
         public bool NewLink(AtomNode from, AtomNode to)
@@ -190,7 +207,7 @@ namespace EvoGen.Domain.Collections
                     {
                         energy += Constants.EnergyTable[hash];
                     }
-                    else if(Constants.EnergyTable.ContainsKey(reverseHash))
+                    else if (Constants.EnergyTable.ContainsKey(reverseHash))
                     {
                         energy += Constants.EnergyTable[reverseHash];
                     }

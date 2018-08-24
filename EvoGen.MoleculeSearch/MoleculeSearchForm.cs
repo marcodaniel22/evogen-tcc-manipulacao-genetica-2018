@@ -244,34 +244,38 @@ namespace EvoGen.MoleculeSearch
                 ThreadSaveInit = DateTime.Now;
                 ThreadSave = new Thread(() =>
                 {
-                    while (ResultQueue.Count > 0)
+                    try
                     {
-                        MoleculeGraph molecule = null;
-                        Molecule saved = null;
-
-                        lock (queueObjectLock)
+                        while (ResultQueue.Count > 0)
                         {
-                            molecule = ResultQueue.Dequeue();
-                            ShowQueueDataSource();
-                        }
+                            MoleculeGraph molecule = null;
+                            Molecule saved = null;
 
-                        if (molecule != null && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
-                        {
-                            if (!string.IsNullOrEmpty(molecule.IdStructure))
-                                saved = _moleculeService.Create(molecule);
+                            lock (queueObjectLock)
+                            {
+                                molecule = ResultQueue.Dequeue();
+                                ShowQueueDataSource();
+                            }
 
-                            var emptyMolecule = _moleculeService.GetByIdStructure(molecule.Nomenclature, null);
-                            if (emptyMolecule != null && _moleculeService.GetNotEmptyMoleculeCount(molecule.Nomenclature) > 0)
-                                _moleculeService.Delete(emptyMolecule);
-                        }
+                            if (molecule != null && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
+                            {
+                                if (!string.IsNullOrEmpty(molecule.IdStructure))
+                                    saved = _moleculeService.Create(molecule);
 
-                        if (saved != null)
-                        {
-                            SearchCount++;
-                            DatabaseCount++;
+                                var emptyMolecule = _moleculeService.GetByIdStructure(molecule.Nomenclature, null);
+                                if (emptyMolecule != null && _moleculeService.GetNotEmptyMoleculeCount(molecule.Nomenclature) > 0)
+                                    _moleculeService.Delete(emptyMolecule);
+                            }
+
+                            if (saved != null)
+                            {
+                                SearchCount++;
+                                DatabaseCount++;
+                            }
                         }
+                        DatabaseCount = _moleculeService.GetMoleculeCount();
                     }
-                    DatabaseCount = _moleculeService.GetMoleculeCount();
+                    catch (Exception) { }
                 });
                 ThreadSave.Start();
             }

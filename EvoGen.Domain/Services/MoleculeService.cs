@@ -61,11 +61,14 @@ namespace EvoGen.Domain.Services
             if (_logRepository.GetAll().Count() > 0)
             {
                 var randon = new Random();
-                var emptyCounter = _moleculeRepository.GetAll().Count(x => string.IsNullOrEmpty(x.IdStructure));
+                var emptyMolecules = _moleculeRepository.GetAll().Where(x => string.IsNullOrEmpty(x.IdStructure));
+                //var minAtoms = emptyMolecules.Where(x => x.AtomsCount > 3 && x.AtomsCount < 20).Min(x => x.AtomsCount);
+                var toSearch = emptyMolecules.Where(x => x.AtomsCount > 3 && x.AtomsCount < 20);
+                var emptyCounter = toSearch.Count();
                 if (emptyCounter > 0)
                 {
-                    var skipElements = randon.Next(_moleculeRepository.GetAll().Count(x => string.IsNullOrEmpty(x.IdStructure)));
-                    return _moleculeRepository.GetAll().Skip(skipElements).FirstOrDefault();
+                    var skipElements = randon.Next(emptyCounter);
+                    return toSearch.Skip(skipElements).FirstOrDefault();
                 }
                 else
                 {

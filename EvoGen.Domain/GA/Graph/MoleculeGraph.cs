@@ -16,7 +16,7 @@ namespace EvoGen.Domain.Collections
         public bool FromDataSet { get; set; }
         public int MaxLinksCounter { get; private set; }
 
-        private static Random _random = new Random(DateTime.Now.Millisecond);
+        private volatile static Random _random = new Random(DateTime.Now.Millisecond);
 
         public static List<AtomNode> ExtractAtomsFromNomenclature(string nomenclature)
         {
@@ -129,6 +129,7 @@ namespace EvoGen.Domain.Collections
             var queue = new Queue<AtomNode>();
             var stack = new Stack<LinkEdge>(this.LinkEdges);
             var stackedLinks = new List<string>();
+            var fail = 0;
             AtomNode lastAtom = null;
 
             stack.Push(this.LinkEdges.FirstOrDefault());
@@ -147,8 +148,10 @@ namespace EvoGen.Domain.Collections
                             (x.From.AtomId == link.From.AtomId && x.To.AtomId == link.To.AtomId)
                             || (x.From.AtomId == link.To.AtomId && x.To.AtomId == link.From.AtomId)
                         ).ToList();
+
                     if (link.From.AtomId == lastAtom.AtomId)
                     {
+                        fail = 0;
                         foreach (var item in sameLinks)
                         {
                             newLinks.Add(new LinkEdge(link.From, link.To));
@@ -158,6 +161,7 @@ namespace EvoGen.Domain.Collections
                     }
                     else if (link.To.AtomId == lastAtom.AtomId)
                     {
+                        fail = 0;
                         foreach (var item in sameLinks)
                         {
                             newLinks.Add(new LinkEdge(link.To, link.From));
@@ -170,6 +174,16 @@ namespace EvoGen.Domain.Collections
                         lastAtom = queue.Dequeue();
                         queue.Enqueue(lastAtom);
                         stack.Push(link);
+                        fail++;
+
+                        if (fail >= queue.Count)
+                        {
+                            var alternativeLink = this.LinkEdges.Where(x => !stackedLinks.Contains(x.ToString())).DefaultIfEmpty()
+                                .FirstOrDefault(x => x.From.AtomId == lastAtom.AtomId || x.To.AtomId == lastAtom.AtomId);
+                            if (alternativeLink != null)
+                                stack.Push(alternativeLink);
+                        }
+
                         continue;
                     }
 

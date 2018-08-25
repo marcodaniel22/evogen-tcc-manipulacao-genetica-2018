@@ -23,7 +23,8 @@ namespace EvoGen.Domain.GA.StructureGenerator
         private int _populationSize = 0;
         private int _maxGenerations = 0;
         private double _mutationRate = 0.00;
-        private static Random _random = new Random(DateTime.Now.Millisecond);
+
+        private volatile static Random _random = new Random(DateTime.Now.Millisecond);
 
         public StructureGenerator(string target, int populationSize, int generations, double mutationRate)
         {

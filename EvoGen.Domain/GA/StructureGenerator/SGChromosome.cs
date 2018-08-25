@@ -10,7 +10,7 @@ namespace EvoGen.Domain.GA.StructureGenerator
         public MoleculeGraph Molecule { get; private set; }
         public double Fitness { get; private set; }
 
-        private static Random _random = new Random(DateTime.Now.Millisecond);
+        private volatile static Random _random = new Random(DateTime.Now.Millisecond);
 
         public SGChromosome(MoleculeGraph molecule)
         {

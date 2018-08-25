@@ -14,13 +14,15 @@ namespace EvoGen.Domain.Services
         private readonly IMoleculeRepository _moleculeRepository;
         private readonly ILogRepository _logRepository;
         private readonly ILinkService _linkService;
+        private readonly IAtomService _atomService;
 
-        public MoleculeService(IMoleculeRepository moleculeRepository, ILogRepository logRepository, ILinkService linkService)
+        public MoleculeService(IMoleculeRepository moleculeRepository, ILogRepository logRepository, ILinkService linkService, IAtomService atomService)
             : base(moleculeRepository)
         {
             this._moleculeRepository = moleculeRepository;
             this._logRepository = logRepository;
             this._linkService = linkService;
+            this._atomService = atomService;
         }
 
         #region RepositoryAcess
@@ -56,29 +58,25 @@ namespace EvoGen.Domain.Services
             return _moleculeRepository.GetAll().Count(x => x.Nomenclature == nomenclature && !string.IsNullOrEmpty(x.IdStructure));
         }
 
-        public Molecule GetFirstEmpty()
+        public Molecule GetRandomEmpty()
         {
-            if (_logRepository.GetAll().Count() > 0)
+            var randon = new Random();
+            var empty = _moleculeRepository.GetAll().Where(x => string.IsNullOrEmpty(x.IdStructure));
+            var query = empty.Where(x => x.AtomsCount > 3 && x.AtomsCount < 20);
+
+            var counter = query.Count();
+            if (counter > 0)
             {
-                var randon = new Random();
-                var emptyMolecules = _moleculeRepository.GetAll().Where(x => string.IsNullOrEmpty(x.IdStructure));
-                //var minAtoms = emptyMolecules.Where(x => x.AtomsCount > 3 && x.AtomsCount < 20).Min(x => x.AtomsCount);
-                var toSearch = emptyMolecules.Where(x => x.AtomsCount > 3 && x.AtomsCount < 20);
-                var emptyCounter = toSearch.Count();
-                if (emptyCounter > 0)
-                {
-                    var skipElements = randon.Next(emptyCounter);
-                    return toSearch.Skip(skipElements).FirstOrDefault();
-                }
-                else
-                {
-                    var minSearches = _logRepository.GetAll().Min(x => x.SearchCounter);
-                    var skipElements = randon.Next(_logRepository.GetAll().Count(x => x.SearchCounter == minSearches));
-                    var nomenclature = _logRepository.GetAll().Skip(skipElements).FirstOrDefault().Nomenclature;
-                    return _moleculeRepository.GetAll().Where(x => x.Nomenclature == nomenclature).FirstOrDefault();
-                }
+                var skip = randon.Next(counter);
+                return query.Skip(skip).FirstOrDefault();
             }
-            return _moleculeRepository.GetAll().First(x => string.IsNullOrEmpty(x.IdStructure));
+            else
+            {
+                var min = _logRepository.GetAll().Min(x => x.SearchCounter);
+                var skip = randon.Next(_logRepository.GetAll().Count(x => x.SearchCounter == min));
+                var nomenclature = _logRepository.GetAll().Skip(skip).FirstOrDefault().Nomenclature;
+                return _moleculeRepository.GetAll().Where(x => x.Nomenclature == nomenclature).FirstOrDefault();
+            }
         }
 
         #endregion
@@ -88,18 +86,23 @@ namespace EvoGen.Domain.Services
         public Molecule GetCollectionFromGraph(MoleculeGraph molecule)
         {
             var collection = new Molecule();
-            collection.Nomenclature = molecule.Nomenclature;
-            collection.IdStructure = molecule.IdStructure;
-            collection.Energy = molecule.Energy;
-            collection.FromDataSet = molecule.FromDataSet;
             if (molecule.AtomNodes != null && molecule.AtomNodes.Count > 0)
             {
                 collection.AtomsCount = molecule.AtomNodes.Count;
                 collection.DiferentAtomsCount = molecule.AtomNodes.GroupBy(x => x.Symbol).Count();
+                collection.SimpleAtoms = string.Join(",", molecule.AtomNodes.Select(x => x.ToString()).ToList());
+                collection.Atoms = molecule.AtomNodes.Select(x => _atomService.GetCollectionFromNode(x)).ToList();
+            }
+            if (molecule.LinkEdges != null && molecule.LinkEdges.Count > 0)
+            {
+                collection.SimpleLinks = string.Join(",", molecule.LinkEdges.Select(x => _linkService.GetCollectionFromEdge(x)).Select(x => x.ToString()).ToList());
                 collection.Links = molecule.LinkEdges.Select(x => _linkService.GetCollectionFromEdge(x)).ToList();
             }
+            collection.Nomenclature = molecule.Nomenclature;
+            collection.IdStructure = molecule.IdStructure;
+            collection.Energy = molecule.Energy;
+            collection.FromDataSet = molecule.FromDataSet;
             return collection;
-
         }
 
         public List<Cycle> GetMoleculeCycles(Molecule molecule)

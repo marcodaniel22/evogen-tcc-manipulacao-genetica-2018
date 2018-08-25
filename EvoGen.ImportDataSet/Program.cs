@@ -47,8 +47,11 @@ namespace EvoGen.ImportDataSet
                                 {
                                     AtomsCount = molecule.Sum(x => x.Value),
                                     DiferentAtomsCount = molecule.Count,
+                                    SimpleAtoms = string.Empty,
+                                    SimpleLinks = string.Empty,
                                     Nomenclature = formula,
-                                    Searched = false,
+                                    IdStructure = string.Empty,
+                                    Energy = 0,
                                     FromDataSet = true
                                 });
                             }

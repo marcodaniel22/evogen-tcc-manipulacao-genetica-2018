@@ -29,7 +29,7 @@ namespace EvoGen.Domain.Collections
 
         public override string ToString()
         {
-            return String.Format("{0}-{1} => {2}-{3}", this.From.AtomId, this.From.Symbol, To.AtomId, this.To.Symbol);
+            return String.Format("{0}-{1}=>{2}-{3}", this.From.AtomId, this.From.Symbol, To.AtomId, this.To.Symbol);
         }
     }
 }

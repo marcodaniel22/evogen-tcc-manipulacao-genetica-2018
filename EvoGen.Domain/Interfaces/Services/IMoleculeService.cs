@@ -12,7 +12,7 @@ namespace EvoGen.Domain.Interfaces.Services
         Molecule Create(MoleculeGraph molecule);
         Molecule Delete(Molecule molecule);
         int GetNotEmptyMoleculeCount(string nomenclature);
-        Molecule GetFirstEmpty();
+        Molecule GetRandomEmpty();
 
         Molecule GetCollectionFromGraph(MoleculeGraph molecule);
         List<Cycle> GetMoleculeCycles(Molecule molecule);

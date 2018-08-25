@@ -20,7 +20,7 @@ namespace EvoGen.Domain.ValueObjects
 
         public override string ToString()
         {
-            return string.Format("{0} - {1}", this.AtomId, this.Symbol);
+            return string.Format("{0}-{1}", this.AtomId, this.Symbol);
         }
     }
 }

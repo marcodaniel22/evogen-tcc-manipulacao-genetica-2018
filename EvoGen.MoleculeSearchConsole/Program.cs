@@ -31,7 +31,6 @@ namespace EvoGen.MoleculeSearchConsole
                 int diferentAtomsCount = 0;
                 int searchCounter = 0;
                 bool fromDataSet = false;
-                var Ids = new List<string>();
                 var resultCounter = 0;
                 var idStructure = string.Empty;
                 Molecule saved = null;
@@ -73,19 +72,16 @@ namespace EvoGen.MoleculeSearchConsole
                                     molecule.IdStructure = _linkService.GetIdStructure(molecule.LinkEdges);
                                     idStructure = molecule.IdStructure;
 
-                                    if (!Ids.Contains(molecule.IdStructure))
+                                    if (string.IsNullOrEmpty(idStructure) && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
                                     {
-                                        Ids.Add(molecule.IdStructure);
-
-                                        if (!string.IsNullOrEmpty(molecule.IdStructure))
-                                            saved = _moleculeService.Create(molecule);
-
-                                        var emptyMolecule = _moleculeService.GetByIdStructure(molecule.Nomenclature, null);
-                                        if (emptyMolecule != null && _moleculeService.GetNotEmptyMoleculeCount(molecule.Nomenclature) > 0)
-                                            _moleculeService.Delete(emptyMolecule);
-
+                                        saved = _moleculeService.Create(molecule);
+                                        
                                         if (saved != null)
                                         {
+                                            var empty = _moleculeService.GetByIdStructure(saved.Nomenclature, string.Empty);
+                                            if (empty != null)
+                                                _moleculeService.Delete(empty);
+
                                             resultCounter++;
                                             Console.WriteLine(string.Format("Encontrado {0}", saved.IdStructure));
                                         }
@@ -95,14 +91,13 @@ namespace EvoGen.MoleculeSearchConsole
                             Console.WriteLine(string.Format("Finalizado busca para {0}", formula));
                         }
                         Console.Write("\n");
-                        if (!fromDataSet && resultCounter > 0)
+                        if (resultCounter > 0)
                             _logService.NewSearch(formula);
-                        Ids.RemoveAll(x => x == idStructure);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("\n"+ex.Message+"\n");
+                    Console.WriteLine("\n" + ex.Message + "\n");
                 }
             }
         }

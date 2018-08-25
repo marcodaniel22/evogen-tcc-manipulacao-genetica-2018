@@ -23,81 +23,85 @@ namespace EvoGen.MoleculeSearchConsole
         public static void Main(string[] args)
         {
             GetServices();
+            Console.Write("Quantidade MÍNIMA de átomos na molécula: ");
+            var min = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Quantidade MÁXIMA de átomos na molécula: ");
+            var max = Convert.ToInt32(Console.ReadLine());
+            Console.Write("\n");
 
-            while (true)
+            if (min >= 2 && min <= 50 && max >= 2 && max <= 50)
             {
-                string formula = string.Empty;
-                int atomsCount = 0;
-                int diferentAtomsCount = 0;
-                int searchCounter = 0;
-                bool fromDataSet = false;
-                var resultCounter = 0;
-                var idStructure = string.Empty;
-                Molecule saved = null;
-                FormulaGenerator fg = new FormulaGenerator();
-                try
+                while (true)
                 {
-                    var moleculeAtoms = _moleculeService.GetRandomEmpty();
-                    formula = moleculeAtoms.Nomenclature;
-                    atomsCount = moleculeAtoms.AtomsCount;
-                    diferentAtomsCount = moleculeAtoms.DiferentAtomsCount;
-                    fromDataSet = moleculeAtoms.FromDataSet;
-                    searchCounter = _logService.GetCounter(formula);
-
-
-                    if (!string.IsNullOrEmpty(formula))
+                    string formula = string.Empty;
+                    int atomsCount = 0;
+                    int diferentAtomsCount = 0;
+                    int searchCounter = 0;
+                    bool fromDataSet = false;
+                    var resultCounter = 0;
+                    var idStructure = string.Empty;
+                    Molecule saved = null;
+                    FormulaGenerator fg = new FormulaGenerator();
+                    try
                     {
-                        if (fromDataSet)
-                            _logService.NewSearch(formula);
+                        var moleculeAtoms = _moleculeService.GetRandomEmpty();
+                        formula = moleculeAtoms.Nomenclature;
+                        atomsCount = moleculeAtoms.AtomsCount;
+                        diferentAtomsCount = moleculeAtoms.DiferentAtomsCount;
+                        fromDataSet = moleculeAtoms.FromDataSet;
+                        searchCounter = _logService.GetCounter(formula);
 
-                        Console.WriteLine(string.Format("Iniciando busca para {0}", formula));
 
-                        var ga = new StructureGenerator(
-                            formula,
-                            GetPopulationSize(atomsCount, diferentAtomsCount, searchCounter),
-                            GetMaxGenerations(atomsCount, diferentAtomsCount, searchCounter),
-                            GetMutationRate(atomsCount, diferentAtomsCount, searchCounter)
-                        );
-                        ga.FindSolutions();
-                        if (ga.Finished)
+                        if (!string.IsNullOrEmpty(formula))
                         {
-                            while (ga.ResultList.Count > 0)
+                            Console.WriteLine(string.Format("Iniciando busca para {0}", formula));
+
+                            var ga = new StructureGenerator(
+                                formula,
+                                GetPopulationSize(atomsCount, diferentAtomsCount, searchCounter),
+                                GetMaxGenerations(atomsCount, diferentAtomsCount, searchCounter),
+                                GetMutationRate(atomsCount, diferentAtomsCount, searchCounter)
+                            );
+                            ga.FindSolutions();
+                            if (ga.Finished)
                             {
-                                var molecule = ga.ResultList.Dequeue();
-                                if (molecule != null)
+                                while (ga.ResultList.Count > 0)
                                 {
-                                    molecule.ReorganizeLinks();
-                                    molecule.SetEnergy();
-                                    molecule.FromDataSet = fromDataSet;
-                                    molecule.IdStructure = _linkService.GetIdStructure(molecule.LinkEdges);
-                                    idStructure = molecule.IdStructure;
-
-                                    if (string.IsNullOrEmpty(idStructure) && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
+                                    var molecule = ga.ResultList.Dequeue();
+                                    if (molecule != null)
                                     {
-                                        saved = _moleculeService.Create(molecule);
-                                        
-                                        if (saved != null)
-                                        {
-                                            var empty = _moleculeService.GetByIdStructure(saved.Nomenclature, string.Empty);
-                                            if (empty != null)
-                                                _moleculeService.Delete(empty);
+                                        molecule.ReorganizeLinks();
+                                        molecule.SetEnergy();
+                                        molecule.FromDataSet = fromDataSet;
+                                        molecule.IdStructure = _linkService.GetIdStructure(molecule.LinkEdges);
+                                        idStructure = molecule.IdStructure;
 
-                                            resultCounter++;
-                                            Console.WriteLine(string.Format("Encontrado {0}", saved.IdStructure));
+                                        if (!string.IsNullOrEmpty(idStructure) && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
+                                        {
+                                            saved = _moleculeService.Create(molecule);
+
+                                            if (saved != null)
+                                            {
+                                                var empty = _moleculeService.GetByIdStructure(saved.Nomenclature, string.Empty);
+                                                if (empty != null)
+                                                    _moleculeService.Delete(empty);
+
+                                                resultCounter++;
+                                                Console.WriteLine(string.Format("Encontrado {0}", saved.IdStructure));
+                                            }
                                         }
                                     }
                                 }
+                                Console.WriteLine(string.Format("Finalizado busca para {0}", formula));
                             }
-                            Console.WriteLine(string.Format("Finalizado busca para {0}", formula));
-                        }
-                        Console.Write("\n");
-                        if (resultCounter > 0)
                             _logService.NewSearch(formula);
+                            Console.Write("\n");
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("\n" + ex.Message + "\n");
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("\n" + ex.Message + "\n");
+                    }
                 }
             }
         }

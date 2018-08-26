@@ -23,6 +23,7 @@ namespace EvoGen.MoleculeSearchConsole
         public static void Main(string[] args)
         {
             GetServices();
+            int counter = 0;
             Console.Write("Quantidade MÍNIMA de átomos na molécula: ");
             var min = Convert.ToInt32(Console.ReadLine());
             Console.Write("Quantidade MÁXIMA de átomos na molécula: ");
@@ -82,6 +83,7 @@ namespace EvoGen.MoleculeSearchConsole
 
                                             if (saved != null)
                                             {
+                                                counter++;
                                                 var empty = _moleculeService.GetByIdStructure(saved.Nomenclature, string.Empty);
                                                 if (empty != null)
                                                     _moleculeService.Delete(empty);
@@ -96,6 +98,8 @@ namespace EvoGen.MoleculeSearchConsole
                             }
                             _logService.NewSearch(formula);
                             Console.Write("\n");
+                            Console.Write(string.Format("Você já encontrou {0} moléculas!", counter));
+                            Console.Write("\n\n");
                         }
                     }
                     catch (Exception ex)

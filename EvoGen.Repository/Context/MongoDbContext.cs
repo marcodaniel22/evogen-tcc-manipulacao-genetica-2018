@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace EvoGen.Repository.Context
 {
@@ -15,6 +16,10 @@ namespace EvoGen.Repository.Context
             var mongoConect = ConfigurationManager.AppSettings["MongoConect"];
             var username = ConfigurationManager.AppSettings["Username"];
             var password = ConfigurationManager.AppSettings["Password"];
+            password = Regex.Replace(password, "[0456789adEGijLOpqstTUXyYz]", "");
+            var array = password.ToCharArray();
+            Array.Reverse(array);
+            password = new string(array);
             var port = Convert.ToInt32(ConfigurationManager.AppSettings["Port"]);
             var credential = MongoCredential.CreateCredential(database, username, password);
             var mongoClientSettings = new MongoClientSettings

@@ -77,7 +77,7 @@ namespace EvoGen.MoleculeSearchConsole
                                         molecule.FromDataSet = fromDataSet;
                                         molecule.IdStructure = _linkService.GetIdStructure(molecule.LinkEdges);
                                         idStructure = molecule.IdStructure;
-                                        
+
                                         if (!string.IsNullOrEmpty(idStructure) && !foundIds.Contains(idStructure) && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
                                         {
                                             foundIds.Add(idStructure);

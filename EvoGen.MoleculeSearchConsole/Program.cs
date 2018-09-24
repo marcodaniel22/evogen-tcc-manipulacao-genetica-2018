@@ -45,7 +45,7 @@ namespace EvoGen.MoleculeSearchConsole
                     FormulaGenerator fg = new FormulaGenerator();
                     try
                     {
-                        var moleculeAtoms = _moleculeService.GetRandomEmpty();
+                        var moleculeAtoms = _moleculeService.GetRandomEmpty(min, max);
                         formula = moleculeAtoms.Nomenclature;
                         atomsCount = moleculeAtoms.AtomsCount;
                         diferentAtomsCount = moleculeAtoms.DiferentAtomsCount;
@@ -66,6 +66,7 @@ namespace EvoGen.MoleculeSearchConsole
                             ga.FindSolutions();
                             if (ga.Finished)
                             {
+                                var foundIds = new List<string>();
                                 while (ga.ResultList.Count > 0)
                                 {
                                     var molecule = ga.ResultList.Dequeue();
@@ -76,9 +77,10 @@ namespace EvoGen.MoleculeSearchConsole
                                         molecule.FromDataSet = fromDataSet;
                                         molecule.IdStructure = _linkService.GetIdStructure(molecule.LinkEdges);
                                         idStructure = molecule.IdStructure;
-
-                                        if (!string.IsNullOrEmpty(idStructure) && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
+                                        
+                                        if (!string.IsNullOrEmpty(idStructure) && !foundIds.Contains(idStructure) && _moleculeService.GetByIdStructure(molecule.Nomenclature, molecule.IdStructure) == null)
                                         {
+                                            foundIds.Add(idStructure);
                                             saved = _moleculeService.Create(molecule);
 
                                             if (saved != null)
@@ -125,7 +127,9 @@ namespace EvoGen.MoleculeSearchConsole
         private static int GetMaxGenerations(int atomsCount, int diferentAtomsCount, int searchCounter)
         {
             var result = 0;
-            if (atomsCount < 40)
+            if (atomsCount < 4)
+                result = 50;
+            else if (atomsCount < 40)
                 result = 2000;
             else
                 result = 4000;
@@ -148,6 +152,7 @@ namespace EvoGen.MoleculeSearchConsole
             container.Register<ILogRepository, LogRepository>();
             container.Register<IAtomService, AtomService>();
             container.Register<ILinkService, LinkService>();
+            container.Register<IReactionService, ReactionService>();
 
             _moleculeService = container.Resolve<IMoleculeService>();
             _linkService = container.Resolve<ILinkService>();

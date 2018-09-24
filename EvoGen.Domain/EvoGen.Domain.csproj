@@ -46,7 +46,13 @@
     <Compile Include="Collections\Log.cs" />
     <Compile Include="Interfaces\Repositories\ILogRepository.cs" />
     <Compile Include="Interfaces\Services\ILogService.cs" />
+    <Compile Include="Interfaces\Services\IReactionService.cs" />
     <Compile Include="Services\LogService.cs" />
+    <Compile Include="Services\ReactionService.cs" />
+    <Compile Include="ValueObjects\DNA\Thymine.cs" />
+    <Compile Include="ValueObjects\DNA\Guanine.cs" />
+    <Compile Include="ValueObjects\DNA\Cytosine.cs" />
+    <Compile Include="ValueObjects\DNA\Adenine.cs" />
     <Compile Include="ValueObjects\Atom.cs" />
     <Compile Include="ValueObjects\Cycle.cs" />
     <Compile Include="ValueObjects\Link.cs" />

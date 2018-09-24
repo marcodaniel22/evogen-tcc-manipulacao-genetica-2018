@@ -58,11 +58,11 @@ namespace EvoGen.Domain.Services
             return _moleculeRepository.GetAll().Count(x => x.Nomenclature == nomenclature && !string.IsNullOrEmpty(x.IdStructure));
         }
 
-        public Molecule GetRandomEmpty()
+        public Molecule GetRandomEmpty(int min, int max)
         {
             var randon = new Random();
             var empty = _moleculeRepository.GetAll().Where(x => string.IsNullOrEmpty(x.IdStructure));
-            var query = empty.Where(x => x.AtomsCount > 3 && x.AtomsCount < 20);
+            var query = empty.Where(x => x.AtomsCount >= min && x.AtomsCount <= max);
 
             var counter = query.Count();
             if (counter > 0)
@@ -72,8 +72,8 @@ namespace EvoGen.Domain.Services
             }
             else
             {
-                var min = _logRepository.GetAll().Min(x => x.SearchCounter);
-                var skip = randon.Next(_logRepository.GetAll().Count(x => x.SearchCounter == min));
+                var minLog = _logRepository.GetAll().Min(x => x.SearchCounter);
+                var skip = randon.Next(_logRepository.GetAll().Count(x => x.SearchCounter == minLog));
                 var nomenclature = _logRepository.GetAll().Skip(skip).FirstOrDefault().Nomenclature;
                 return _moleculeRepository.GetAll().Where(x => x.Nomenclature == nomenclature).FirstOrDefault();
             }

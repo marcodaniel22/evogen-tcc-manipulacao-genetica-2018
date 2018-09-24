@@ -26,6 +26,7 @@ namespace EvoGen.MoleculeSearch
             container.Register<ILogRepository, LogRepository>();
             container.Register<IAtomService, AtomService>();
             container.Register<ILinkService, LinkService>();
+            container.Register<IReactionService, ReactionService>();
 
             var moleculeService = container.Resolve<IMoleculeService>();
             var logService = container.Resolve<ILogService>();

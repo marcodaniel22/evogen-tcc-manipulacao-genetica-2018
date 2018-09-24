@@ -74,6 +74,7 @@ namespace EvoGen.ImportDataSet
             container.Register<ILogRepository, LogRepository>();
             container.Register<IAtomService, AtomService>();
             container.Register<ILinkService, LinkService>();
+            container.Register<IReactionService, ReactionService>();
 
             moleculeService = container.Resolve<IMoleculeService>();
         }

@@ -96,16 +96,28 @@ namespace EvoGen.Domain.GA.StructureGenerator
                         if (BestIndividual.Fitness == 0)
                         {
                             var bestIndividuals = Population.Where(x => x.Fitness == 0).Select(x => x.Molecule);
-                            foreach (var item in bestIndividuals)
+                            if (bestIndividuals.Count() <= 100)
                             {
-                                ResultList.Enqueue(item);
+                                foreach (var item in bestIndividuals)
+                                {
+                                    ResultList.Enqueue(item);
+                                }
+                                Population.RemoveAll(x => x.Fitness == 0);
+                                do
+                                {
+                                    Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
+                                } while (Population.Count < _populationSize);
+                                GetBestIndividual();
                             }
-                            Population.RemoveAll(x => x.Fitness == 0);
-                            do
+                            else
                             {
-                                Population.Add(new SGChromosome(new MoleculeGraph(Target, Atoms)));
-                            } while (Population.Count < _populationSize);
-                            GetBestIndividual();
+                                bestIndividuals = bestIndividuals.Take(100);
+                                foreach (var item in bestIndividuals)
+                                {
+                                    ResultList.Enqueue(item);
+                                }
+                                break;
+                            }
                         }
                     } while (Generation < _maxGenerations);
                 }

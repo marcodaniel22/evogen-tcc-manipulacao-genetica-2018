@@ -20,6 +20,8 @@ namespace EvoGen.Test.Domain.GA
             var container = new InjectContainer();
             container.Register<IMoleculeService, MoleculeService>();
             container.Register<IMoleculeRepository, MoleculeRepository>();
+            container.Register<ILogService, LogService>();
+            container.Register<ILogRepository, LogRepository>();
             container.Register<IAtomService, AtomService>();
             container.Register<ILinkService, LinkService>();
 

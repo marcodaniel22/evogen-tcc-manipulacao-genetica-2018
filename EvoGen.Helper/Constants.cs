@@ -6,8 +6,11 @@ namespace EvoGen.Helper
     public class Constants
     {
         public static readonly int MaxLinkEdges = 3;
+
         public static readonly int MaxMoleculeAtoms = 50;
+
         public static readonly List<string> ElementFilterList = new List<string> { "C", "H", "O", "N", "P", "S", "Br", "Cl", "I" };
+
         public static readonly Dictionary<string, int> OoctetRule = new Dictionary<string, int> {
             { "C", 4 },
             { "H", 1},
@@ -19,7 +22,9 @@ namespace EvoGen.Helper
             { "Cl", 7},
             { "I", 7}
         };
+
         public static readonly List<string> CyclicCompoundAtoms = new List<string> { "C", "O", "N", "P", "S" };
+
         public static readonly Dictionary<Tuple<string, int, string>, int> EnergyTable = new Dictionary<Tuple<string, int, string>, int> {
             { new Tuple<string, int, string>("C", 1, "H"), 412 },
             { new Tuple<string, int, string>("C", 1, "C"), 348 },

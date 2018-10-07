@@ -142,7 +142,7 @@ namespace EvoGen.MoleculeSearch
                     {
                         if (FromEmpty)
                         {
-                            var molecule = _moleculeService.GetRandomEmpty(2, 50);
+                            var molecule = _moleculeService.GetRandomToSearch(2, 50);
                             formula = molecule.Nomenclature;
                             atomsCount = molecule.AtomsCount;
                             diferentAtomsCount = molecule.DiferentAtomsCount;

@@ -45,7 +45,7 @@ namespace EvoGen.MoleculeSearchConsole
                     FormulaGenerator fg = new FormulaGenerator();
                     try
                     {
-                        var moleculeAtoms = _moleculeService.GetRandomEmpty(min, max);
+                        var moleculeAtoms = _moleculeService.GetRandomToSearch(min, max);
                         formula = moleculeAtoms.Nomenclature;
                         atomsCount = moleculeAtoms.AtomsCount;
                         diferentAtomsCount = moleculeAtoms.DiferentAtomsCount;

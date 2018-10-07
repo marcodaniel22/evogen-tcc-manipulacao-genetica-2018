@@ -79,6 +79,17 @@ namespace EvoGen.Domain.Services
             }
         }
 
+        public Molecule GetRandomToSearch(int min, int max)
+        {
+            var randon = new Random();
+            var query = _moleculeRepository.GetAll().Where(x => x.AtomsCount >= min && x.AtomsCount <= max);
+
+            var minLog = _logRepository.GetAll().Min(x => x.SearchCounter);
+            var skip = randon.Next(_logRepository.GetAll().Count(x => x.SearchCounter == minLog));
+            var nomenclature = _logRepository.GetAll().Skip(skip).FirstOrDefault().Nomenclature;
+            return query.Where(x => x.Nomenclature == nomenclature).FirstOrDefault();
+        }
+
         #endregion
 
         #region CustomServices
@@ -107,6 +118,7 @@ namespace EvoGen.Domain.Services
 
         public List<Cycle> GetMoleculeCycles(Molecule molecule)
         {
+            BuildDatabaseMolecule(ref molecule);
             List<Cycle> cycles = new List<Cycle>();
             var links = molecule.Links.Where(x => Constants.CyclicCompoundAtoms.Contains(x.From.Symbol) && Constants.CyclicCompoundAtoms.Contains(x.To.Symbol)).ToList();
             foreach (var link in links)
@@ -170,6 +182,49 @@ namespace EvoGen.Domain.Services
             }
 
             return cycles;
+        }
+
+        public void BuildDatabaseMolecule(ref Molecule molecule)
+        {
+            if (molecule.Atoms == null)
+            {
+                var atoms = molecule.SimpleAtoms.Split(',');
+                molecule.Atoms = atoms.Select(atom =>
+                {
+                    var atomProps = atom.Split('-');
+                    return new Atom()
+                    {
+                        AtomId = Int32.Parse(atomProps[0]),
+                        Symbol = atomProps[1],
+                        Octet = Constants.OoctetRule[atomProps[1]]
+                    };
+                }).ToList();
+            }
+            if (molecule.Links == null)
+            {
+                var links = molecule.SimpleLinks.Split(',');
+                molecule.Links = links.Select(link =>
+                {
+                    var linkAtoms = link.Replace("=", "").Split('>');
+                    var from = linkAtoms[0].Split('-');
+                    var to = linkAtoms[1].Split('-');
+                    return new Link()
+                    {
+                        From = new Atom()
+                        {
+                            AtomId = Int32.Parse(from[0]),
+                            Symbol = from[1],
+                            Octet = Constants.OoctetRule[from[1]]
+                        },
+                        To = new Atom()
+                        {
+                            AtomId = Int32.Parse(to[0]),
+                            Symbol = to[1],
+                            Octet = Constants.OoctetRule[to[1]]
+                        }
+                    };
+                }).ToList();
+            }
         }
 
         #endregion

@@ -121,67 +121,85 @@ namespace EvoGen.Domain.Services
             BuildDatabaseMolecule(ref molecule);
             List<Cycle> cycles = new List<Cycle>();
             var links = molecule.Links.Where(x => Constants.CyclicCompoundAtoms.Contains(x.From.Symbol) && Constants.CyclicCompoundAtoms.Contains(x.To.Symbol)).ToList();
-            foreach (var link in links)
+            var atoms = _linkService.GetDiferentAtomsFromLinks(links);
+            foreach (var startAtom in atoms)
             {
                 var cycled = false;
-                var visited = new List<Atom>();
                 var queue = new Queue<Node<Atom>>();
-                var firstAtom = link.From;
+                var startNode = new Node<Atom>();
+                startNode.Parent = null;
+                startNode.Value = startAtom;
+                queue.Enqueue(startNode);
 
-                var atomNode = new Node<Atom>();
-                atomNode.Value = firstAtom;
-                queue.Enqueue(atomNode);
-
-                while (queue.Count > 0)
+                while (queue.Count > 0 && !cycled)
                 {
-                    atomNode = queue.Dequeue();
-                    if (!visited.Any(x => x.AtomId == atomNode.Value.AtomId))
+                    var atomNode = queue.Dequeue();
+                    var neighbors = _linkService.GetLinksFromAtom(atomNode.Value, links);
+                    foreach (var neighbor in neighbors)
                     {
-                        visited.Add(atomNode.Value);
-                        var atoms = links.Where(x => x.From.AtomId == atomNode.Value.AtomId).Select(x => x.To).ToList();
-                        var neighbors = atoms.Select(x => new Node<Atom>()
-                        {
-                            Parent = atomNode,
-                            Value = x
-                        }).ToList();
+                        var neighborNode = new Node<Atom>();
+                        neighborNode.Parent = atomNode;
+                        neighborNode.Value = neighbor.To;
 
-                        if (neighbors.Where(x => x.Value.AtomId == firstAtom.AtomId).Any(x => x.Parent.Parent.Value.AtomId != firstAtom.AtomId))
+                        if (neighborNode.Value.AtomId == startAtom.AtomId && CountLevels(neighborNode) > 2)
                         {
-                            atomNode = neighbors.FirstOrDefault(x => x.Value.AtomId == firstAtom.AtomId);
                             cycled = true;
+                            startNode = neighborNode;
                             break;
                         }
-                        else
-                        {
-                            foreach (var item in neighbors)
-                            {
-                                queue.Enqueue(item);
-                            }
-                        }
 
+                        if (!AtomInParents(neighborNode))
+                            queue.Enqueue(neighborNode);
                     }
                 }
-                if (cycled && atomNode.Parent != null)
+
+                if (cycled)
                 {
-                    var cycle = new Cycle();
-                    do
+                    var cycleLinks = new List<Link>();
+                    var atom = startNode.Value;
+                    var parent = startNode.Parent;
+                    while (parent != null)
                     {
-                        var from = atomNode.Value;
-                        var toAtoms = _linkService.GetLinksFromAtom(atomNode.Value, links)
-                            .Where(x => x.To.AtomId == atomNode.Parent.Value.AtomId).ToList();
-                        cycle.Links.AddRange(toAtoms);
+                        var from = atom;
+                        var to = parent.Value;
 
-                        atomNode = atomNode.Parent;
-                    } while (atomNode.Parent != null);
-
-                    cycle.SetDiferentAtoms();
-                    cycle.CycliId = _linkService.GetIdStructure(cycle.Links);
-                    if (!cycles.Any(x => x.CycliId == cycle.CycliId))
-                        cycles.Add(cycle);
+                        foreach (var link in links)
+                        {
+                            if (from.AtomId == link.From.AtomId && to.AtomId == link.To.AtomId || from.AtomId == link.To.AtomId && to.AtomId == link.From.AtomId)
+                                cycleLinks.Add(new Link(from, to));
+                        }
+                        atom = parent.Value;
+                        parent = parent.Parent;
+                    }
+                    var cycleId = _linkService.GetIdStructure(cycleLinks);
+                    if (!cycles.Any(x => x.CycliId == cycleId))
+                        cycles.Add(new Cycle(cycleLinks, cycleId));
                 }
             }
 
             return cycles;
+        }
+
+        private int CountLevels(Node<Atom> atomNode)
+        {
+            var parent = atomNode.Parent;
+            var counter = 0;
+            while (parent != null)
+            {
+                parent = parent.Parent;
+                counter++;
+            }
+            return counter;
+        }
+
+        private bool AtomInParents(Node<Atom> atomNode)
+        {
+            var target = atomNode.Value;
+            var parent = atomNode.Parent;
+            while (parent != null && parent.Value.AtomId != target.AtomId)
+                parent = parent.Parent;
+
+            return parent != null;
         }
 
         public void BuildDatabaseMolecule(ref Molecule molecule)

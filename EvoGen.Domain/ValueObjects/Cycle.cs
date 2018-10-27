@@ -9,12 +9,14 @@ namespace EvoGen.Domain.ValueObjects
         public int DiferentAtoms { get; private set; }
         public string CycliId { get; set; }
 
-        public Cycle()
+        public Cycle(List<Link> links, string cycleId)
         {
-            this.Links = new List<Link>();
+            this.Links = links;
+            this.CycliId = cycleId;
+            this.SetDiferentAtoms();
         }
 
-        public void SetDiferentAtoms()
+        private void SetDiferentAtoms()
         {
             var atomIds = new List<int>();
             foreach (var link in this.Links)

@@ -85,5 +85,32 @@ namespace EvoGen.Domain.Services
             }
             return id.Substring(0, id.Length - 1);
         }
+
+        public int CountDiferentLinks(List<Link> linkEdges)
+        {
+            var auxList = new List<Link>();
+            foreach (var link in linkEdges)
+            {
+                if (!auxList.Any(x => x.From.Symbol == link.From.Symbol && x.To.Symbol == link.To.Symbol 
+                    || x.From.Symbol == link.To.Symbol && x.To.Symbol == link.From.Symbol))
+                {
+                    auxList.Add(link);
+                }
+            }
+            return auxList.Count;
+        }
+
+        public List<Atom> GetDiferentAtomsFromLinks(List<Link> linkEdges)
+        {
+            var atomList = new List<Atom>();
+            foreach (var link in linkEdges)
+            {
+                if (!atomList.Contains(link.From))
+                    atomList.Add(link.From);
+                if (!atomList.Contains(link.To))
+                    atomList.Add(link.To);
+            }
+            return atomList;
+        }
     }
 }

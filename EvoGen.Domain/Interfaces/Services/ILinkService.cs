@@ -11,5 +11,7 @@ namespace EvoGen.Domain.Interfaces.Services
         List<Link> GetLinksFromAtom(Atom atom, List<Link> links);
         string GetIdStructure(List<LinkEdge> linkEdges);
         string GetIdStructure(List<Link> linkEdges);
+        int CountDiferentLinks(List<Link> linkEdges);
+        List<Atom> GetDiferentAtomsFromLinks(List<Link> linkEdges);
     }
 }

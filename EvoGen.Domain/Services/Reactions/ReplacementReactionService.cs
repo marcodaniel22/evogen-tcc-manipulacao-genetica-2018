@@ -59,10 +59,68 @@ namespace EvoGen.Domain.Services.Reactions
                             || x.From.AtomId == exclude.To.AtomId && x.To.AtomId == exclude.From.AtomId);
                     }
 
-                    substract.Links.Remove(substractReactionLink);
-                    // reorganize atomsIds from newLinks
-                    // add new link substractReactionLink.From => reagentTargetAtom
-                    substract.Links.AddRange(newLinks);
+                    var targetLink = substract.Links.Where(x => x.From.AtomId == substractReactionLink.From.AtomId && x.To.AtomId == substractReactionLink.To.AtomId
+                            || x.From.AtomId == substractReactionLink.To.AtomId && x.To.AtomId == substractReactionLink.From.AtomId).FirstOrDefault();
+
+                    var targetAtomId = targetLink.From.AtomId;
+                    if (substractReactionLink.To.AtomId == targetLink.To.AtomId)
+                        targetAtomId = targetLink.To.AtomId;
+                    var newAtom = new Atom()
+                    {
+                        AtomId = targetAtomId,
+                        Symbol = reagentTargetAtom.Symbol,
+                        Octet = reagentTargetAtom.Octet
+                    };
+                    var newLink = new Link(targetLink.From, newAtom);
+
+                    substract.Links.Remove(targetLink);
+                    substract.Links.Add(newLink);
+                    substract.Atoms.Remove(substractTargetAtom);
+                    substract.Atoms.Add(newAtom);
+
+                    var mapper = new Dictionary<int, int>();
+                    mapper.Add(reagentTargetAtom.AtomId, substractTargetAtom.AtomId);
+                    foreach (var link in newLinks)
+                    {
+                        if (!mapper.ContainsKey(link.From.AtomId))
+                        {
+                            var newAtomId = substract.Atoms.Count + 1;
+                            mapper.Add(link.From.AtomId, newAtomId);
+                            substract.Atoms.Add(new Atom()
+                            {
+                                AtomId = newAtomId,
+                                Symbol = link.From.Symbol,
+                                Octet = link.From.Octet
+                            });
+                        }
+                        else if (!mapper.ContainsKey(link.To.AtomId))
+                        {
+                            var newAtomId = substract.Atoms.Count + 1;
+                            mapper.Add(link.To.AtomId, newAtomId);
+                            substract.Atoms.Add(new Atom()
+                            {
+                                AtomId = newAtomId,
+                                Symbol = link.To.Symbol,
+                                Octet = link.To.Octet
+                            });
+                        }
+                        substract.Links.Add(
+                            new Link(
+                                new Atom()
+                                {
+                                    AtomId = mapper[link.From.AtomId],
+                                    Symbol = link.From.Symbol,
+                                    Octet = link.From.Octet
+                                },
+                                new Atom()
+                                {
+                                    AtomId = mapper[link.To.AtomId],
+                                    Symbol = link.To.Symbol,
+                                    Octet = link.To.Octet
+                                }
+                            )
+                        );
+                    }
                 }
             }
             return substract;

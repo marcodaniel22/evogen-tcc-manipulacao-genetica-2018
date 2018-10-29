@@ -115,7 +115,7 @@ namespace EvoGen.Domain.Services
 
         public List<Link> GetOutCycleLinks(Molecule molecule, List<Cycle> cycles)
         {
-            var outLinks = molecule.Links;
+            var outLinks = molecule.Links.ToList();
             foreach (var cycle in cycles)
             {
                 foreach (var link in cycle.Links)

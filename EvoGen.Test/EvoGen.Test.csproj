@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Domain\GA\MoleculeGraphTests.cs" />
     <Compile Include="Domain\Services\MoleculeServiceTests.cs" />
+    <Compile Include="Domain\Services\ReplacementReactionServiceTests.cs" />
     <Compile Include="Helper\ProporcionalLimitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

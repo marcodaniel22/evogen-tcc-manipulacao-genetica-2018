@@ -2,7 +2,9 @@
 using EvoGen.Domain.GA.StructureGenerator;
 using EvoGen.Domain.Interfaces.Repositories;
 using EvoGen.Domain.Interfaces.Services;
+using EvoGen.Domain.Interfaces.Services.Reaction;
 using EvoGen.Domain.Services;
+using EvoGen.Domain.Services.Reactions;
 using EvoGen.Domain.ValueObjects;
 using EvoGen.Domain.ValueObjects.DNA;
 using EvoGen.Repository.Repositories;
@@ -28,7 +30,8 @@ namespace EvoGen.Test.Domain.Services
             container.Register<ILogRepository, LogRepository>();
             container.Register<IAtomService, AtomService>();
             container.Register<ILinkService, LinkService>();
-            container.Register<IReactionService, ReactionService>();
+            container.Register<IReplacementReactionService, ReplacementReactionService>();
+            container.Register<IAddictionReactionService, AddictionReactionService>();
 
             _moleculeService = container.Resolve<IMoleculeService>();
         }

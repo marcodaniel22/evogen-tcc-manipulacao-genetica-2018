@@ -28,29 +28,6 @@ namespace EvoGen.Domain.ValueObjects.DNA
                 new Atom() { AtomId = 14, Octet = 1, Symbol = "H" },
                 new Atom() { AtomId = 15, Octet = 1, Symbol = "H" }
             };
-            //this.Links = new List<Link>
-            //{
-            //    new Link(GetAtomById(1), GetAtomById(11)),
-            //    new Link(GetAtomById(1), GetAtomById(7)),
-            //    new Link(GetAtomById(7), GetAtomById(12)),
-            //    new Link(GetAtomById(7), GetAtomById(3)),
-            //    new Link(GetAtomById(3), GetAtomById(2)),
-            //    new Link(GetAtomById(3), GetAtomById(2)),
-            //    new Link(GetAtomById(2), GetAtomById(6)),
-            //    new Link(GetAtomById(6), GetAtomById(1)),
-            //    new Link(GetAtomById(6), GetAtomById(1)),
-            //    new Link(GetAtomById(2), GetAtomById(5)),
-            //    new Link(GetAtomById(5), GetAtomById(9)),
-            //    new Link(GetAtomById(5), GetAtomById(9)),
-            //    new Link(GetAtomById(9), GetAtomById(4)),
-            //    new Link(GetAtomById(4), GetAtomById(13)),
-            //    new Link(GetAtomById(4), GetAtomById(8)),
-            //    new Link(GetAtomById(4), GetAtomById(8)),
-            //    new Link(GetAtomById(8), GetAtomById(3)),
-            //    new Link(GetAtomById(5), GetAtomById(10)),
-            //    new Link(GetAtomById(10), GetAtomById(14)),
-            //    new Link(GetAtomById(10), GetAtomById(15))
-            //};
             this.Links = new List<Link>
             {
                 new Link(GetAtomById(1), GetAtomById(11)),
@@ -62,18 +39,41 @@ namespace EvoGen.Domain.ValueObjects.DNA
                 new Link(GetAtomById(2), GetAtomById(6)),
                 new Link(GetAtomById(6), GetAtomById(1)),
                 new Link(GetAtomById(6), GetAtomById(1)),
-                new Link(GetAtomById(3), GetAtomById(8)),
-                new Link(GetAtomById(8), GetAtomById(4)),
-                new Link(GetAtomById(8), GetAtomById(4)),
+                new Link(GetAtomById(2), GetAtomById(5)),
+                new Link(GetAtomById(5), GetAtomById(9)),
+                new Link(GetAtomById(5), GetAtomById(9)),
+                new Link(GetAtomById(9), GetAtomById(4)),
                 new Link(GetAtomById(4), GetAtomById(13)),
-                new Link(GetAtomById(4), GetAtomById(9)),
-                new Link(GetAtomById(9), GetAtomById(5)),
-                new Link(GetAtomById(9), GetAtomById(5)),
-                new Link(GetAtomById(5), GetAtomById(2)),
+                new Link(GetAtomById(4), GetAtomById(8)),
+                new Link(GetAtomById(4), GetAtomById(8)),
+                new Link(GetAtomById(8), GetAtomById(3)),
                 new Link(GetAtomById(5), GetAtomById(10)),
                 new Link(GetAtomById(10), GetAtomById(14)),
-                new Link(GetAtomById(10), GetAtomById(15)),
+                new Link(GetAtomById(10), GetAtomById(15))
             };
+            //this.Links = new List<Link>
+            //{
+            //    new Link(GetAtomById(1), GetAtomById(11)),
+            //    new Link(GetAtomById(1), GetAtomById(7)),
+            //    new Link(GetAtomById(7), GetAtomById(12)),
+            //    new Link(GetAtomById(7), GetAtomById(3)),
+            //    new Link(GetAtomById(3), GetAtomById(2)),
+            //    new Link(GetAtomById(3), GetAtomById(2)),
+            //    new Link(GetAtomById(2), GetAtomById(6)),
+            //    new Link(GetAtomById(6), GetAtomById(1)),
+            //    new Link(GetAtomById(6), GetAtomById(1)),
+            //    new Link(GetAtomById(3), GetAtomById(8)),
+            //    new Link(GetAtomById(8), GetAtomById(4)),
+            //    new Link(GetAtomById(8), GetAtomById(4)),
+            //    new Link(GetAtomById(4), GetAtomById(13)),
+            //    new Link(GetAtomById(4), GetAtomById(9)),
+            //    new Link(GetAtomById(9), GetAtomById(5)),
+            //    new Link(GetAtomById(9), GetAtomById(5)),
+            //    new Link(GetAtomById(5), GetAtomById(2)),
+            //    new Link(GetAtomById(5), GetAtomById(10)),
+            //    new Link(GetAtomById(10), GetAtomById(14)),
+            //    new Link(GetAtomById(10), GetAtomById(15)),
+            //};
         }
 
         private Atom GetAtomById(int id)

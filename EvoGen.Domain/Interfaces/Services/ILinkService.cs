@@ -13,5 +13,6 @@ namespace EvoGen.Domain.Interfaces.Services
         string GetIdStructure(List<Link> linkEdges);
         int CountDiferentLinks(List<Link> linkEdges);
         List<Atom> GetDiferentAtomsFromLinks(List<Link> linkEdges);
+        List<Link> GetOutCycleLinks(Molecule molecule, List<Cycle> cyckes);
     }
 }

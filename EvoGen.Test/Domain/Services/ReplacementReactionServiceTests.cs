@@ -1,25 +1,24 @@
-﻿using EvoGen.Domain.Interfaces.Repositories;
+﻿using EvoGen.Domain.Collections;
+using EvoGen.Domain.Interfaces.Repositories;
 using EvoGen.Domain.Interfaces.Services;
 using EvoGen.Domain.Interfaces.Services.Reaction;
 using EvoGen.Domain.Services;
 using EvoGen.Domain.Services.Reactions;
+using EvoGen.Domain.ValueObjects.DNA;
 using EvoGen.Repository.Repositories;
 using Inject;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace EvoGen.MoleculeSearch
+namespace EvoGen.Test.Domain.Services
 {
-    static class Program
+    [TestClass]
+    public class ReplacementReactionServiceTests
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        private IReplacementReactionService _replacementReactionService;
+
+        [TestInitialize]
+        public void Initialize()
         {
             var container = new InjectContainer();
             container.Register<IMoleculeService, MoleculeService>();
@@ -31,13 +30,18 @@ namespace EvoGen.MoleculeSearch
             container.Register<IReplacementReactionService, ReplacementReactionService>();
             container.Register<IAddictionReactionService, AddictionReactionService>();
 
-            var moleculeService = container.Resolve<IMoleculeService>();
-            var logService = container.Resolve<ILogService>();
-            var linkService = container.Resolve<ILinkService>();
+            _replacementReactionService = container.Resolve<IReplacementReactionService>();
+        }
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MoleculeSearchForm(moleculeService, logService, linkService));
+        [TestMethod]
+        public void Cytosine_Reaction()
+        {
+            var cytosine = new Cytosine();
+            var substract = cytosine.GetTestSubstract();
+            var reagent = cytosine.GetTestReagent();
+            var result = _replacementReactionService.React(reagent, substract);
+            Assert.AreNotEqual(result, null);
+
         }
     }
 }

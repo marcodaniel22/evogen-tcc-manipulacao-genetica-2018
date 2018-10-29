@@ -14,7 +14,7 @@ namespace EvoGen.Domain.Services
         {
             this._atomService = atomService;
         }
-        
+
         public Link GetCollectionFromEdge(LinkEdge link)
         {
             var collection = new Link();
@@ -36,7 +36,7 @@ namespace EvoGen.Domain.Services
         public List<Link> GetLinksFromAtom(Atom atom, List<Link> links)
         {
             var atomLinks = links.Where(x => x.From.AtomId == atom.AtomId).ToList();
-            var outLinks = links.Where(x => x.To.AtomId == atom.AtomId);
+            var outLinks = links.Where(x => x.To.AtomId == atom.AtomId).ToList();
             foreach (var link in outLinks)
                 atomLinks.Add(new Link()
                 {
@@ -91,7 +91,7 @@ namespace EvoGen.Domain.Services
             var auxList = new List<Link>();
             foreach (var link in linkEdges)
             {
-                if (!auxList.Any(x => x.From.Symbol == link.From.Symbol && x.To.Symbol == link.To.Symbol 
+                if (!auxList.Any(x => x.From.Symbol == link.From.Symbol && x.To.Symbol == link.To.Symbol
                     || x.From.Symbol == link.To.Symbol && x.To.Symbol == link.From.Symbol))
                 {
                     auxList.Add(link);
@@ -111,6 +111,24 @@ namespace EvoGen.Domain.Services
                     atomList.Add(link.To);
             }
             return atomList;
+        }
+
+        public List<Link> GetOutCycleLinks(Molecule molecule, List<Cycle> cycles)
+        {
+            var outLinks = molecule.Links;
+            foreach (var cycle in cycles)
+            {
+                foreach (var link in cycle.Links)
+                {
+                    if (outLinks.Any(x => x.From.AtomId == link.From.AtomId && x.To.AtomId == link.To.AtomId
+                        || x.From.AtomId == link.To.AtomId && x.To.AtomId == link.From.AtomId))
+                    {
+                        outLinks.RemoveAll(x => x.From.AtomId == link.From.AtomId && x.To.AtomId == link.To.AtomId
+                            || x.From.AtomId == link.To.AtomId && x.To.AtomId == link.From.AtomId);
+                    }
+                }
+            }
+            return outLinks;
         }
     }
 }

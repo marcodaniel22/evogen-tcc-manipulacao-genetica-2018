@@ -46,9 +46,12 @@
     <Compile Include="Collections\Log.cs" />
     <Compile Include="Interfaces\Repositories\ILogRepository.cs" />
     <Compile Include="Interfaces\Services\ILogService.cs" />
-    <Compile Include="Interfaces\Services\IReactionService.cs" />
+    <Compile Include="Interfaces\Services\Reaction\IAddictionReactionService.cs" />
+    <Compile Include="Interfaces\Services\Reaction\IReactionService.cs" />
+    <Compile Include="Interfaces\Services\Reaction\IReplacementReactionService.cs" />
     <Compile Include="Services\LogService.cs" />
-    <Compile Include="Services\ReactionService.cs" />
+    <Compile Include="Services\Reactions\AddictionReactionService.cs" />
+    <Compile Include="Services\Reactions\ReplacementReactionService.cs" />
     <Compile Include="ValueObjects\DNA\Thymine.cs" />
     <Compile Include="ValueObjects\DNA\Guanine.cs" />
     <Compile Include="ValueObjects\DNA\Cytosine.cs" />

@@ -23,6 +23,19 @@ namespace EvoGen.Helper
             { "I", 7}
         };
 
+        public static readonly List<string> HalogensAtoms = new List<string> { "I", "Cl", "Br" };
+
+        public static readonly Dictionary<string, int> FreeElectrons = new Dictionary<string, int> {
+            { "O", 4},
+            { "S", 4},
+            { "N", 2},
+            { "P", 2}
+        };
+
+        public static readonly List<string> ElectroNegativeAtoms = new List<string> { "O", "N", "Cl", "Br", "I", "S", "C", "P", "H" };
+
+        public static readonly List<string> ElectroPositiveAtoms = new List<string> { "H", "P", "C", "S", "I", "Br", "Cl", "N", "O" };
+
         public static readonly List<string> CyclicCompoundAtoms = new List<string> { "C", "O", "N", "P", "S" };
 
         public static readonly Dictionary<Tuple<string, int, string>, int> EnergyTable = new Dictionary<Tuple<string, int, string>, int> {

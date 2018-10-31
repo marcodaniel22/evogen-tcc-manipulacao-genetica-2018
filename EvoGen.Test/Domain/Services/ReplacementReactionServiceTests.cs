@@ -9,6 +9,7 @@ using EvoGen.Repository.Repositories;
 using Inject;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 
 namespace EvoGen.Test.Domain.Services
 {
@@ -39,8 +40,10 @@ namespace EvoGen.Test.Domain.Services
             var cytosine = new Cytosine();
             var substract = cytosine.GetTestSubstract();
             var reagent = cytosine.GetTestReagent();
+
+            var substractLinks = substract.Links.ToList();
             var result = _replacementReactionService.React(reagent, substract);
-            Assert.AreNotEqual(result, null);
+            Assert.AreNotEqual(substractLinks, result.Links);
 
         }
     }

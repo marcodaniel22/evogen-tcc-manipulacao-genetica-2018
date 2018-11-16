@@ -1,15 +1,15 @@
 ﻿using EvoGen.Domain.Collections;
 using System.Collections.Generic;
 
-namespace EvoGen.Domain.ValueObjects.DNA
+namespace EvoGen.Domain.ValueObjects.FakeDNA
 {
-    public class Adenine : Molecule
+    public class FakeAdenine1 : Molecule
     {
-        public Adenine()
+        public FakeAdenine1()
         {
-            this.Nomenclature = "C5H5N5";
-            this.AtomsCount = 15;
-            this.DiferentAtomsCount = 3;
+            this.Nomenclature = "C5H3N4Cl";
+            this.AtomsCount = 13;
+            this.DiferentAtomsCount = 4;
             this.Atoms = new List<Atom>
             {
                 new Atom() { AtomId = 1, Octet = 4, Symbol = "C" },
@@ -21,12 +21,10 @@ namespace EvoGen.Domain.ValueObjects.DNA
                 new Atom() { AtomId = 7, Octet = 5, Symbol = "N" },
                 new Atom() { AtomId = 8, Octet = 5, Symbol = "N" },
                 new Atom() { AtomId = 9, Octet = 5, Symbol = "N" },
-                new Atom() { AtomId = 10, Octet = 5, Symbol = "N" },
+                new Atom() { AtomId = 10, Octet = 7, Symbol = "Cl" },
                 new Atom() { AtomId = 11, Octet = 1, Symbol = "H" },
                 new Atom() { AtomId = 12, Octet = 1, Symbol = "H" },
-                new Atom() { AtomId = 13, Octet = 1, Symbol = "H" },
-                new Atom() { AtomId = 14, Octet = 1, Symbol = "H" },
-                new Atom() { AtomId = 15, Octet = 1, Symbol = "H" }
+                new Atom() { AtomId = 13, Octet = 1, Symbol = "H" }
             };
             this.Links = new List<Link>
             {
@@ -47,9 +45,7 @@ namespace EvoGen.Domain.ValueObjects.DNA
                 new Link(GetAtomById(4), GetAtomById(8)),
                 new Link(GetAtomById(4), GetAtomById(8)),
                 new Link(GetAtomById(8), GetAtomById(3)),
-                new Link(GetAtomById(5), GetAtomById(10)),
-                new Link(GetAtomById(10), GetAtomById(14)),
-                new Link(GetAtomById(10), GetAtomById(15))
+                new Link(GetAtomById(5), GetAtomById(10))
             };
         }
 

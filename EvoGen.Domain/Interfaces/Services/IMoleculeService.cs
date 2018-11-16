@@ -14,8 +14,10 @@ namespace EvoGen.Domain.Interfaces.Services
         int GetNotEmptyMoleculeCount(string nomenclature);
         Molecule GetRandomEmpty(int min, int max);
         Molecule GetRandomToSearch(int min, int max);
+        List<Molecule> GetMoleculesByRange(int init, int last);
 
         Molecule GetCollectionFromGraph(MoleculeGraph molecule);
         List<Cycle> GetMoleculeCycles(Molecule molecule);
+        Molecule CloneMolecule(Molecule molecule);
     }
 }

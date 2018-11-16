@@ -20,8 +20,9 @@ namespace EvoGen.Domain.Services.Reactions
             this._linkService = linkService;
         }
 
-        public Molecule React(Molecule reagent, Molecule substract)
+        public Molecule React(Molecule reagent, Molecule substractMolecule)
         {
+            var substract = _moleculeService.CloneMolecule(substractMolecule);
             // Get cycles
             var reagentCycles = _moleculeService.GetMoleculeCycles(reagent);
             var substractCycles = _moleculeService.GetMoleculeCycles(substract);
@@ -93,7 +94,7 @@ namespace EvoGen.Domain.Services.Reactions
                                 Octet = link.From.Octet
                             });
                         }
-                        else if (!mapper.ContainsKey(link.To.AtomId))
+                        if (!mapper.ContainsKey(link.To.AtomId))
                         {
                             var newAtomId = substract.Atoms.Count + 1;
                             mapper.Add(link.To.AtomId, newAtomId);

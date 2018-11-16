@@ -90,6 +90,11 @@ namespace EvoGen.Domain.Services
             return query.Where(x => x.Nomenclature == nomenclature).FirstOrDefault();
         }
 
+        public List<Molecule> GetMoleculesByRange(int init, int last)
+        {
+            return _moleculeRepository.GetAll().Where(x => !string.IsNullOrEmpty(x.IdStructure) && x.AtomsCount >= init && x.AtomsCount < last).ToList();
+        }
+
         #endregion
 
         #region CustomServices
@@ -243,6 +248,35 @@ namespace EvoGen.Domain.Services
                     };
                 }).ToList();
             }
+        }
+
+        public Molecule CloneMolecule(Molecule molecule)
+        {
+            BuildDatabaseMolecule(ref molecule);
+            var newMolecule = new Molecule();
+            newMolecule.Nomenclature = molecule.Nomenclature;
+            newMolecule.AtomsCount = molecule.AtomsCount;
+            newMolecule.DiferentAtomsCount = molecule.DiferentAtomsCount;
+            newMolecule.Atoms = new List<Atom>();
+            foreach (var atom in molecule.Atoms)
+            {
+                newMolecule.Atoms.Add(new Atom
+                {
+                    AtomId = atom.AtomId,
+                    Octet = atom.Octet,
+                    Symbol = atom.Symbol
+                });
+            }
+            newMolecule.Links = new List<Link>();
+            foreach (var link in molecule.Links)
+            {
+                newMolecule.Links.Add(new Link
+                {
+                    From = newMolecule.Atoms.FirstOrDefault(x => x.AtomId == link.From.AtomId),
+                    To = newMolecule.Atoms.FirstOrDefault(x => x.AtomId == link.To.AtomId)
+                });
+            }
+            return newMolecule;
         }
 
         #endregion

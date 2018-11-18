@@ -6,7 +6,7 @@ using EvoGen.Domain.Services;
 using EvoGen.Domain.Services.Reactions;
 using EvoGen.Domain.ValueObjects;
 using EvoGen.Domain.ValueObjects.DNA;
-using EvoGen.Domain.ValueObjects.FakeDNA;
+using EvoGen.Domain.ValueObjects.MutatedDNA;
 using EvoGen.Repository.Repositories;
 using Inject;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -41,7 +41,7 @@ namespace EvoGen.Test.Domain.Services
         public void Cytosine_Reaction()
         {
             var cytosine = new Cytosine();
-            var substract = new FakeCytosine1();
+            var substract = new MutatedCytosine1();
             var reagent = GetReagent();
             
             var result = _replacementReactionService.React(reagent, substract);
@@ -53,7 +53,7 @@ namespace EvoGen.Test.Domain.Services
         public void Adenine_Reaction()
         {
             var adenine = new Adenine();
-            var substract = new FakeAdenine1();
+            var substract = new MutatedAdenine1();
             var reagent = GetReagent();
             
             var result = _replacementReactionService.React(reagent, substract);

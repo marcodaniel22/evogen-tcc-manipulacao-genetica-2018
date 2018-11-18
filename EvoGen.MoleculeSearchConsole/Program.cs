@@ -31,8 +31,14 @@ namespace EvoGen.MoleculeSearchConsole
             Console.Write("Quantidade MÁXIMA de átomos na molécula: ");
             var max = Convert.ToInt32(Console.ReadLine());
             Console.Write("\n");
+            Console.WriteLine("Procurar por estruturas: ");
+            Console.WriteLine("1 - Moléculas existentes");
+            Console.WriteLine("2 - Moléculas aleatórias");
+            Console.Write("Opção: ");
+            var tipo = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("\n");
 
-            if (min >= 2 && min <= 50 && max >= 2 && max <= 50)
+            if (min >= 2 && min <= 50 && max >= 2 && max <= 50 && min <= max && (tipo == 1 || tipo == 2))
             {
                 while (true)
                 {
@@ -47,14 +53,25 @@ namespace EvoGen.MoleculeSearchConsole
                     FormulaGenerator fg = new FormulaGenerator();
                     try
                     {
-                        var moleculeAtoms = _moleculeService.GetRandomToSearch(min, max);
-                        formula = moleculeAtoms.Nomenclature;
-                        atomsCount = moleculeAtoms.AtomsCount;
-                        diferentAtomsCount = moleculeAtoms.DiferentAtomsCount;
-                        fromDataSet = moleculeAtoms.FromDataSet;
-                        searchCounter = _logService.GetCounter(formula);
-
-
+                        if (tipo == 1)
+                        {
+                            var moleculeAtoms = _moleculeService.GetRandomToSearch(min, max);
+                            formula = moleculeAtoms.Nomenclature;
+                            atomsCount = moleculeAtoms.AtomsCount;
+                            diferentAtomsCount = moleculeAtoms.DiferentAtomsCount;
+                            fromDataSet = moleculeAtoms.FromDataSet;
+                            searchCounter = _logService.GetCounter(formula);
+                        }
+                        else if (tipo == 2)
+                        {
+                            var moleculeAtoms = fg.GenerateFormula(min, max);
+                            formula = fg.GetFormulaFromMolecule(moleculeAtoms);
+                            atomsCount = moleculeAtoms.Sum(x => x.Value);
+                            diferentAtomsCount = moleculeAtoms.Count;
+                            fromDataSet = false;
+                            searchCounter = _logService.GetCounter(formula);
+                        }
+                        
                         if (!string.IsNullOrEmpty(formula))
                         {
                             Console.WriteLine(string.Format("Iniciando busca para {0}", formula));

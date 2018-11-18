@@ -14,13 +14,23 @@ namespace EvoGen.Domain.DataGen
             customRandom = new CustomRandom();
         }
 
-        public Dictionary<string, int> GenerateFormula()
+        public Dictionary<string, int> GenerateFormula(int min = 1, int max = 50)
         {
             var atomsList = Constants.OoctetRule.Keys.ToList();
             var molecule = new Dictionary<string, int>();
             
             var totalAtomsMolecule = customRandom.NextTotalMoleculeAtoms();
             var totalDiferentAtomsMolecule = customRandom.NextDiferentMoleculeAtoms();
+
+            if (totalAtomsMolecule < min)
+                totalAtomsMolecule = min;
+            if (totalAtomsMolecule > max)
+                totalAtomsMolecule = max;
+            if (totalDiferentAtomsMolecule < min)
+                totalDiferentAtomsMolecule = min;
+            if (totalDiferentAtomsMolecule > max)
+                totalDiferentAtomsMolecule = max;
+
             if (totalDiferentAtomsMolecule == 1 && totalAtomsMolecule > 3)
                 totalAtomsMolecule = 3;
             

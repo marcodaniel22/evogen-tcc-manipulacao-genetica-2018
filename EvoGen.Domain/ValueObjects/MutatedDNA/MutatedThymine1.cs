@@ -2,11 +2,11 @@
 using EvoGen.Domain.Collections;
 using System.Collections.Generic;
 
-namespace EvoGen.Domain.ValueObjects.FakeDNA
+namespace EvoGen.Domain.ValueObjects.MutatedDNA
 {
-    public class FakeThymine1 : Molecule
+    public class MutatedThymine1 : Molecule
     {
-        public FakeThymine1()
+        public MutatedThymine1()
         {
             this.Nomenclature = "C4H3O2N2Br";
             this.AtomsCount = 12;

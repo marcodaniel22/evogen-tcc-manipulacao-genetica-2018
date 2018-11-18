@@ -58,10 +58,10 @@
     <Compile Include="ValueObjects\DNA\Adenine.cs" />
     <Compile Include="ValueObjects\Atom.cs" />
     <Compile Include="ValueObjects\Cycle.cs" />
-    <Compile Include="ValueObjects\FakeDNA\FakeCytosine1.cs" />
-    <Compile Include="ValueObjects\FakeDNA\FakeAdenine1.cs" />
-    <Compile Include="ValueObjects\FakeDNA\FakeThymine1.cs" />
-    <Compile Include="ValueObjects\FakeDNA\FakeGuanine1.cs" />
+    <Compile Include="ValueObjects\MutatedDNA\MutatedCytosine1.cs" />
+    <Compile Include="ValueObjects\MutatedDNA\MutatedAdenine1.cs" />
+    <Compile Include="ValueObjects\MutatedDNA\MutatedThymine1.cs" />
+    <Compile Include="ValueObjects\MutatedDNA\MutatedGuanine1.cs" />
     <Compile Include="ValueObjects\Link.cs" />
     <Compile Include="Collections\Molecule.cs" />
     <Compile Include="Collections\MongoDbBase.cs" />

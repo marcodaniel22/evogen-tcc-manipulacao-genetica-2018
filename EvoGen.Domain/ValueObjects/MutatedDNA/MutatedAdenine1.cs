@@ -1,11 +1,11 @@
 ﻿using EvoGen.Domain.Collections;
 using System.Collections.Generic;
 
-namespace EvoGen.Domain.ValueObjects.FakeDNA
+namespace EvoGen.Domain.ValueObjects.MutatedDNA
 {
-    public class FakeAdenine1 : Molecule
+    public class MutatedAdenine1 : Molecule
     {
-        public FakeAdenine1()
+        public MutatedAdenine1()
         {
             this.Nomenclature = "C5H3N4Cl";
             this.AtomsCount = 13;

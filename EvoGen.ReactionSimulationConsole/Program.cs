@@ -5,7 +5,7 @@ using EvoGen.Domain.Interfaces.Services.Reaction;
 using EvoGen.Domain.Services;
 using EvoGen.Domain.Services.Reactions;
 using EvoGen.Domain.ValueObjects.DNA;
-using EvoGen.Domain.ValueObjects.FakeDNA;
+using EvoGen.Domain.ValueObjects.MutatedDNA;
 using EvoGen.Repository.Repositories;
 using Inject;
 using System;
@@ -26,44 +26,89 @@ namespace EvoGen.ReactionSimulationConsole
         public static void Main(string[] args)
         {
             GetServices();
-            Molecule substract = null;
-            Molecule reagent = null;
-            Molecule target = null;
-            Molecule result = null;
+            Molecule substract;
+            Molecule reagent;
+            Molecule target;
+            Molecule result;
             string targetId;
-            int initAtomsCount = 2;
-            bool found = false;
+            int initAtomsCount;
+            bool found;
 
-            target = new Adenine();
-            targetId = _linksService.GetIdStructure(target.Links);
-            substract = new FakeAdenine1();
-
-            while (initAtomsCount <= 20 && !found)
+            while (true)
             {
-                Console.WriteLine("Separando moléculas para teste de reagente...");
-                var testMolecules = _moleculeService.GetMoleculesByRange(initAtomsCount, initAtomsCount + 2);
-                foreach (var molecule in testMolecules)
+                Console.Clear();
+                substract = null;
+                reagent = null;
+                target = null;
+                result = null;
+                targetId = string.Empty;
+                initAtomsCount = 2;
+                found = false;
+                
+                Console.WriteLine("Escolha qual molécula danificada do DNA deseja restaurar:");
+                Console.WriteLine("1 - Mutação na Adenina");
+                Console.WriteLine("2 - Mutação na Citosina");
+                Console.WriteLine("3 - Mutação na Guanina");
+                Console.WriteLine("4 - Mutação na Timina");
+                Console.Write("Opção: ");
+                var input = Console.ReadKey();
+                Console.WriteLine("\n");
+
+                if (input.KeyChar == '1')
                 {
-                    reagent = molecule;
-                    Console.Write(string.Format("Teste com reagente {0}", reagent.Nomenclature));
-                    result = _replacementReactionService.React(reagent, substract);
-                    if (result != null)
-                    {
-                        var resultId = _linksService.GetIdStructure(result.Links);
-                        if (resultId.Equals(targetId))
-                        {
-                            FoundResult(substract, reagent, result);
-                            found = true;
-                            break;
-                        }
-                    }
-                    Console.Write(" - Falha\n");
+                    target = new Adenine();
+                    targetId = _linksService.GetIdStructure(target.Links);
+                    substract = new MutatedAdenine1();
                 }
-                initAtomsCount += 2;
+                else if (input.KeyChar == '2')
+                {
+                    target = new Cytosine();
+                    targetId = _linksService.GetIdStructure(target.Links);
+                    substract = new MutatedCytosine1();
+                }
+                else if (input.KeyChar == '3')
+                {
+                    target = new Guanine();
+                    targetId = _linksService.GetIdStructure(target.Links);
+                    substract = new MutatedGuanine1();
+                }
+                else if (input.KeyChar == '4')
+                {
+                    target = new Thymine();
+                    targetId = _linksService.GetIdStructure(target.Links);
+                    substract = new MutatedThymine1();
+                }
+
+                if (target != null)
+                {
+                    while (initAtomsCount <= 20 && !found)
+                    {
+                        Console.WriteLine("Separando moléculas para teste de reagente...");
+                        var testMolecules = _moleculeService.GetMoleculesByRange(initAtomsCount, initAtomsCount + 2);
+                        foreach (var molecule in testMolecules)
+                        {
+                            reagent = molecule;
+                            Console.Write(string.Format("Teste com reagente {0}", reagent.Nomenclature));
+                            result = _replacementReactionService.React(reagent, substract);
+                            if (result != null)
+                            {
+                                var resultId = _linksService.GetIdStructure(result.Links);
+                                if (resultId.Equals(targetId))
+                                {
+                                    FoundResult(substract, reagent, result);
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            Console.Write(" - Falha\n");
+                        }
+                        initAtomsCount += 2;
+                    }
+                    if (!found)
+                        Console.WriteLine("\nNão foi possível restaurar a molécula danificada.");
+                    Console.ReadKey();
+                }
             }
-            if (!found)
-                Console.WriteLine("\nNão foi possível restaurar a molécula danificada.");
-            Console.ReadKey();
         }
 
         private static void FoundResult(Molecule substract, Molecule reagent, Molecule result)

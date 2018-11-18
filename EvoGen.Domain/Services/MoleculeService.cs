@@ -82,7 +82,7 @@ namespace EvoGen.Domain.Services
         public Molecule GetRandomToSearch(int min, int max)
         {
             var randon = new Random();
-            var query = _moleculeRepository.GetAll().Where(x => x.AtomsCount >= min && x.AtomsCount <= max);
+            var query = _moleculeRepository.GetAll().Where(x => x.AtomsCount >= min && x.AtomsCount <= max && x.FromDataSet == true);
 
             var minLog = _logRepository.GetAll().Min(x => x.SearchCounter);
             var skip = randon.Next(_logRepository.GetAll().Count(x => x.SearchCounter == minLog));

@@ -119,7 +119,7 @@ namespace EvoGen.Domain.GA.StructureGenerator
                                 break;
                             }
                         }
-                    } while (Generation < _maxGenerations);
+                    } while (Generation < _maxGenerations && ResultList.Count < 1000);
                 }
             }
             catch (Exception) { }
